@@ -3,7 +3,7 @@ import projectsData from '@/content/projects.json';
 import timelineData from '@/content/timeline.json';
 import decisionsData from '@/content/decisions.json';
 import docsData from '@/content/docs.json';
-import type { Product, Project, TimelineEntry, Decision, Doc } from '@/types';
+import type { Product, Project, TimelineEntry, Decision, Doc, SkillCategory } from '@/types';
 
 export function getProducts(): Product[] {
   return productsData as unknown as Product[];
@@ -39,4 +39,9 @@ export function getDocs(): Doc[] {
 
 export function getDoc(id: string): Doc | undefined {
   return getDocs().find(d => d.id === id);
+}
+
+import skillsData from '@/content/skills.json';
+export function getSkills(): SkillCategory[] {
+  return skillsData as SkillCategory[];
 }

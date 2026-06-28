@@ -1,4 +1,5 @@
 import { Terminal, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export function HeroCommandCenter() {
   return (
@@ -24,10 +25,10 @@ export function HeroCommandCenter() {
               className="inline-flex items-center gap-2 px-6 py-3 bg-accent-qa text-white rounded-lg text-sm font-semibold hover:bg-accent-qa/90 transition-colors">
               Explorar produtos <ArrowRight size={16} />
             </a>
-            <a href="/command-center/projects"
+            <Link href="/command-center/projects"
               className="inline-flex items-center gap-2 px-6 py-3 bg-surface-elevated border border-border-subtle text-text-primary rounded-lg text-sm font-semibold hover:bg-surface-soft transition-colors">
               <Terminal size={16} /> Ver projetos
-            </a>
+            </Link>
           </div>
         </div>
       </div>

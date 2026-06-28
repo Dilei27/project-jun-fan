@@ -7,6 +7,12 @@ export interface Decision {
   impact: string;
 }
 
+export interface SkillCategory {
+  area: string;
+  skills: string[];
+  nivel: 'avancado' | 'intermediario' | 'iniciante';
+}
+
 export interface DocSection {
   heading: string;
   content: string;

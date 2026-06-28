@@ -16,6 +16,8 @@ const suggestions = [
   'O que é WhatsApp AI?',
   'Qual a stack usada?',
   'Como começar?',
+  'O que é o Command Center?',
+  'Quais projetos existem?',
 ];
 
 const aiResponses: Record<string, AIResponse> = {
@@ -27,6 +29,13 @@ const aiResponses: Record<string, AIResponse> = {
   arquitetura: { text: 'Stack moderna front-end first com Next.js + TypeScript.', link: { href: '/decisoes/', label: 'Decisões Técnicas →' } },
   começar: { text: 'Ambiente configurado com Next.js, sem backend ou banco de dados.', link: { href: '/docs/setup/', label: 'Setup →' } },
   framework: { text: 'O Robot/QA AI Framework unifica automação de testes com IA.', link: { href: '/framework/', label: 'Saiba mais →' } },
+  'command center': { text: 'O QA Command Center é o primeiro produto oficial do Project Jun Fan. É o hub central que nuclea projetos, decisões, métricas e documentação.', link: { href: '/command-center/', label: 'Explorar →' } },
+  projetos: { text: 'O ecossistema tem 3 projetos principais: Automação ERP UAU, WhatsApp AI Assistant e Vigilante AI.', link: { href: '/command-center/projects/', label: 'Ver projetos →' } },
+  projeto: { text: 'O ecossistema tem 3 projetos principais: Automação ERP UAU, WhatsApp AI Assistant e Vigilante AI.', link: { href: '/command-center/projects/', label: 'Ver projetos →' } },
+  decisoes: { text: 'O projeto registra decisões arquiteturais como ADRs, incluindo a migração para front-end first.', link: { href: '/command-center/decisions/', label: 'Ver decisões →' } },
+  decisões: { text: 'O projeto registra decisões arquiteturais como ADRs, incluindo a migração para front-end first.', link: { href: '/command-center/decisions/', label: 'Ver decisões →' } },
+  trajetória: { text: 'A trajetória começa em 2018 com QA manual e evolui até a fundação do Project Jun Fan em 2025.', link: { href: '/command-center/', label: 'Ver timeline →' } },
+  trajetoria: { text: 'A trajetória começa em 2018 com QA manual e evolui até a fundação do Project Jun Fan em 2025.', link: { href: '/command-center/', label: 'Ver timeline →' } },
 };
 
 export function AIDock() {

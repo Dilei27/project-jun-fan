@@ -6,6 +6,9 @@ import { Timeline } from '@/components/shared/timeline';
 import { AIInsightCards } from '@/components/cards/ai-insight-card';
 import { HeroCommandCenter } from '@/features/command-center/components/hero-command-center';
 import { MetricsGrid } from '@/features/command-center/components/metrics-grid';
+import { SkillsCloud } from '@/features/command-center/components/skills-cloud';
+import { ArchitectureFlow } from '@/features/command-center/components/architecture-flow';
+import Link from 'next/link';
 
 
 export default function CommandCenterPage() {
@@ -43,6 +46,18 @@ export default function CommandCenterPage() {
           <Timeline entries={timeline} />
         </section>
 
+        {/* Skills */}
+        <section className="mb-16">
+          <h2 className="text-xl font-semibold text-text-primary mb-6">Stack Técnica</h2>
+          <SkillsCloud />
+        </section>
+
+        {/* Architecture Flow */}
+        <section className="mb-16">
+          <h2 className="text-xl font-semibold text-text-primary mb-6">Arquitetura</h2>
+          <ArchitectureFlow />
+        </section>
+
         {/* Projects */}
         <section className="mb-16">
           <h2 className="text-xl font-semibold text-text-primary mb-6">Projetos em Destaque</h2>
@@ -54,16 +69,16 @@ export default function CommandCenterPage() {
           <h2 className="text-xl font-semibold text-text-primary mb-6">Decisões Técnicas</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {decisions.slice(0, 2).map(d => (
-              <a key={d.id} href={`/decisoes/#${d.id}`}
+              <Link key={d.id} href={`/decisoes/#${d.id}`}
                 className="p-4 bg-surface-default border border-border-subtle rounded-lg hover:bg-surface-elevated transition-colors">
                 <h3 className="text-sm font-semibold text-text-primary mb-1">{d.decision}</h3>
                 <p className="text-xs text-text-muted">{d.context}</p>
-              </a>
+              </Link>
             ))}
-            <a href="/decisoes/"
+            <Link href="/decisoes/"
               className="p-4 bg-surface-default border border-border-subtle rounded-lg hover:bg-surface-elevated transition-colors flex items-center justify-center text-sm text-accent-qa">
               Ver todas as decisões →
-            </a>
+            </Link>
           </div>
         </section>
 
