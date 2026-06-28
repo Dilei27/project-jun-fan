@@ -8,6 +8,7 @@ import { HeroCommandCenter } from '@/features/command-center/components/hero-com
 import { MetricsGrid } from '@/features/command-center/components/metrics-grid';
 import { SkillsCloud } from '@/features/command-center/components/skills-cloud';
 import { ArchitectureFlow } from '@/features/command-center/components/architecture-flow';
+import { BootLoader } from '@/features/command-center/components/boot-loader';
 import Link from 'next/link';
 
 
@@ -19,6 +20,7 @@ export default function CommandCenterPage() {
 
   return (
     <div>
+      <BootLoader />
       <HeroCommandCenter />
 
       <div className="max-w-[1440px] mx-auto px-6">
