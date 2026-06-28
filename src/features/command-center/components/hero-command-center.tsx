@@ -21,10 +21,10 @@ export function HeroCommandCenter() {
           </p>
 
           <div className="flex flex-wrap gap-4">
-            <a href="#produtos"
+            <Link href="#produtos"
               className="inline-flex items-center gap-2 px-6 py-3 bg-accent-qa text-white rounded-lg text-sm font-semibold hover:bg-accent-qa/90 transition-colors">
               Explorar produtos <ArrowRight size={16} />
-            </a>
+            </Link>
             <Link href="/command-center/projects"
               className="inline-flex items-center gap-2 px-6 py-3 bg-surface-elevated border border-border-subtle text-text-primary rounded-lg text-sm font-semibold hover:bg-surface-soft transition-colors">
               <Terminal size={16} /> Ver projetos
