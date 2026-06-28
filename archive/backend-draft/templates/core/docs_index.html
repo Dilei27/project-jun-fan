@@ -1,0 +1,56 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Documentação — Odirlei Labs{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <a href="{% url 'home' %}" class="back-link">← Início</a>
+  <p class="page-header-label">Documentação</p>
+  <h1 class="page-header-title">Documentação</h1>
+  <p class="page-header-desc">Arquitetura, setup, produtos e decisões técnicas do ecossistema Odirlei Labs.</p>
+</div>
+
+<div class="docs-layout">
+  <aside class="docs-sidebar" aria-label="Navegação da documentação">
+    <p class="docs-sidebar-title">Navegação</p>
+    <nav class="docs-nav">
+      {% for d in docs %}
+      <a href="{% url 'doc_detail' d.id %}" class="docs-nav-item">{{ d.title }}</a>
+      {% endfor %}
+      <a href="{% url 'decisions' %}" class="docs-nav-item">Decisões Técnicas</a>
+    </nav>
+  </aside>
+  <main class="docs-content">
+    <div class="docs-mobile-nav">
+      <label for="docs-mobile-select" class="sr-only">Selecionar página</label>
+      <select class="docs-mobile-select" id="docs-mobile-select" onchange="if(this.value)window.location.href=this.value">
+        <option value="">Navegar para...</option>
+        {% for d in docs %}
+        <option value="{% url 'doc_detail' d.id %}">{{ d.title }}</option>
+        {% endfor %}
+        <option value="{% url 'decisions' %}">Decisões Técnicas</option>
+      </select>
+    </div>
+    <nav class="docs-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Início</a>
+      <span aria-hidden="true">/</span>
+      <span>Documentação</span>
+    </div>
+    <div class="docs-body">
+      <h1>Visão Geral da Documentação</h1>
+      <p>Bem-vindo à documentação do ecossistema Odirlei Labs. Aqui você encontra informações sobre arquitetura, setup, produtos e decisões técnicas que guiam o desenvolvimento da plataforma.</p>
+      <p>Use a navegação lateral para explorar os tópicos disponíveis.</p>
+      <h2>Tópicos Disponíveis</h2>
+      <ul>
+        {% for d in docs %}
+        <li><a href="{% url 'doc_detail' d.id %}" style="color: var(--color-accent-qa);">{{ d.title }}</a> — {{ d.description }}</li>
+        {% endfor %}
+        <li><a href="{% url 'decisions' %}" style="color: var(--color-accent-qa);">Decisões Técnicas</a> — Contexto, decisão, trade-off e impacto arquitetural.</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+{% endblock %}

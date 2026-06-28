@@ -1,0 +1,80 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Robot/QA AI Framework — Odirlei Labs{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <a href="{% url 'home' %}" class="back-link">← Início</a>
+  <p class="page-header-label">Framework</p>
+  <h1 class="page-header-title">Robot/QA AI Framework</h1>
+  <p class="page-header-desc">Framework de automação de testes com IA aplicada — conceito e arquitetura.</p>
+</div>
+
+<div class="page-section">
+  <div class="framework-section">
+    <h3>Visão Geral</h3>
+    <p style="font-size: 14px; color: var(--color-text-secondary); line-height: 1.6;">O Robot/QA AI Framework é um conceito em desenvolvimento na Odirlei Labs que unifica automação de testes com inteligência artificial. O objetivo é criar uma camada inteligente sobre frameworks existentes como Robot Framework e Playwright, permitindo geração automática de cenários, análise de logs com IA e documentação automatizada.</p>
+  </div>
+
+  <div class="framework-section">
+    <h3>Arquitetura Proposta</h3>
+    <div class="architecture-flow" style="margin-top: var(--space-3);">
+      <div class="flow-track">
+        <span class="flow-node">Código Fonte</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">Parser IA</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">Geração de Cenários</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">Execução</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">Análise de Logs</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">Relatório Inteligente</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="framework-section">
+    <h3>Componentes</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+      <div class="card">
+        <h3>Gerador de Cenários</h3>
+        <p>IA analisa o código fonte e sugere cenários de teste baseados em padrões e histórico de bugs.</p>
+      </div>
+      <div class="card">
+        <h3>Analisador de Logs</h3>
+        <p>Classifica falhas, sugere causas raiz e recomenda correções com base em logs de execução.</p>
+      </div>
+      <div class="card">
+        <h3>Documentador Automático</h3>
+        <p>Gera documentação de testes, steps e resultados em formato legível para equipe técnica e não técnica.</p>
+      </div>
+      <div class="card">
+        <h3>Assistant de QA</h3>
+        <p>Chat contextual que responde perguntas sobre suites de teste, cobertura e histórico de execuções.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="framework-section">
+    <h3>Stack Pretendida</h3>
+    <div class="stack-list">
+      <span class="badge badge-default" style="background: var(--color-surface-soft);">Robot Framework</span>
+      <span class="badge badge-default" style="background: var(--color-surface-soft);">Playwright</span>
+      <span class="badge badge-default" style="background: var(--color-surface-soft);">Python</span>
+      <span class="badge badge-default" style="background: var(--color-surface-soft);">LangChain</span>
+      <span class="badge badge-default" style="background: var(--color-surface-soft);">OpenAI</span>
+      <span class="badge badge-default" style="background: var(--color-surface-soft);">Django</span>
+    </div>
+  </div>
+
+  <div class="framework-section">
+    <h3>Status</h3>
+    <p style="font-size: 14px; color: var(--color-text-secondary);">Conceito em fase de pesquisa e prototipação. A arquitetura está sendo validada com projetos reais de automação. Previsão de MVP: <strong>2026</strong>.</p>
+  </div>
+</div>
+
+{% endblock %}

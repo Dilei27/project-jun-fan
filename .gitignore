@@ -1,0 +1,45 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# testing
+coverage/
+
+# next.js
+.next/
+out/
+
+# production
+build/
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env
+.env
+.env*.local
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
+
+# Django archive (kept for reference - only essential files)
+archive/backend-draft/db.sqlite3
+archive/backend-draft/**/__pycache__/
+archive/backend-draft/**/.venv/
+archive/backend-draft/staticfiles/
+archive/backend-draft/.venv/
+
+# Project evolution zips
+evolucoes/

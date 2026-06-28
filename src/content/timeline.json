@@ -1,0 +1,32 @@
+[
+  {
+    "year": "2018",
+    "milestone": "QA Manual",
+    "description": "Início na qualidade de software com testes manuais e processos de homologação."
+  },
+  {
+    "year": "2019",
+    "milestone": "Automação",
+    "description": "Primeiros passos em automação de testes com Robot Framework e Selenium."
+  },
+  {
+    "year": "2020",
+    "milestone": "ERP Legado",
+    "description": "Automação de regressões em ERP desktop com Robot Framework, Sikuli e Click Custom."
+  },
+  {
+    "year": "2022",
+    "milestone": "Playwright / API / Perf",
+    "description": "Automação web com Playwright, testes de API com requests + pytest e performance com locust."
+  },
+  {
+    "year": "2024",
+    "milestone": "IA Aplicada",
+    "description": "IA aplicada a QA: agentes, resumos inteligentes, análise de logs e documentação automatizada."
+  },
+  {
+    "year": "2025",
+    "milestone": "Jun Fan",
+    "description": "Fundação do Project Jun Fan com QA Command Center, WhatsApp AI e Vigilante AI."
+  }
+]

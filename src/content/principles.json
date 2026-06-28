@@ -1,0 +1,38 @@
+[
+  {
+    "id": "simplicidade",
+    "title": "Simplicidade",
+    "description": "Toda decisão deve privilegiar o caminho mais simples que atenda ao objetivo. Complexidade só é adicionada quando comprovadamente necessária.",
+    "tags": ["arquitetura", "código", "decisão"]
+  },
+  {
+    "id": "engenharia",
+    "title": "Engenharia Visível",
+    "description": "Cada tela deve comunicar que existe engenharia por trás. A interface não esconde a complexidade — ela a organiza.",
+    "tags": ["ux", "design", "comunicação"]
+  },
+  {
+    "id": "reutilizacao",
+    "title": "Reutilização",
+    "description": "Componentes devem ser construídos para ser reutilizados. Conteúdo deve ser separado de apresentação.",
+    "tags": ["código", "arquitetura", "componentes"]
+  },
+  {
+    "id": "produto-antes-codigo",
+    "title": "Produto Antes de Código",
+    "description": "Antes de escrever código, entender o problema, a solução e o impacto. Código é meio, não fim.",
+    "tags": ["produto", "estratégia"]
+  },
+  {
+    "id": "design-system",
+    "title": "Design System como Verdade",
+    "description": "Nenhum valor visual solto. Cores, espaçamentos, tipografia e motion são definidos em tokens e aplicados consistentemente.",
+    "tags": ["design-system", "consistência"]
+  },
+  {
+    "id": "front-end-first",
+    "title": "Front-end First",
+    "description": "A plataforma é front-end first. Todo conteúdo é servido estaticamente. Backend só quando absolutamente necessário.",
+    "tags": ["arquitetura", "stack"]
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "totalProjetos": 3,
+  "totalProdutos": 3,
+  "totalDocumentos": 4,
+  "totalDecisoes": 4,
+  "linguagens": ["TypeScript", "Python", "JavaScript"],
+  "frameworks": ["Next.js", "React", "Robot Framework", "Playwright"],
+  "ferramentas": ["Docker", "Git", "VS Code"],
+  "metricasPorProduto": {
+    "qa-command-center": { "projetos": 12, "automacoes": 15, "frameworks": 5 },
+    "whatsapp-ai": { "conversas": 0, "agendamentos": 0, "taxa_automacao": 0 },
+    "vigilante-ai": { "camera": 0, "eventos": 0, "alertas_criticos": 0 }
+  }
+}

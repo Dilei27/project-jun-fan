@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} — Odirlei Labs{% endblock %}
+
+{% block content %}
+
+<div class="project-detail-header">
+  <a href="{% url 'home' %}" class="back-link">← Voltar</a>
+  <span class="badge {% if project.status == 'concluido' %}badge-success{% else %}badge-warning{% endif %}" style="margin-bottom: var(--space-3); display: inline-block;">{{ project.status|title }}</span>
+  <h1 class="page-header-title" style="font-size: 36px;">{{ project.title }}</h1>
+  {% if project.context %}
+  <p class="page-header-desc">{{ project.context }}</p>
+  {% endif %}
+</div>
+
+<div class="page-section">
+  <div class="problem-solution-grid">
+    <div class="problem-box">
+      <p class="section-label" style="margin-bottom: var(--space-2);">Problema</p>
+      <p style="font-size: 14px; color: var(--color-text-secondary); line-height: 1.6;">{{ project.problem }}</p>
+    </div>
+    <div class="solution-box">
+      <p class="section-label" style="margin-bottom: var(--space-2);">Solução</p>
+      <p style="font-size: 14px; color: var(--color-text-secondary); line-height: 1.6;">{{ project.solution }}</p>
+    </div>
+  </div>
+</div>
+
+{% if project.stack %}
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Stack</h2>
+    <p class="page-section-sub">Tecnologias utilizadas</p>
+  </div>
+  <div class="stack-list">
+    {% for tech in project.stack %}
+    <span class="badge badge-default" style="background: var(--color-surface-soft);">{{ tech }}</span>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if project.impact %}
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Impacto</h2>
+    <p class="page-section-sub">Resultados e métricas do projeto</p>
+  </div>
+  <div style="background: var(--color-surface-default); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: var(--space-6);">
+    <p style="font-size: 14px; color: var(--color-text-secondary); line-height: 1.6;">{{ project.impact }}</p>
+  </div>
+</div>
+{% endif %}
+
+{% if project.decisions %}
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Decisões Técnicas</h2>
+    <p class="page-section-sub">Escolhas de arquitetura e design</p>
+  </div>
+  <div class="roadmap-list">
+    {% for decision in project.decisions %}
+    <div class="roadmap-item">
+      <span class="roadmap-dot" style="background: var(--color-accent-qa);"></span>
+      {{ decision }}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if project.links %}
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Links</h2>
+  </div>
+  <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+    {% if project.links.docs and project.links.docs != '#' %}
+    <a href="{{ project.links.docs }}" class="btn btn-secondary">Documentação</a>
+    {% endif %}
+    {% if project.links.repo and project.links.repo != '#' %}
+    <a href="{{ project.links.repo }}" class="btn btn-secondary">Repositório</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

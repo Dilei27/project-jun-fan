@@ -1,0 +1,83 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Demo — {{ product.name }} — Odirlei Labs{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <a href="{% url 'product_detail' product.id %}" class="back-link">← {{ product.name }}</a>
+  <div class="page-header-accent" style="background: {{ product.accentColor }};"></div>
+  <p class="page-header-label">Demo Interativa</p>
+  <h1 class="page-header-title">{{ product.name }}</h1>
+  <p class="page-header-desc">Explore o produto em ação — demonstração interativa.</p>
+</div>
+
+<div class="page-section">
+  <div class="demo-interactive">
+    <div class="demo-interactive-step" id="demo-step">▶</div>
+    <div class="demo-interactive-label" id="demo-label">Clique em "Iniciar" para ver o {{ product.name }} em ação</div>
+    <div class="demo-interactive-controls">
+      <button class="btn btn-primary" onclick="startDemo()">Iniciar</button>
+      <button class="btn btn-secondary" onclick="resetDemo()" id="demo-reset" style="display:none;">Reiniciar</button>
+    </div>
+    <div id="demo-log" style="margin-top: var(--space-4); text-align: left; width: 100%; max-width: 500px; display: none;">
+      <div class="activity-list" id="demo-steps"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var productName = '{{ product.name|escapejs }}';
+var steps = [
+  'Inicializando {{ product.name }}...',
+  'Carregando módulo principal...',
+  'Conectando ao serviço...',
+  'Processando dados de entrada...',
+  'Executando análise...',
+  'Gerando resultado...',
+  'Demo concluída com sucesso!'
+];
+var stepIndex = 0;
+
+function startDemo() {
+  stepIndex = 0;
+  document.getElementById('demo-step').textContent = '⟳';
+  document.getElementById('demo-label').textContent = 'Executando...';
+  document.getElementById('demo-reset').style.display = 'none';
+  document.getElementById('demo-log').style.display = 'block';
+  document.getElementById('demo-steps').innerHTML = '';
+  document.querySelector('.demo-interactive-controls .btn-primary').disabled = true;
+  nextStep();
+}
+
+function nextStep() {
+  if (stepIndex >= steps.length) {
+    document.getElementById('demo-step').textContent = '✓';
+    document.getElementById('demo-label').textContent = 'Demo concluída — produto funcionando conforme esperado.';
+    document.getElementById('demo-reset').style.display = 'inline-flex';
+    document.querySelector('.demo-interactive-controls .btn-primary').disabled = false;
+    return;
+  }
+  var log = document.getElementById('demo-steps');
+  var item = document.createElement('div');
+  item.className = 'activity-item';
+  item.innerHTML = '<span class="activity-dot" style="background: var(--color-accent-qa);"></span>' + steps[stepIndex] + '<span class="activity-time">' + ((stepIndex + 1) * 0.8).toFixed(1) + 's</span>';
+  log.appendChild(item);
+  log.parentElement.scrollTop = log.parentElement.scrollHeight;
+  stepIndex++;
+  setTimeout(nextStep, 800);
+}
+
+function resetDemo() {
+  stepIndex = 0;
+  document.getElementById('demo-step').textContent = '▶';
+  document.getElementById('demo-label').textContent = 'Clique em "Iniciar" para ver o {{ product.name }} em ação';
+  document.getElementById('demo-reset').style.display = 'none';
+  document.getElementById('demo-log').style.display = 'none';
+  document.getElementById('demo-steps').innerHTML = '';
+  document.querySelector('.demo-interactive-controls .btn-primary').disabled = false;
+}
+</script>
+
+{% endblock %}

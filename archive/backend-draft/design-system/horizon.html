@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horizon Design System — Odirlei Labs</title>
+<link rel="stylesheet" href="../static/css/horizon.css">
+<style>
+  body { padding: var(--space-8); max-width: 1200px; margin: 0 auto; }
+  .sg-section { margin-bottom: var(--space-12); }
+  .sg-section h2 { border-bottom: 1px solid var(--color-border-subtle); padding-bottom: var(--space-2); margin-bottom: var(--space-6); }
+  .sg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-4); }
+  .sg-swatch { padding: var(--space-4); border-radius: var(--radius-md); color: var(--color-text-primary); font-size: 13px; }
+  .sg-swatch span { display: block; font-family: 'Geist Mono', 'JetBrains Mono', monospace; font-size: 12px; margin-top: var(--space-1); }
+  .sg-components { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: flex-start; }
+  .sg-demo-box { background: var(--color-surface-elevated); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: var(--space-6); margin-bottom: var(--space-4); }
+  .sg-demo-box h3 { margin-top: 0; }
+  .sg-space { display: flex; align-items: center; gap: var(--space-4); }
+  .sg-space-box { background: var(--color-accent-qa); border-radius: var(--radius-sm); }
+</style>
+</head>
+<body>
+
+<h1>Horizon Design System v0.1</h1>
+<p>Design system da Odirlei Labs. Toda interface deve seguir estes tokens e componentes.</p>
+
+<div class="sg-section">
+  <h2>Cores de Fundo e Superfície</h2>
+  <div class="sg-grid">
+    <div class="sg-swatch" style="background: var(--color-bg-base);">--color-bg-base<br><span>#0B0F14</span></div>
+    <div class="sg-swatch" style="background: var(--color-bg-deep);">--color-bg-deep<br><span>#070A0F</span></div>
+    <div class="sg-swatch" style="background: var(--color-surface-default);">--color-surface-default<br><span>#111821</span></div>
+    <div class="sg-swatch" style="background: var(--color-surface-elevated);">--color-surface-elevated<br><span>#151D27</span></div>
+    <div class="sg-swatch" style="background: var(--color-surface-soft);">--color-surface-soft<br><span>#1B2430</span></div>
+  </div>
+</div>
+
+<div class="sg-section">
+  <h2>Bordas</h2>
+  <div class="sg-grid">
+    <div class="sg-swatch" style="background: var(--color-border-subtle);">--color-border-subtle<br><span>#263241</span></div>
+    <div class="sg-swatch" style="background: var(--color-border-strong);">--color-border-strong<br><span>#3A4658</span></div>
+  </div>
+</div>
+
+<div class="sg-section">
+  <h2>Texto</h2>
+  <div class="sg-grid">
+    <div class="sg-swatch" style="background: var(--color-text-primary); color: var(--color-bg-base);">--color-text-primary<br><span>#F4F7FA</span></div>
+    <div class="sg-swatch" style="background: var(--color-text-secondary); color: var(--color-bg-base);">--color-text-secondary<br><span>#9AA6B8</span></div>
+    <div class="sg-swatch" style="background: var(--color-text-muted);">--color-text-muted<br><span>#687385</span></div>
+  </div>
+</div>
+
+<div class="sg-section">
+  <h2>Acentos por Módulo</h2>
+  <div class="sg-grid">
+    <div class="sg-swatch" style="background: var(--color-accent-qa);">QA Command Center<br><span>#4F8CFF</span></div>
+    <div class="sg-swatch" style="background: var(--color-accent-whatsapp);">WhatsApp AI<br><span>#2DD4BF</span></div>
+    <div class="sg-swatch" style="background: var(--color-accent-vigilante);">Vigilante AI<br><span>#F97316</span></div>
+    <div class="sg-swatch" style="background: var(--color-accent-analytics);">Analytics<br><span>#A855F7</span></div>
+    <div class="sg-swatch" style="background: var(--color-accent-docs); color: var(--color-bg-base);">Docs<br><span>#EAB308</span></div>
+    <div class="sg-swatch" style="background: var(--color-success); color: var(--color-bg-base);">Success<br><span>#22C55E</span></div>
+    <div class="sg-swatch" style="background: var(--color-warning); color: var(--color-bg-base);">Warning<br><span>#F59E0B</span></div>
+    <div class="sg-swatch" style="background: var(--color-danger);">Danger<br><span>#EF4444</span></div>
+  </div>
+</div>
+
+<div class="sg-section">
+  <h2>Tipografia</h2>
+  <p style="font-size: 56px; font-weight: 700; margin: 0;">Display 56px</p>
+  <p style="font-size: 40px; font-weight: 600; margin: var(--space-4) 0 0;">H1 40px</p>
+  <p style="font-size: 30px; font-weight: 600; margin: var(--space-3) 0 0;">H2 30px</p>
+  <p style="font-size: 24px; font-weight: 600; margin: var(--space-3) 0 0;">H3 24px</p>
+  <p style="font-size: 16px; font-weight: 400; margin: var(--space-3) 0 0;">Body 16px — Texto padrão para parágrafos, descrições e conteúdo.</p>
+  <p style="font-size: 13px; margin: var(--space-3) 0 0;">Small 13px</p>
+  <p style="font-size: 12px; margin: var(--space-3) 0 0; text-transform: uppercase; letter-spacing: 0.05em;">Caption 12px uppercase</p>
+</div>
+
+<div class="sg-section">
+  <h2>Botões</h2>
+  <div class="sg-components">
+    <button class="btn btn-primary">Primary</button>
+    <button class="btn btn-secondary">Secondary</button>
+    <button class="btn btn-ghost">Ghost</button>
+    <button class="btn btn-danger">Danger</button>
+    <button class="btn btn-primary" disabled>Disabled</button>
+    <button class="btn btn-icon" aria-label="Buscar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="sg-section">
+  <h2>Cards</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: var(--space-4);">
+    <div class="card"><h3>Default Card</h3><p>Conteúdo do card com espaçamento e borda sutil.</p></div>
+    <div class="card card-hover"><h3>Card com Hover</h3><p>Passe o mouse para ver o realce.</p></div>
+    <div class="card" style="border-left: 3px solid var(--color-accent-qa);"><h3>Card com Acento</h3><p>Usa a cor de acento do módulo.</p></div>
+  </div>
+</div>
+
+<div class="sg-section">
+  <h2>Badges</h2>
+  <div class="sg-components">
+    <span class="badge badge-default">Default</span>
+    <span class="badge badge-success">Online</span>
+    <span class="badge badge-warning">Em andamento</span>
+    <span class="badge badge-danger">Offline</span>
+    <span class="badge" style="background: var(--color-accent-qa);">QA</span>
+    <span class="badge" style="background: var(--color-accent-whatsapp);">WhatsApp</span>
+    <span class="badge" style="background: var(--color-accent-vigilante);">Vigilante</span>
+  </div>
+</div>
+
+<div class="sg-section">
+  <h2>Inputs</h2>
+  <div style="display: flex; flex-direction: column; gap: var(--space-4); max-width: 400px;">
+    <input type="text" class="input" placeholder="Texto padrão">
+    <input type="text" class="input input-active" placeholder="Campo em foco">
+    <input type="text" class="input" placeholder="Campo desabilitado" disabled>
+    <textarea class="input" rows="3" placeholder="Textarea"></textarea>
+  </div>
+</div>
+
+<div class="sg-section">
+  <h2>Skeleton</h2>
+  <div style="display: flex; flex-direction: column; gap: var(--space-3); max-width: 400px;">
+    <div class="skeleton" style="width: 60%; height: 24px;"></div>
+    <div class="skeleton" style="width: 80%; height: 16px;"></div>
+    <div class="skeleton" style="width: 40%; height: 16px;"></div>
+    <div class="skeleton" style="width: 100%; height: 120px; border-radius: var(--radius-md);"></div>
+  </div>
+</div>
+
+<div class="sg-section">
+  <h2>Tokens de Espaçamento</h2>
+  <div class="sg-space">
+    <span>space-1 (4px)</span>
+    <div class="sg-space-box" style="width: 4px; height: 16px;"></div>
+  </div>
+  <div class="sg-space">
+    <span>space-2 (8px)</span>
+    <div class="sg-space-box" style="width: 8px; height: 16px;"></div>
+  </div>
+  <div class="sg-space">
+    <span>space-4 (16px)</span>
+    <div class="sg-space-box" style="width: 16px; height: 16px;"></div>
+  </div>
+  <div class="sg-space">
+    <span>space-6 (24px)</span>
+    <div class="sg-space-box" style="width: 24px; height: 16px;"></div>
+  </div>
+  <div class="sg-space">
+    <span>space-8 (32px)</span>
+    <div class="sg-space-box" style="width: 32px; height: 16px;"></div>
+  </div>
+  <div class="sg-space">
+    <span>space-12 (48px)</span>
+    <div class="sg-space-box" style="width: 48px; height: 16px;"></div>
+  </div>
+</div>
+
+<div class="sg-section">
+  <h2>Motion</h2>
+  <div class="sg-demo-box">
+    <button class="btn btn-primary" style="transition: transform var(--motion-fast) ease, background var(--motion-fast) ease;">Motion fast (160ms)</button>
+    <button class="btn btn-secondary" style="transition: transform var(--motion-normal) ease, background var(--motion-normal) ease; margin-left: var(--space-3);">Motion normal (280ms)</button>
+    <button class="btn btn-ghost" style="transition: transform var(--motion-slow) ease, background var(--motion-slow) ease; margin-left: var(--space-3);">Motion slow (420ms)</button>
+  </div>
+</div>
+
+</body>
+</html>

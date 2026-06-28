@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Busca — Odirlei Labs{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <a href="{% url 'home' %}" class="back-link">← Início</a>
+  <p class="page-header-label">Busca</p>
+  <h1 class="page-header-title">Busca Semântica</h1>
+  <p class="page-header-desc">Encontre produtos, projetos, documentação e decisões técnicas.</p>
+</div>
+
+<div class="page-section">
+  <form action="{% url 'search' %}" method="GET" style="max-width: 600px; margin-bottom: var(--space-8);">
+    <label for="search-input" class="sr-only">Buscar</label>
+    <input type="text" class="input" id="search-input" name="q" value="{{ query }}" placeholder="Buscar produtos, projetos, documentação..." autofocus style="text-align: left;">
+  </form>
+
+  {% if query %}
+    <p class="search-results-count">{{ results|length }} resultado{{ results|pluralize }} para "{{ query }}"</p>
+    {% if results %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: var(--space-4);">
+      {% for r in results %}
+      <a href="{{ r.url }}" class="decision-card" style="text-decoration: none;">
+        <div class="decision-card-header">
+          <div class="decision-card-icon" style="background: {{ r.accent }}20; color: {{ r.accent }};" aria-hidden="true">
+            {% if r.type == 'produto' %}🔷{% elif r.type == 'projeto' %}⚙️{% elif r.type == 'documentação' %}📄{% else %}✏️{% endif %}
+          </div>
+          <div>
+            <h3 class="decision-card-title">{{ r.title }}</h3>
+            <span class="badge badge-default">{{ r.type|title }}</span>
+          </div>
+        </div>
+        <p class="decision-card-context">{{ r.desc|truncatechars:120 }}</p>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="demo-frame-empty" style="min-height: 200px;">
+      <p class="demo-frame-empty-text">Nenhum resultado encontrado para "{{ query }}"</p>
+      <span class="badge badge-default">Tente termos como "Robot", "Vigilante", "Django" ou "WhatsApp"</span>
+    </div>
+    {% endif %}
+  {% else %}
+  <div class="demo-frame-empty" style="min-height: 200px;">
+    <p class="demo-frame-empty-text">Digite um termo para buscar em produtos, projetos, documentação e decisões.</p>
+    <div class="ai-dock-suggestions" style="margin-top: var(--space-3);">
+      <a href="{% url 'search' %}?q=Robot" class="badge badge-default" style="cursor: pointer; text-decoration: none;">Robot</a>
+      <a href="{% url 'search' %}?q=Vigilante" class="badge badge-default" style="cursor: pointer; text-decoration: none;">Vigilante</a>
+      <a href="{% url 'search' %}?q=Django" class="badge badge-default" style="cursor: pointer; text-decoration: none;">Django</a>
+      <a href="{% url 'search' %}?q=WhatsApp" class="badge badge-default" style="cursor: pointer; text-decoration: none;">WhatsApp</a>
+      <a href="{% url 'search' %}?q=Arquitetura" class="badge badge-default" style="cursor: pointer; text-decoration: none;">Arquitetura</a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

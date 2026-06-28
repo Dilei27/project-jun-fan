@@ -1,0 +1,38 @@
+[
+  {
+    "id": "automacao-erp-uau",
+    "title": "Automação ERP UAU",
+    "context": "ERP legado com interface desktop exigia regressão manual completa a cada deploy.",
+    "problem": "Ciclos de regressão de 960 minutos por release, alta taxa de falhas humanas e retrabalho.",
+    "solution": "Robot Framework + Sikuli + Click Custom para automação robusta com fallback visual.",
+    "stack": ["Robot Framework", "Sikuli", "Python", "Click Custom", "Jenkins"],
+    "impact": "960 minutos reduzidos para 192 minutos automatizados. Padronização e base para UI elements.",
+    "status": "concluido",
+    "decisions": ["Arquitetura de automação híbrida", "Fallback visual para componentes instáveis"],
+    "links": {"docs": "#", "repo": "#"}
+  },
+  {
+    "id": "whatsapp-ai",
+    "title": "WhatsApp AI Assistant",
+    "context": "Pequenos negócios precisam de automação comercial acessível via WhatsApp.",
+    "problem": "Atendimento manual perde leads, esquece agendamentos e sobrecarrega equipe.",
+    "solution": "Assistente com LangChain, LangGraph e GPT-5.5-mini integrado ao WhatsApp Business API.",
+    "stack": ["LangChain", "LangGraph", "OpenAI", "Django", "Celery", "RabbitMQ"],
+    "impact": "Automação de respostas frequentes, qualificação de leads e agendamento automático.",
+    "status": "em_andamento",
+    "decisions": ["Streaming de respostas", "Tools tenant-safe", "Handoff humano como fallback"],
+    "links": {"docs": "#", "repo": "#"}
+  },
+  {
+    "id": "vigilante-ai",
+    "title": "Vigilante AI",
+    "context": "Câmeras residenciais geram excesso de alertas inúteis.",
+    "problem": "Usuário precisa verificar manualmente eventos irrelevantes, perdendo tempo e atenção.",
+    "solution": "Sistema de detecção com classificação por IA que distingue pessoa, animal, veículo e sombra.",
+    "stack": ["Python", "OpenCV", "IA", "Django", "PostgreSQL"],
+    "impact": "Redução de ruído de alertas, priorização de eventos críticos e histórico organizado.",
+    "status": "em_andamento",
+    "decisions": ["Classificação on-device vs cloud", "Política de retenção de evidências"],
+    "links": {"docs": "#", "repo": "#"}
+  }
+]

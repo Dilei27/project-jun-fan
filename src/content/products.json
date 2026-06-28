@@ -1,0 +1,44 @@
+[
+  {
+    "id": "qa-command-center",
+    "name": "QA Command Center",
+    "status": "online",
+    "shortDescription": "Hub central, portfólio vivo e cockpit do ecossistema de automação, QA e IA aplicada.",
+    "problem": "Projetos técnicos excelentes parecem pequenos quando apresentados como repositórios soltos ou páginas isoladas.",
+    "solution": "Plataforma modular que centraliza trajetória, projetos, decisões técnicas, produtos, demos, métricas e documentação com identidade visual própria.",
+    "accentColor": "#4F8CFF",
+    "stack": ["Python", "Robot Framework", "Playwright", "LangChain", "TypeScript", "Next.js"],
+    "architectureFlow": "Entrada -> Hub -> Produtos -> Projetos -> Decisões -> Docs -> AI",
+    "metrics": {"projetos": 12, "automacoes": 15, "frameworks": 5},
+    "roadmap": ["Dashboard interno", "Grafo de expertise", "Integração com AI Dock real"],
+    "links": {"docs": "#", "repo": "#"}
+  },
+  {
+    "id": "whatsapp-ai",
+    "name": "WhatsApp AI Assistant",
+    "status": "beta",
+    "shortDescription": "Assistente comercial conectado ao WhatsApp para pequenos negócios automatizarem atendimento.",
+    "problem": "Pequenos negócios perdem tempo respondendo perguntas repetitivas e esquecendo agendamentos.",
+    "solution": "Assistente com LangChain e GPT-5.5-mini que qualifica clientes, agenda horários e gera resumo para atendimento humano.",
+    "accentColor": "#2DD4BF",
+    "stack": ["LangChain", "OpenAI", "GPT", "Node.js", "TypeScript", "WhatsApp API"],
+    "architectureFlow": "Mensagem -> WhatsApp -> Processamento -> IA -> Regra -> Resposta/Agendamento -> Log",
+    "metrics": {"conversas": 0, "agendamentos": 0, "taxa_automacao": 0},
+    "roadmap": ["Dashboard de conversas", "Handoff humano", "Relatórios semanais"],
+    "links": {"docs": "#", "repo": "#"}
+  },
+  {
+    "id": "vigilante-ai",
+    "name": "Vigilante AI",
+    "status": "beta",
+    "shortDescription": "Monitoramento inteligente com IA que classifica eventos e reduz alertas inúteis.",
+    "problem": "Câmeras comuns geram alertas inúteis e exigem verificação manual constante.",
+    "solution": "Agente de monitoramento com detecção, classificação IA e alertas inteligentes para pessoa, animal, veículo e movimento irrelevante.",
+    "accentColor": "#F97316",
+    "stack": ["Python", "OpenCV", "IA", "TypeScript", "Next.js"],
+    "architectureFlow": "Câmera -> Detecção -> Classificação IA -> Regra -> Alerta -> Histórico",
+    "metrics": {"camera": 0, "eventos": 0, "alertas_criticos": 0},
+    "roadmap": ["Feed ao vivo", "Timeline por câmera", "Regras de notificação"],
+    "links": {"docs": "#", "repo": "#"}
+  }
+]

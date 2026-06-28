@@ -1,0 +1,43 @@
+[
+  {
+    "id": "overview",
+    "title": "Visão Geral",
+    "description": "Arquitetura, stack e filosofia do ecossistema Odirlei Labs.",
+    "sections": [
+      {"heading": "Odirlei Labs", "content": "A Odirlei Labs é um ecossistema de produtos de automação, QA e IA aplicada. A plataforma centraliza trajetória profissional, projetos, decisões técnicas, documentação e demos em uma experiência coesa."},
+      {"heading": "Arquitetura", "content": "O sistema segue uma arquitetura modular com seis camadas: Odirlei Labs Hub, QA Command Center, Product Modules, Documentation Layer, AI Layer e Horizon Design System. Cada camada é independente e reutilizável."},
+      {"heading": "Stack", "content": "Python + Django no backend, templates Django + CSS customizado no front-end. Banco de dados SQLite (dev) / PostgreSQL (prod). Conteúdo estruturado em JSON. Design system com tokens CSS nativos."}
+    ]
+  },
+  {
+    "id": "setup",
+    "title": "Setup e Ambiente",
+    "description": "Como configurar o ambiente de desenvolvimento local.",
+    "sections": [
+      {"heading": "Pré-requisitos", "content": "Python 3.12+, Django 6.0.6, pip e venv."},
+      {"heading": "Instalação", "content": "Clone o repositório, crie um virtualenv com python -m venv .venv, ative com source .venv/bin/activate e instale as dependências com pip install -r requirements.txt."},
+      {"heading": "Executar", "content": "Rode python manage.py runserver para iniciar o servidor de desenvolvimento. Acesse http://localhost:8000."},
+      {"heading": "Variáveis de Ambiente", "content": "DEBUG=True em desenvolvimento. SECRET_KEY configurada no settings.py. Em produção, use variáveis de ambiente para secret key e database URL."}
+    ]
+  },
+  {
+    "id": "produtos",
+    "title": "Produtos",
+    "description": "Visão geral dos produtos do ecossistema.",
+    "sections": [
+      {"heading": "QA Command Center", "content": "Hub central que funciona como cockpit do ecossistema. Centraliza trajetória, projetos, decisões técnicas, demos, métricas e documentação com identidade visual própria. É o ponto de entrada para todos os produtos."},
+      {"heading": "WhatsApp AI Assistant", "content": "Assistente comercial conectado ao WhatsApp para pequenos negócios automatizarem atendimento. Usa LangChain e GPT-5.5-mini para qualificar clientes, agendar horários e gerar resumos."},
+      {"heading": "Vigilante AI", "content": "Sistema de monitoramento inteligente com classificação de eventos por IA. Detecta movimento, classifica pessoa/animal/veículo/sombra e reduz alertas inúteis."}
+    ]
+  },
+  {
+    "id": "arquitetura",
+    "title": "Arquitetura",
+    "description": "Decisões de arquitetura e design do sistema.",
+    "sections": [
+      {"heading": "Stack Definitiva", "content": "Django + PostgreSQL como base principal. Templates Django com CSS customizado via Horizon Design System. Conteúdo gerenciado via JSON estruturado. Sem frameworks JS no front-end — mantendo simplicidade e performance."},
+      {"heading": "Multi-Tenant Lógico", "content": "Isolamento lógico com campos tenant nos modelos, middleware de contexto e managers tenant-aware. Evita complexidade de schemas separados e custo operacional."},
+      {"heading": "Design System", "content": "Tokens CSS como fonte de verdade visual. Nenhum valor solto em componentes finais. Se a identidade mudar, a plataforma inteira evolui por token."}
+    ]
+  }
+]

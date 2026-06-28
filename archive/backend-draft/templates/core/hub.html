@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Odirlei Labs Hub — Ecossistema{% endblock %}
+
+{% block content %}
+
+<div class="page-header" style="text-align: center;">
+  <p class="hero-subtitle">Odirlei Labs</p>
+  <h1 class="hero-title" style="font-size: 48px;">Ecossistema de Produtos</h1>
+  <p class="hero-description">Automação, QA e IA aplicada — uma plataforma, três produtos, infinitas possibilidades.</p>
+</div>
+
+<div class="page-section">
+  <div class="hub-grid">
+    {% for product in products %}
+    <a href="{% url 'product_detail' product.id %}" class="hub-card" style="text-decoration: none;">
+      <div class="hub-card-icon" style="background: {{ product.accentColor }}20;">
+        <span style="font-size: 28px;">
+          {% if product.id == 'qa-command-center' %}🔷{% elif product.id == 'whatsapp-ai' %}💬{% else %}📹{% endif %}
+        </span>
+      </div>
+      <h3 style="font-size: 18px; font-weight: 600; margin-bottom: var(--space-2); color: var(--color-text-primary);">{{ product.name }}</h3>
+      <p style="font-size: 14px; color: var(--color-text-secondary); line-height: 1.5;">{{ product.shortDescription }}</p>
+      <span class="badge {% if product.status == 'online' %}badge-success{% else %}badge-warning{% endif %}" style="margin-top: var(--space-4);">{{ product.status|title }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="page-section" style="text-align: center;">
+  <h2 class="section-title">Navegue pelo Ecossistema</h2>
+  <div style="display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap;">
+    <a href="{% url 'docs_index' %}" class="btn btn-secondary">Documentação</a>
+    <a href="{% url 'decisions' %}" class="btn btn-secondary">Decisões Técnicas</a>
+    <a href="{% url 'framework' %}" class="btn btn-ghost">Robot/QA AI Framework</a>
+  </div>
+</div>
+
+{% endblock %}

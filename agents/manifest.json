@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "project": "Project Jun Fan",
+  "philosophy": "Absorb. Refine. Build.",
+  "description": "Agentes especializados para desenvolvimento assistido por IA do Project Jun Fan.",
+  "agents": [
+    { "id": "project-architect", "category": "core", "role": "Arquiteto de Projeto" },
+    { "id": "system-architect", "category": "core", "role": "Arquiteto de Sistema" },
+    { "id": "principal-engineer", "category": "core", "role": "Engenheiro Principal" },
+    { "id": "reviewer", "category": "core", "role": "Revisor de Arquitetura" },
+    { "id": "frontend-engineer", "category": "engineering", "role": "Engenheiro Front-end" },
+    { "id": "architecture-review", "category": "engineering", "role": "Revisor de Arquitetura" },
+    { "id": "refactoring", "category": "engineering", "role": "Especialista em Refatoração" },
+    { "id": "code-review", "category": "engineering", "role": "Revisor de Código" },
+    { "id": "product-manager", "category": "product", "role": "Gerente de Produto" },
+    { "id": "prd-generator", "category": "product", "role": "Gerador de PRD" },
+    { "id": "roadmap-planner", "category": "product", "role": "Planejador de Roadmap" },
+    { "id": "feature-planner", "category": "product", "role": "Planejador de Features" },
+    { "id": "design-system", "category": "design", "role": "Guardião do Design System" },
+    { "id": "branding", "category": "design", "role": "Especialista em Marca" },
+    { "id": "motion", "category": "design", "role": "Especialista em Animação" },
+    { "id": "ui-review", "category": "design", "role": "Revisor de Interface" },
+    { "id": "qa-architect", "category": "qa", "role": "Arquiteto de QA" },
+    { "id": "automation-engineer", "category": "qa", "role": "Engenheiro de Automação" },
+    { "id": "quality-review", "category": "qa", "role": "Revisor de Qualidade" },
+    { "id": "test-strategy", "category": "qa", "role": "Estrategista de Testes" },
+    { "id": "docker", "category": "devops", "role": "Especialista em Docker" },
+    { "id": "github-actions", "category": "devops", "role": "Especialista em CI/CD" },
+    { "id": "release-manager", "category": "devops", "role": "Gerente de Release" },
+    { "id": "deployment-review", "category": "devops", "role": "Revisor de Deploy" }
+  ]
+}

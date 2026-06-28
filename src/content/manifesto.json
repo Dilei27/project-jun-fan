@@ -1,0 +1,25 @@
+{
+  "title": "Project Jun Fan",
+  "subtitle": "Advancing Frontiers",
+  "motto": "Absorb. Refine. Build.",
+  "summary": "Project Jun Fan é a fundação visual, técnica e conceitual que sustenta um ecossistema de produtos de automação, QA e IA aplicada.",
+  "principles": [
+    "Simplicidade acima de complexidade antecipada",
+    "Engenharia visível em cada tela",
+    "Reutilização antes de abstração",
+    "Produto antes de código",
+    "Conteúdo desacoplado de layout",
+    "Design System como fonte de verdade"
+  ],
+  "whatItIs": [
+    "Fundação front-end first para plataforma de produtos",
+    "Ecossistema de documentação e narrativa técnica",
+    "Base reutilizável para QA Command Center, WhatsApp AI e Vigilante AI"
+  ],
+  "whatItIsNot": [
+    "SaaS, ERP ou sistema comercial",
+    "Backend ou framework",
+    "Landing page ou portfólio estático",
+    "Dashboard genérico"
+  ]
+}

@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard — {{ product.name }} — Odirlei Labs{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <a href="{% url 'product_detail' product.id %}" class="back-link">← {{ product.name }}</a>
+  <div class="page-header-accent" style="background: {{ product.accentColor }};"></div>
+  <p class="page-header-label">Dashboard</p>
+  <h1 class="page-header-title">{{ product.name }}</h1>
+  <p class="page-header-desc">Métricas e indicadores internos — dados mockados para demonstração.</p>
+</div>
+
+<div class="page-section">
+  <div class="dashboard-grid">
+    <div class="dashboard-card">
+      <p class="dashboard-card-title">Usuários Ativos</p>
+      <p class="dashboard-card-value">{{ product.metrics.projetos|default:"1.2k" }}</p>
+      <p class="dashboard-card-change up">↑ 12% este mês</p>
+    </div>
+    <div class="dashboard-card">
+      <p class="dashboard-card-title">Automações</p>
+      <p class="dashboard-card-value">{{ product.metrics.automacoes|default:"847" }}</p>
+      <p class="dashboard-card-change up">↑ 8% este mês</p>
+    </div>
+    <div class="dashboard-card">
+      <p class="dashboard-card-title">Eventos</p>
+      <p class="dashboard-card-value">{{ product.metrics.eventos|default:"3.2k" }}</p>
+      <p class="dashboard-card-change down">↓ 3% este mês</p>
+    </div>
+    <div class="dashboard-card">
+      <p class="dashboard-card-title">Uptime</p>
+      <p class="dashboard-card-value">99.9%</p>
+      <p class="dashboard-card-change up">Estável</p>
+    </div>
+  </div>
+
+  <div style="margin-top: var(--space-8);">
+    <div class="page-section-header">
+      <h2 class="page-section-title">Atividade Recente</h2>
+      <p class="page-section-sub">Últimas ações registradas no sistema</p>
+    </div>
+    <div class="activity-list">
+      <div class="activity-item">
+        <span class="activity-dot" style="background: var(--color-success);"></span>
+        Nova automação configurada
+        <span class="activity-time">2 min atrás</span>
+      </div>
+      <div class="activity-item">
+        <span class="activity-dot" style="background: var(--color-accent-qa);"></span>
+        Pipeline executado com sucesso
+        <span class="activity-time">15 min atrás</span>
+      </div>
+      <div class="activity-item">
+        <span class="activity-dot" style="background: var(--color-warning);"></span>
+        Alerta de baixa prioridade
+        <span class="activity-time">1h atrás</span>
+      </div>
+      <div class="activity-item">
+        <span class="activity-dot" style="background: var(--color-accent-qa);"></span>
+        Relatório diário gerado
+        <span class="activity-time">3h atrás</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

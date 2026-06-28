@@ -1,0 +1,34 @@
+[
+  {
+    "id": "stack-django",
+    "context": "Escolha de stack para o ecossistema Jun Fan.",
+    "decision": "Next.js + React + TypeScript como stack principal (front-end first).",
+    "rationale": "Simplicidade, deploy estático, SSR nativo, ecossistema maduro e alinhamento com o objetivo de plataforma front-end first.",
+    "tradeoffs": "Dependência de serviços externos para conteúdo dinâmico; não substitui backend para lógica server-side complexa.",
+    "impact": "Elimina necessidade de banco de dados, ORM e admin no MVP. Deploy simplificado com Docker."
+  },
+  {
+    "id": "multi-tenant-logico",
+    "context": "Arquitetura para suportar múltiplas corretoras.",
+    "decision": "Isolamento lógico com campos tenant nos modelos, middleware de contexto e managers tenant-aware.",
+    "rationale": "Evita complexidade de schemas separados, custo operacional reduzido e simplicidade de deploy.",
+    "tradeoffs": "Risco maior de vazamento de dados se filtros forem esquecidos; requer disciplina de desenvolvimento.",
+    "impact": "Facilita onboarding de novas corretoras sem infraestrutura adicional."
+  },
+  {
+    "id": "horizon-tokens",
+    "context": "Definição do Design System Horizon.",
+    "decision": "Tokens CSS como fonte de verdade visual. Nenhum valor solto em componentes finais.",
+    "rationale": "Se a identidade mudar, a plataforma inteira evolui por token. Consistência entre produtos.",
+    "tradeoffs": "Abstração inicial requer planejamento; pode parecer overengineering em telas muito simples.",
+    "impact": "Redução de retrabalho visual e consistência garantida entre QA Command Center, WhatsApp AI e Vigilante AI."
+  },
+  {
+    "id": "ia-assincrona",
+    "context": "Processamento de agentes de IA.",
+    "decision": "IA mockada no MVP, preparada para evolução futura com arquitetura serverless.",
+    "rationale": "No MVP, não há necessidade de IA real. O AI Dock simula respostas com conteúdo pré-definido. Quando a IA real for necessária, usaremos API serverless (sem Celery, RabbitMQ ou Redis).",
+    "tradeoffs": "Respostas mockadas não refletem precisão real; útil apenas para validação de UX.",
+    "impact": "MVP sem dependências de infraestrutura de fila. Evolução futura simplificada."
+  }
+]

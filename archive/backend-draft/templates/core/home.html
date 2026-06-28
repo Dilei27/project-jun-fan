@@ -1,0 +1,142 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Odirlei Labs — Build. Automate. Innovate.{% endblock %}
+
+{% block content %}
+
+<header class="hero">
+  <p class="hero-subtitle">Odirlei Labs</p>
+  <h1 class="hero-title">Build. Automate. Innovate.</h1>
+  <p class="hero-description">QA Engineer | Automation Architect | AI Builder</p>
+  <nav class="hero-actions" aria-label="Ações principais">
+    <a href="{% url 'product_detail' 'qa-command-center' %}" class="btn btn-primary">Explorar Command Center</a>
+    <a href="{% url 'product_detail' 'qa-command-center' %}" class="btn btn-secondary">Ver Produtos</a>
+    <a href="#ai-dock" class="btn btn-ghost">Perguntar à IA</a>
+  </nav>
+</header>
+
+<div class="status-strip" role="status" aria-label="Status do sistema">
+  <span class="badge badge-success">
+    <span aria-hidden="true">●</span> Sistema online
+  </span>
+  <span class="status-strip-divider" aria-hidden="true"></span>
+  {% for product in products %}
+  <span>{{ product.name }} · {{ product.status|title }}</span>
+  {% if not forloop.last %}<span class="status-strip-divider" aria-hidden="true"></span>{% endif %}
+  {% endfor %}
+  <span class="status-strip-divider" aria-hidden="true"></span>
+  <span>{{ products|length }} produtos · {{ projects|length }} projetos</span>
+</div>
+
+<section class="product-gateway" aria-labelledby="section-produtos">
+  <p class="section-label" id="section-produtos">Produtos</p>
+  <h2 class="section-title">Gateway de Produtos</h2>
+  <div class="product-gateway-grid">
+    {% for product in products %}
+    <article class="product-card">
+      <div class="product-card-accent" style="background: {{ product.accentColor }};" aria-hidden="true"></div>
+      <span class="badge {% if product.status == 'online' %}badge-success{% else %}badge-warning{% endif %}">{{ product.status|title }}</span>
+      <h3 class="product-card-name">{{ product.name }}</h3>
+      <p class="product-card-desc">{{ product.shortDescription }}</p>
+      <div class="product-card-stack">
+        {% for tech in product.stack|slice:":4" %}
+        <span class="product-card-badge" style="background: {{ product.accentColor }};">{{ tech }}</span>
+        {% endfor %}
+        {% if product.stack|length > 4 %}
+        <span class="product-card-badge" style="background: var(--color-surface-soft); color: var(--color-text-muted);">+{{ product.stack|length|add:"-4" }}</span>
+        {% endif %}
+      </div>
+      <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary" style="font-size: 13px;" aria-label="Explorar {{ product.name }}">Explorar</a>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+{% if timeline %}
+<section class="timeline-section" aria-labelledby="section-timeline">
+  <p class="section-label" id="section-timeline">Trajetória</p>
+  <h2 class="section-title">Linha do Tempo Técnica</h2>
+  <div class="timeline-track">
+    {% for entry in timeline %}
+    <span class="timeline-node{% if forloop.last %} active{% endif %}" title="{{ entry.description }}" tabindex="0">{{ entry.milestone }}</span>
+    {% if not forloop.last %}<span class="timeline-connector" aria-hidden="true">→</span>{% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if projects %}
+<section class="featured-projects" aria-labelledby="section-projetos">
+  <p class="section-label" id="section-projetos">Projetos</p>
+  <h2 class="section-title">Projetos em Destaque</h2>
+  <div class="featured-grid">
+    {% for project in projects %}
+    <a href="{% url 'project_detail' project.id %}" class="project-card" style="text-decoration: none;" aria-label="{{ project.title }} — {{ project.context }}">
+      <span class="badge {% if project.status == 'concluido' %}badge-success{% else %}badge-warning{% endif %}" style="margin-bottom: var(--space-3);">{{ project.status|title }}</span>
+      <h3 class="project-card-title">{{ project.title }}</h3>
+      <p class="project-card-text">{{ project.context }}</p>
+      <p class="project-card-impact">Impacto: {{ project.impact }}</p>
+      <div class="project-card-stack">
+        {% for tech in project.stack %}
+        <span class="badge badge-default">{{ tech }}</span>
+        {% endfor %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="section" aria-labelledby="section-insights">
+  <p class="section-label" id="section-insights">Explorar</p>
+  <h2 class="section-title">AI Insights</h2>
+  <div class="ai-insight-strip">
+    <div class="ai-insight-card" data-href="{% url 'doc_detail' 'overview' %}" tabindex="0" role="button" aria-label="Visão geral da arquitetura">
+      <div class="ai-insight-card-icon" aria-hidden="true">📖</div>
+      <div class="ai-insight-card-text">Visão geral da arquitetura Odirlei Labs — entenda as camadas do ecossistema.</div>
+    </div>
+    <div class="ai-insight-card" data-href="{% url 'decisions' %}" tabindex="0" role="button" aria-label="Decisões técnicas documentadas">
+      <div class="ai-insight-card-icon" aria-hidden="true">✏️</div>
+      <div class="ai-insight-card-text">Decisões técnicas documentadas — contexto, trade-off e impacto de cada escolha.</div>
+    </div>
+    <div class="ai-insight-card" data-href="{% url 'doc_detail' 'setup' %}" tabindex="0" role="button" aria-label="Setup e ambiente">
+      <div class="ai-insight-card-icon" aria-hidden="true">🔧</div>
+      <div class="ai-insight-card-text">Setup e ambiente — guia rápido para rodar o projeto localmente.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="ai-dock" aria-labelledby="section-ai-dock">
+  <div class="ai-dock">
+    <p class="section-label" style="margin-bottom: var(--space-2);" id="section-ai-dock">AI Dock</p>
+    <h2 class="section-title" style="font-size: 20px; margin-bottom: var(--space-3);">Pergunte sobre meus projetos</h2>
+    <p style="color: var(--color-text-secondary); margin-bottom: var(--space-4); font-size: 14px;">Automações, decisões técnicas ou stack — a IA contextual responde.</p>
+    <div style="max-width: 500px; margin: 0 auto;">
+      <label for="ai-dock-input" class="sr-only">Digite sua pergunta</label>
+      <input type="text" class="input" id="ai-dock-input" placeholder="Ex: Quais projetos usam Robot Framework?" style="text-align: center;">
+    </div>
+    <div class="ai-dock-suggestions" role="group" aria-label="Perguntas sugeridas">
+      <span class="badge badge-default" onclick="askAISuggestion('Explique o Vigilante AI')" onkeydown="if(event.key==='Enter')askAISuggestion('Explique o Vigilante AI')" tabindex="0" role="button" style="cursor: pointer;" aria-label="Explique o Vigilante AI">💡 Explique o Vigilante AI</span>
+      <span class="badge badge-default" onclick="askAISuggestion('Mostre decisões de arquitetura')" onkeydown="if(event.key==='Enter')askAISuggestion('Mostre decisões de arquitetura')" tabindex="0" role="button" style="cursor: pointer;" aria-label="Mostre decisões de arquitetura">💡 Mostre decisões de arquitetura</span>
+      <span class="badge badge-default" onclick="askAISuggestion('Quais tecnologias domino?')" onkeydown="if(event.key==='Enter')askAISuggestion('Quais tecnologias domino?')" tabindex="0" role="button" style="cursor: pointer;" aria-label="Quais tecnologias domino">💡 Quais tecnologias domino?</span>
+    </div>
+    <div class="ai-dock-response" id="ai-dock-response" aria-live="polite"></div>
+  </div>
+</section>
+
+<footer class="footer" role="contentinfo">
+  <nav class="footer-links" aria-label="Links do rodapé">
+    <a href="{% url 'hub' %}" class="footer-link">Hub</a>
+    <a href="{% url 'docs_index' %}" class="footer-link">Documentação</a>
+    <a href="{% url 'decisions' %}" class="footer-link">Decisões</a>
+    <a href="{% url 'search' %}" class="footer-link">Busca</a>
+    <a href="{% url 'framework' %}" class="footer-link">Framework</a>
+    <a href="{% url 'analytics' %}" class="footer-link">Analytics</a>
+    <a href="#" class="footer-link">GitHub</a>
+    <a href="#" class="footer-link">Contato</a>
+  </nav>
+  <p class="footer-copy">Odirlei Labs — Build. Automate. Innovate.</p>
+</footer>
+
+{% endblock %}

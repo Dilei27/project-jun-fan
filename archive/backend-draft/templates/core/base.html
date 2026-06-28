@@ -1,0 +1,213 @@
+{% load static %}<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Odirlei Labs{% endblock %}</title>
+<meta name="description" content="Odirlei Labs — Build. Automate. Innovate. Plataforma de automação, QA e IA aplicada.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="{% static 'css/horizon.css' %}">
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+{% block content %}{% endblock %}
+
+<div id="command-palette" class="command-palette-overlay" role="dialog" aria-label="Command Palette" aria-modal="true">
+  <div class="command-palette-modal">
+    <label for="palette-input" class="sr-only">Buscar produtos, projetos, documentação</label>
+    <input type="text" class="command-palette-input" id="palette-input" placeholder="Buscar produtos, projetos, docs..." autofocus>
+    <div class="command-palette-results" id="palette-results" role="listbox"></div>
+    <div class="command-palette-hint">
+      <span>⬆⬇ Navegar</span>
+      <span>⏎ Abrir</span>
+      <span>Esc Fechar</span>
+    </div>
+  </div>
+</div>
+
+<button id="ai-dock-floating" class="btn btn-icon" style="position: fixed; bottom: 24px; right: 24px; z-index: 900; width: 48px; height: 48px; border-radius: 50%; background: var(--color-accent-qa); color: #fff; box-shadow: 0 4px 12px rgba(79, 140, 255, 0.3);" aria-label="Abrir AI Dock" onclick="document.getElementById('ai-dock').scrollIntoView({behavior:'smooth'})">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+
+{% block extra_body %}{% endblock %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  lucide.createIcons();
+  setupCommandPalette();
+  setupAIDock();
+  setupInsightCards();
+});
+
+var paletteItems = [
+  { label: 'Início', url: '/', icon: '🏠', section: 'Páginas' },
+  { label: 'QA Command Center', url: '/produto/qa-command-center/', icon: '🔷', section: 'Produtos' },
+  { label: 'WhatsApp AI Assistant', url: '/produto/whatsapp-ai/', icon: '💬', section: 'Produtos' },
+  { label: 'Vigilante AI', url: '/produto/vigilante-ai/', icon: '📹', section: 'Produtos' },
+  { label: 'Automação ERP UAU', url: '/projeto/automacao-erp-uau/', icon: '⚙️', section: 'Projetos' },
+  { label: 'WhatsApp AI (projeto)', url: '/projeto/whatsapp-ai/', icon: '🤖', section: 'Projetos' },
+  { label: 'Vigilante AI (projeto)', url: '/projeto/vigilante-ai/', icon: '👁️', section: 'Projetos' },
+  { label: 'Documentação', url: '/docs/', icon: '📄', section: 'Docs' },
+  { label: 'Visão Geral', url: '/docs/overview/', icon: '📋', section: 'Docs' },
+  { label: 'Setup e Ambiente', url: '/docs/setup/', icon: '🔧', section: 'Docs' },
+  { label: 'Produtos (docs)', url: '/docs/produtos/', icon: '📦', section: 'Docs' },
+  { label: 'Arquitetura', url: '/docs/arquitetura/', icon: '🏗️', section: 'Docs' },
+  { label: 'Decisões Técnicas', url: '/decisoes/', icon: '✏️', section: 'Docs' },
+];
+
+var lastFocusedElement = null;
+
+function setupCommandPalette() {
+  var overlay = document.getElementById('command-palette');
+  var input = document.getElementById('palette-input');
+  var results = document.getElementById('palette-results');
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      if (overlay.classList.contains('open')) {
+        closePalette(overlay);
+      } else {
+        lastFocusedElement = document.activeElement;
+        overlay.classList.add('open');
+        setTimeout(function() { input.focus(); }, 100);
+        renderPalette('');
+      }
+    }
+    if (e.key === 'Escape' && overlay.classList.contains('open')) {
+      closePalette(overlay);
+    }
+  });
+
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) closePalette(overlay);
+  });
+
+  input.addEventListener('input', function() {
+    renderPalette(input.value);
+    results.setAttribute('aria-activedescendant', '');
+  });
+
+  input.addEventListener('keydown', function(e) {
+    var items = results.querySelectorAll('.command-palette-item');
+    var current = results.querySelector('.highlighted');
+    var idx = -1;
+    if (current) idx = Array.from(items).indexOf(current);
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      var next = Math.min(idx + 1, items.length - 1);
+      if (current) current.classList.remove('highlighted');
+      if (next >= 0) { items[next].classList.add('highlighted'); items[next].scrollIntoView({ block: 'nearest' }); }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      var prev = Math.max(idx - 1, 0);
+      if (current) current.classList.remove('highlighted');
+      if (prev >= 0) { items[prev].classList.add('highlighted'); items[prev].scrollIntoView({ block: 'nearest' }); }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      var target = current || items[0];
+      if (target) window.location.href = target.getAttribute('href');
+    }
+  });
+}
+
+function closePalette(overlay) {
+  overlay.classList.remove('open');
+  if (lastFocusedElement) lastFocusedElement.focus();
+}
+
+function renderPalette(query) {
+  var results = document.getElementById('palette-results');
+  var q = query.toLowerCase().trim();
+  var filtered = q ? paletteItems.filter(function(item) {
+    return item.label.toLowerCase().includes(q) || item.section.toLowerCase().includes(q);
+  }) : paletteItems;
+  if (filtered.length === 0) {
+    results.innerHTML = '<div class="command-palette-empty">Nenhum resultado encontrado</div>';
+    return;
+  }
+  var html = '';
+  var currentSection = '';
+  filtered.forEach(function(item, i) {
+    if (item.section !== currentSection) {
+      currentSection = item.section;
+      html += '<div role="separator" style="padding:var(--space-1) var(--space-3);font-size:11px;color:var(--color-text-muted);border-top:1px solid var(--color-border-subtle);">' + item.section + '</div>';
+    }
+    html += '<a href="' + item.url + '" class="command-palette-item" role="option" tabindex="-1">' +
+      '<span class="command-palette-item-icon" aria-hidden="true">' + item.icon + '</span>' +
+      '<span>' + item.label + '</span>' +
+      '</a>';
+  });
+  results.innerHTML = html;
+}
+
+var aiResponses = {
+  'robot': 'O projeto <strong>Automação ERP UAU</strong> usou Robot Framework para automatizar regressões em ERP legado. <a href="/projeto/automacao-erp-uau/" style="color:var(--color-accent-qa)">Ver detalhes →</a>',
+  'vigilante': 'O <strong>Vigilante AI</strong> é um sistema de monitoramento com classificação de eventos por IA. Ele reduz alertas inúteis distinguindo pessoa, animal, veículo e sombra. <a href="/produto/vigilante-ai/" style="color:var(--color-accent-qa)">Ver produto →</a>',
+  'whatsapp': 'O <strong>WhatsApp AI Assistant</strong> é um assistente comercial que automatiza atendimento no WhatsApp usando LangChain e GPT-5.5-mini. <a href="/produto/whatsapp-ai/" style="color:var(--color-accent-qa)">Ver produto →</a>',
+  'arquitetura': 'A stack principal é Django + PostgreSQL com templates Django no front-end. Decisões técnicas documentadas em <a href="/decisoes/" style="color:var(--color-accent-qa)">Decisões Técnicas →</a>',
+  'tecnolog': 'Domino Python, Django, Robot Framework, Playwright, LangChain, OpenCV, entre outras. Veja os <a href="/produto/qa-command-center/" style="color:var(--color-accent-qa)">produtos →</a>',
+  'stack': 'A stack principal é Django + PostgreSQL com templates Django no front-end.',
+  'começar': 'Para configurar o ambiente, veja o guia de <a href="/docs/setup/" style="color:var(--color-accent-qa)">Setup e Ambiente →</a>',
+};
+
+function setupAIDock() {
+  var input = document.getElementById('ai-dock-input');
+  if (!input) return;
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      handleAIQuestion(input.value);
+    }
+  });
+}
+
+function handleAIQuestion(question) {
+  var response = document.getElementById('ai-dock-response');
+  if (!response) return;
+  response.innerHTML = '<strong>Resposta:</strong> Carregando...';
+  response.classList.add('visible');
+  response.setAttribute('aria-live', 'polite');
+  fetch('/api/ai-ask/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
+    body: JSON.stringify({question: question})
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    response.innerHTML = '<strong>Resposta:</strong> ' + data.answer;
+  })
+  .catch(function() {
+    response.innerHTML = '<strong>Resposta:</strong> Não foi possível processar a pergunta. Tente novamente.';
+  });
+}
+
+function askAISuggestion(text) {
+  var input = document.getElementById('ai-dock-input');
+  if (!input) return;
+  input.value = text;
+  handleAIQuestion(text);
+}
+
+function setupInsightCards() {
+  var cards = document.querySelectorAll('.ai-insight-card');
+  cards.forEach(function(card) {
+    card.addEventListener('click', function() {
+      var href = card.getAttribute('data-href');
+      if (href) window.location.href = href;
+    });
+    card.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        var href = card.getAttribute('data-href');
+        if (href) window.location.href = href;
+      }
+    });
+  });
+}
+</script>
+</body>
+</html>

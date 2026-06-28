@@ -1,0 +1,32 @@
+[
+  {
+    "area": "Automação de Testes",
+    "skills": ["Robot Framework", "Playwright", "Selenium", "Sikuli", "Click Custom"],
+    "nivel": "avancado"
+  },
+  {
+    "area": "Testes de API",
+    "skills": ["pytest", "requests", "Postman", "Insomnia"],
+    "nivel": "avancado"
+  },
+  {
+    "area": "Testes de Performance",
+    "skills": ["Locust", "k6", "JMeter"],
+    "nivel": "intermediario"
+  },
+  {
+    "area": "Front-end",
+    "skills": ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    "nivel": "intermediario"
+  },
+  {
+    "area": "IA Aplicada",
+    "skills": ["LangChain", "OpenAI", "OpenCV", "Agentes IA"],
+    "nivel": "iniciante"
+  },
+  {
+    "area": "DevOps",
+    "skills": ["Docker", "Jenkins", "Git", "Linux"],
+    "nivel": "intermediario"
+  }
+]

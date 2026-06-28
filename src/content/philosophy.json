@@ -1,0 +1,35 @@
+{
+  "name": "Jun Fan Product Language",
+  "foundation": "Project Jun Fan",
+  "designSystem": "Horizon Design System",
+  "core": {
+    "identity": "A identidade do ecossistema é técnica, premium, futurista e silenciosa. Evitar estética genérica de IA, neon excessivo e templates SaaS.",
+    "tone": "Claro, direto e preciso. Português (pt-BR) na interface. Inglês em código e classes.",
+    "visual": "Tema escuro como padrão. Uma cor de destaque por tela. Tipografia Inter. Motion funcional e discreto."
+  },
+  "products": [
+    {
+      "name": "QA Command Center",
+      "role": "Hub central e cockpit do ecossistema",
+      "accent": "#4F8CFF"
+    },
+    {
+      "name": "WhatsApp AI Assistant",
+      "role": "Assistente comercial inteligente",
+      "accent": "#2DD4BF"
+    },
+    {
+      "name": "Vigilante AI",
+      "role": "Monitoramento com IA",
+      "accent": "#F97316"
+    }
+  ],
+  "layers": [
+    "Jun Fan Hub",
+    "QA Command Center",
+    "Product Modules",
+    "Documentation Layer",
+    "AI Layer",
+    "Horizon Design System"
+  ]
+}

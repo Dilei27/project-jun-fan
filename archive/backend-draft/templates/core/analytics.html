@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Analytics — Odirlei Labs{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <a href="{% url 'home' %}" class="back-link">← Início</a>
+  <p class="page-header-label">Analytics</p>
+  <h1 class="page-header-title">Analytics</h1>
+  <p class="page-header-desc">Métricas de navegação e uso da plataforma — dados baseados na sua sessão.</p>
+</div>
+
+<div class="page-section">
+  <div class="analytics-header">
+    <div class="analytics-stat">
+      <p class="dashboard-card-title">Total de Visualizações</p>
+      <p class="dashboard-card-value">{{ total_views }}</p>
+    </div>
+    <div class="analytics-stat">
+      <p class="dashboard-card-title">Páginas Únicas</p>
+      <p class="dashboard-card-value">{{ top_pages|length }}</p>
+    </div>
+    <div class="analytics-stat">
+      <p class="dashboard-card-title">Sessão Atual</p>
+      <p class="dashboard-card-value" style="font-size: 20px;">Ativa</p>
+    </div>
+  </div>
+
+  <div class="page-section-header">
+    <h2 class="page-section-title">Páginas Mais Visitadas</h2>
+    <p class="page-section-sub">Top 10 páginas da sua sessão</p>
+  </div>
+
+  {% if top_pages %}
+  <div class="activity-list">
+    {% for page, count in top_pages %}
+    <div class="activity-item">
+      <span class="activity-dot" style="background: var(--color-accent-qa);"></span>
+      <span>{{ page|truncatechars:50 }}</span>
+      <span class="activity-time">{{ count }} visita{{ count|pluralize }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="demo-frame-empty" style="min-height: 120px;">
+    <p class="demo-frame-empty-text">Nenhum dado de navegação registrado ainda.</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

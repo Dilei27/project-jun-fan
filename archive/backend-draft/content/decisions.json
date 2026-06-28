@@ -1,0 +1,34 @@
+[
+  {
+    "id": "stack-django",
+    "context": "Escolha de stack para o ecossistema Odirlei Labs.",
+    "decision": "Django + PostgreSQL como base principal do backend.",
+    "rationale": "Maturidade do ecossistema, segurança nativa, ORM robusto, admin embutido e suporte a migrações complexas.",
+    "tradeoffs": "Mais opinado que FastAPI para endpoints simples; maior consumo de recursos que Flask em cenários mínimos.",
+    "impact": "Padronização da stack, reutilização de apps entre produtos e redução de decisões por projeto."
+  },
+  {
+    "id": "multi-tenant-logico",
+    "context": "Arquitetura para suportar múltiplas corretoras.",
+    "decision": "Isolamento lógico com campos tenant nos modelos, middleware de contexto e managers tenant-aware.",
+    "rationale": "Evita complexidade de schemas separados, custo operacional reduzido e simplicidade de deploy.",
+    "tradeoffs": "Risco maior de vazamento de dados se filtros forem esquecidos; requer disciplina de desenvolvimento.",
+    "impact": "Facilita onboarding de novas corretoras sem infraestrutura adicional."
+  },
+  {
+    "id": "horizon-tokens",
+    "context": "Definição do Design System Horizon.",
+    "decision": "Tokens CSS como fonte de verdade visual. Nenhum valor solto em componentes finais.",
+    "rationale": "Se a identidade mudar, a plataforma inteira evolui por token. Consistência entre produtos.",
+    "tradeoffs": "Abstração inicial requer planejamento; pode parecer overengineering em telas muito simples.",
+    "impact": "Redução de retrabalho visual e consistência garantida entre QA Command Center, WhatsApp AI e Vigilante AI."
+  },
+  {
+    "id": "ia-assincrona",
+    "context": "Processamento de agentes de IA.",
+    "decision": "IA assíncrona via Celery + RabbitMQ + Redis. Interface não bloqueia durante análise.",
+    "rationale": "Análises de IA podem levar segundos. Bloquear a interface degrada UX e escala.",
+    "tradeoffs": "Complexidade operacional de manter fila e broker; necessário para experiência não-bloqueante.",
+    "impact": "Usuário dispara análise e continua trabalhando. Notificado quando resultado fica pronto."
+  }
+]

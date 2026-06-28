@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ doc.title }} — Documentação — Odirlei Labs{% endblock %}
+
+{% block content %}
+
+<div class="docs-layout">
+  <aside class="docs-sidebar" aria-label="Navegação da documentação">
+    <p class="docs-sidebar-title">Navegação</p>
+    <nav class="docs-nav">
+      {% for d in docs %}
+      <a href="{% url 'doc_detail' d.id %}" class="docs-nav-item{% if d.id == doc.id %} active{% endif %}">{{ d.title }}</a>
+      {% endfor %}
+      <a href="{% url 'decisions' %}" class="docs-nav-item">Decisões Técnicas</a>
+    </nav>
+  </aside>
+  <main class="docs-content">
+    <div class="docs-mobile-nav">
+      <label for="docs-mobile-select" class="sr-only">Selecionar página</label>
+      <select class="docs-mobile-select" id="docs-mobile-select" onchange="if(this.value)window.location.href=this.value">
+        <option value="">Navegar para...</option>
+        {% for d in docs %}
+        <option value="{% url 'doc_detail' d.id %}"{% if d.id == doc.id %} selected{% endif %}>{{ d.title }}</option>
+        {% endfor %}
+        <option value="{% url 'decisions' %}">Decisões Técnicas</option>
+      </select>
+    </div>
+    <nav class="docs-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Início</a>
+      <span aria-hidden="true">/</span>
+      <a href="{% url 'docs_index' %}">Documentação</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ doc.title }}</span>
+    </nav>
+    <div class="docs-body">
+      <h1>{{ doc.title }}</h1>
+      <p>{{ doc.description }}</p>
+      {% for section in doc.sections %}
+      <h2>{{ section.heading }}</h2>
+      <p>{{ section.content }}</p>
+      {% endfor %}
+    </div>
+  </main>
+</div>
+
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} — Odirlei Labs{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="page-header-accent" style="background: {{ product.accentColor }};"></div>
+  <p class="page-header-label">{{ product.status|title }}</p>
+  <h1 class="page-header-title">{{ product.name }}</h1>
+  <p class="page-header-desc">{{ product.shortDescription }}</p>
+  <div style="display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap;">
+    <a href="{% url 'home' %}" class="back-link">← Voltar</a>
+  </div>
+</div>
+
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Problema & Solução</h2>
+    <p class="page-section-sub">Contexto e abordagem do produto</p>
+  </div>
+  <div class="problem-solution-grid">
+    <div class="problem-box">
+      <p class="section-label" style="margin-bottom: var(--space-2);">Problema</p>
+      <p style="font-size: 14px; color: var(--color-text-secondary); line-height: 1.6;">{{ product.problem }}</p>
+    </div>
+    <div class="solution-box">
+      <p class="section-label" style="margin-bottom: var(--space-2);">Solução</p>
+      <p style="font-size: 14px; color: var(--color-text-secondary); line-height: 1.6;">{{ product.solution }}</p>
+    </div>
+  </div>
+</div>
+
+{% if product.flow_nodes %}
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Architecture Flow</h2>
+    <p class="page-section-sub">Fluxo conceitual da arquitetura do produto</p>
+  </div>
+  <div class="architecture-flow">
+    <div class="flow-track">
+      {% for node in product.flow_nodes %}
+      <span class="flow-node">{{ node }}</span>
+      {% if not forloop.last %}<span class="flow-arrow">→</span>{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Demo</h2>
+    <p class="page-section-sub">Preview do produto em funcionamento</p>
+  </div>
+  <div class="demo-frame">
+    <div class="demo-frame-empty">
+      <div class="demo-frame-empty-icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+      </div>
+      <p class="demo-frame-empty-text">Demo em breve</p>
+      <span class="badge badge-default">Preview mockado — MVP</span>
+    </div>
+  </div>
+</div>
+
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Stack</h2>
+    <p class="page-section-sub">Tecnologias utilizadas</p>
+  </div>
+  <div class="stack-list">
+    {% for tech in product.stack %}
+    <span class="product-card-badge" style="background: {{ product.accentColor }};">{{ tech }}</span>
+    {% endfor %}
+  </div>
+</div>
+
+{% if product.metrics %}
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Métricas</h2>
+    <p class="page-section-sub">Indicadores atuais do produto</p>
+  </div>
+  <div class="metric-grid">
+    {% for key, value in product.metrics.items %}
+    <div class="metric-card">
+      <p class="metric-value">{{ value }}</p>
+      <p class="metric-label">{{ key }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if product.roadmap %}
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Roadmap</h2>
+    <p class="page-section-sub">Próximos passos planejados</p>
+  </div>
+  <div class="roadmap-list">
+    {% for item in product.roadmap %}
+    <div class="roadmap-item">
+      <span class="roadmap-dot" style="background: {{ product.accentColor }};"></span>
+      {{ item }}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if product.links %}
+<div class="page-section">
+  <div class="page-section-header">
+    <h2 class="page-section-title">Links</h2>
+    <p class="page-section-sub">Recursos e referências</p>
+  </div>
+  <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+    {% if product.links.docs and product.links.docs != '#' %}
+    <a href="{{ product.links.docs }}" class="btn btn-secondary">Documentação</a>
+    {% endif %}
+    {% if product.links.repo and product.links.repo != '#' %}
+    <a href="{{ product.links.repo }}" class="btn btn-secondary">Repositório</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
