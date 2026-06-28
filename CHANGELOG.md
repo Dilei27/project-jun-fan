@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.0.0-foundation (2025-06-28) — Foundation Release (FR1)
+
+### Added
+- Publicação oficial no GitHub
+- AI Workspace com 24 agentes especializados
+- Agents core, engineering, product, design, qa, devops
+- Contextos permanentes (6), playbooks (6), templates (6)
+- docs/AI-Workspace.md
+- Seção AI Workspace no README
+
+### Changed
+- v0.1.0 promovido para v1.0.0-foundation
+
+---
+
 ## v0.1.0 (2025-06-28) — Foundation Release
 
 ### Added
