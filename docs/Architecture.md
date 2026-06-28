@@ -63,6 +63,18 @@ Componentes reutilizáveis e compartilháveis entre módulos. Organizados por ca
 - `navigation/` — componentes de navegação (futuro)
 - `docs/` — (vazio, componentes de docs estão em features/docs/)
 
+## Por que `core/`
+
+O diretório `src/core/` é o núcleo arquitetural do ecossistema. Ele centraliza:
+
+- **Entities** — definições de todas as entidades do domínio (Product, Project, Decision, Doc, etc.)
+- **Loaders** — acesso centralizado a dados (atualmente JSON, preparado para futuras fontes)
+- **Queries** — consultas do ecossistema (search, graph, metrics, relations)
+
+O Core segue o princípio de **fonte única de verdade**: nenhum componente acessa `content/` diretamente. Toda informação flui através do Core.
+
+Documentação completa em `docs/operation-phoenix/core/`.
+
 ## Por que `lib/`
 
 Funções utilitárias puras sem efeitos colaterais:

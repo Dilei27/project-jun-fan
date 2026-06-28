@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { searchAll } from '@/lib/search';
@@ -50,20 +51,28 @@ export function CommandPalette() {
     }
   }
 
-  if (!open) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-black/60 backdrop-blur-sm"
-      onClick={handleClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Paleta de comandos"
-    >
-      <div
-        className="w-full max-w-[560px] bg-surface-elevated border border-border-subtle rounded-xl overflow-hidden shadow-2xl"
-        onClick={e => e.stopPropagation()}
-      >
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.16 }}
+          className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-black/60 backdrop-blur-sm"
+          onClick={handleClose}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Paleta de comandos"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.16 }}
+            className="w-full max-w-[560px] bg-surface-elevated border border-border-subtle rounded-xl overflow-hidden shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
         <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle">
           <Search size={18} className="text-text-muted shrink-0" />
           <input
@@ -112,7 +121,9 @@ export function CommandPalette() {
           <span><kbd className="px-1 py-0.5 bg-surface-soft rounded">Enter</kbd> Abrir</span>
           <span><kbd className="px-1 py-0.5 bg-surface-soft rounded">Esc</kbd> Fechar</span>
         </div>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

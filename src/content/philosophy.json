@@ -2,10 +2,13 @@
   "name": "Jun Fan Product Language",
   "foundation": "Project Jun Fan",
   "designSystem": "Horizon Design System",
+  "positioning": "Product Operating System",
+  "motto": "Absorb. Refine. Build.",
+  "archetype": "O Construtor (The Creator) — não o herói, mas o arquiteto que projeta o sistema",
   "core": {
-    "identity": "A identidade do ecossistema é técnica, premium, futurista e silenciosa. Evitar estética genérica de IA, neon excessivo e templates SaaS.",
-    "tone": "Claro, direto e preciso. Português (pt-BR) na interface. Inglês em código e classes.",
-    "visual": "Tema escuro como padrão. Uma cor de destaque por tela. Tipografia Inter. Motion funcional e discreto."
+    "identity": "O Project Jun Fan é a fundação visual, técnica e conceitual que sustenta um ecossistema de produtos de automação, QA e IA aplicada. A identidade é técnica, premium, futurista e silenciosa. Não somos portfólio, dashboard ou template.",
+    "tone": "Claro, direto e preciso. Português (pt-BR) na interface. Inglês em código e classes. Tom do arquiteto silencioso: confiante sem ser arrogante, técnico sem ser hermético.",
+    "visual": "Tema escuro premium como padrão. Uma cor de acento por tela. Tipografia Inter. Motion funcional e discreto. Engenharia visível em cada tela."
   },
   "products": [
     {

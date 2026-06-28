@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { navLinks } from '@/config/navigation';
 
 export function Header() {
@@ -38,20 +39,31 @@ export function Header() {
         </button>
       </div>
 
-      {menuOpen && (
-        <nav className="md:hidden border-t border-border-subtle bg-bg-base px-4 py-2" aria-label="Navegação mobile">
-          {navLinks.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary rounded-md"
-              onClick={() => setMenuOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-      )}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.16 }}
+            className="md:hidden overflow-hidden border-t border-border-subtle bg-bg-base px-4"
+            aria-label="Navegação mobile"
+          >
+            <div className="py-2">
+              {navLinks.map(link => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary rounded-md"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

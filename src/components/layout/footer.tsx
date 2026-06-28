@@ -10,13 +10,11 @@ export function Footer() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-text-muted hover:text-text-secondary transition-colors"
+              className="text-sm text-text-muted hover:text-text-secondary hover:bg-surface-soft px-2 py-1 rounded-md transition-colors"
             >
               {link.label}
             </Link>
           ))}
-          <a href="#" className="text-sm text-text-muted hover:text-text-secondary transition-colors">GitHub</a>
-          <a href="#" className="text-sm text-text-muted hover:text-text-secondary transition-colors">Contato</a>
         </nav>
         <p className="text-center text-xs text-text-muted">
           Project Jun Fan &mdash; Build. Automate. Innovate.

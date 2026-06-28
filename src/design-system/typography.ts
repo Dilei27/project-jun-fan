@@ -1,7 +1,7 @@
 export const typography = {
   font: {
     sans: "'Inter', system-ui, sans-serif",
-    mono: "'JetBrains Mono', 'Fira Code', monospace",
+    mono: "'Fira Code', monospace",
   },
   weight: {
     normal: 400,

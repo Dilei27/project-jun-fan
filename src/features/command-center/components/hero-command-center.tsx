@@ -7,7 +7,7 @@ export function HeroCommandCenter() {
       <div className="max-w-[1440px] mx-auto px-6 py-20 md:py-28">
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 text-xs font-medium text-accent-qa bg-accent-qa/10 border border-accent-qa/20 rounded-full">
-            <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-success" />
             Quality ecosystem online
           </div>
 

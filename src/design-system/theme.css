@@ -33,10 +33,3 @@
   --motion-slow: 420ms;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg-base: #0B0F14;
-    --color-bg-deep: #070A0F;
-    --color-text-primary: #F4F7FA;
-  }
-}

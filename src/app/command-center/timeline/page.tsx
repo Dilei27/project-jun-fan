@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { TimelineSection } from '@/features/command-center/components/timeline-section';
+import { getTimeline } from '@/lib/content';
+import { Timeline } from '@/components/shared/timeline';
 
 export default function TimelinePage() {
   return (
@@ -13,7 +14,7 @@ export default function TimelinePage() {
       <p className="text-text-secondary mb-8 max-w-xl">Evolução profissional de QA manual à fundação do Project Jun Fan.</p>
 
       <div className="max-w-xl">
-        <TimelineSection />
+        <Timeline entries={getTimeline()} />
       </div>
     </div>
   );
