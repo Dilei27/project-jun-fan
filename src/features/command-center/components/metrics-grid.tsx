@@ -1,6 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { motion as m } from '@/design-system/motion';
+
+const cardShadow =
+  'inset 0 1px 0 0 rgba(244, 247, 250, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.3)';
 
 const metricsData = [
   { value: 95, suffix: '%', label: 'Foco em rastreabilidade e cobertura de regressão' },
@@ -25,24 +30,20 @@ function AnimatedMetric({ value, suffix, label }: { value: number; suffix: strin
       ([entry]) => {
         if (entry.isIntersecting && !animated.current) {
           animated.current = true;
-          requestAnimationFrame(() => {
-            const duration = 420;
-            const steps = 30;
-            const increment = value / steps;
-            let current = 0;
-            const timer = setInterval(() => {
-              current += increment;
-              if (current >= value) {
-                setCount(value);
-                clearInterval(timer);
-              } else {
-                setCount(Math.floor(current));
-              }
-            }, duration / steps);
-          });
+          const duration = 1100;
+          const start = performance.now();
+          const step = (now: number) => {
+            const elapsed = now - start;
+            const t = Math.min(1, elapsed / duration);
+            const eased = 1 - Math.pow(1 - t, 3);
+            setCount(Math.floor(eased * value));
+            if (t < 1) requestAnimationFrame(step);
+            else setCount(value);
+          };
+          requestAnimationFrame(step);
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
 
     if (ref.current) observer.observe(ref.current);
@@ -50,21 +51,43 @@ function AnimatedMetric({ value, suffix, label }: { value: number; suffix: strin
   }, [value]);
 
   return (
-    <div ref={ref} className="p-5 bg-surface-default border border-border-subtle rounded-lg text-center">
-      <div className="text-3xl font-bold text-accent-qa mb-1" aria-label={`${value}${suffix}`}>
+    <motion.div
+      ref={ref}
+      whileHover={{ y: -3, transition: { duration: m.duration.fast, ease: m.easing.out } }}
+      className="jf-lift p-5 bg-surface-default/80 border border-border-subtle/60 rounded-lg text-center"
+      style={{ boxShadow: cardShadow }}
+    >
+      <div className="text-3xl font-bold text-accent-qa mb-1 tabular-nums" aria-label={`${value}${suffix}`}>
         {count}{suffix}
       </div>
       <div className="text-sm text-text-muted leading-relaxed">{label}</div>
-    </div>
+    </motion.div>
   );
 }
 
 export function MetricsGrid() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {metricsData.map(m => (
-        <AnimatedMetric key={m.label} value={m.value} suffix={m.suffix} label={m.label} />
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      variants={{
+        hidden: {},
+        visible: { transition: { staggerChildren: m.stagger.default, delayChildren: 0.05 } },
+      }}
+      className="grid grid-cols-2 md:grid-cols-4 gap-4"
+    >
+      {metricsData.map(metric => (
+        <motion.div
+          key={metric.label}
+          variants={{
+            hidden: { opacity: 0, y: 16 },
+            visible: { opacity: 1, y: 0, transition: { duration: m.duration.normal, ease: m.easing.out } },
+          }}
+        >
+          <AnimatedMetric value={metric.value} suffix={metric.suffix} label={metric.label} />
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }

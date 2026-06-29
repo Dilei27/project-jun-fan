@@ -28,8 +28,37 @@
   --space-6: 24px;
   --space-8: 32px;
   --space-12: 48px;
-  --motion-fast: 160ms;
-  --motion-normal: 280ms;
-  --motion-slow: 420ms;
-}
 
+  /* Motion tokens */
+  --motion-micro: 120ms;
+  --motion-fast: 200ms;
+  --motion-normal: 360ms;
+  --motion-slow: 560ms;
+  --motion-cinematic: 800ms;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Atmosphere: Shadow layers (multi-layer) */
+  --shadow-low:
+    inset 0 1px 0 0 rgba(244, 247, 250, 0.03),
+    0 1px 2px 0 rgba(0, 0, 0, 0.2),
+    0 4px 12px -4px rgba(0, 0, 0, 0.3);
+  --shadow-mid:
+    inset 0 1px 0 0 rgba(244, 247, 250, 0.05),
+    0 0 0 1px rgba(79, 140, 255, 0.08),
+    0 8px 24px -6px rgba(0, 0, 0, 0.4),
+    0 16px 32px -8px rgba(0, 0, 0, 0.3);
+  --shadow-high:
+    inset 0 1px 0 0 rgba(244, 247, 250, 0.06),
+    0 0 0 1px rgba(79, 140, 255, 0.06),
+    0 20px 48px -12px rgba(0, 0, 0, 0.6),
+    0 32px 64px -16px rgba(0, 0, 0, 0.5);
+  --shadow-takeover:
+    inset 0 1px 0 0 rgba(244, 247, 250, 0.05),
+    0 40px 80px -16px rgba(0, 0, 0, 0.7);
+  --shadow-glow-qa: 0 4px 16px -4px rgba(79, 140, 255, 0.35);
+  --shadow-glow-qa-strong: 0 8px 24px -6px rgba(79, 140, 255, 0.5);
+}

@@ -1,21 +1,48 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { motion as m } from '@/design-system/motion';
+import { StatusDot, type StatusKind } from '@/components/shared/status-dot';
 import type { Product } from '@/types';
 
-export function StatusStrip({ products }: { products: Product[] }) {
-  const statusMap: Record<string, string> = {
-    online: 'text-success',
-    beta: 'text-warning',
-    dev: 'text-text-muted',
-  };
+const statusKind: Record<string, StatusKind> = {
+  online: 'online',
+  beta: 'beta',
+  dev: 'dev',
+};
 
+const statusLabel: Record<string, string> = {
+  online: 'Online',
+  beta: 'Beta',
+  dev: 'Em desenvolvimento',
+};
+
+export function StatusStrip({ products }: { products: Product[] }) {
   return (
-    <div className="flex flex-wrap gap-6 py-4">
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.4 }}
+      variants={{
+        hidden: {},
+        visible: { transition: { staggerChildren: m.stagger.tight } },
+      }}
+      className="flex flex-wrap gap-x-6 gap-y-2 py-4"
+    >
       {products.map(p => (
-        <div key={p.id} className="flex items-center gap-2 text-sm">
-          <span className={`w-2 h-2 rounded-full ${statusMap[p.status] || 'text-text-muted'} bg-current`} />
+        <motion.div
+          key={p.id}
+          variants={{
+            hidden: { opacity: 0, y: 6 },
+            visible: { opacity: 1, y: 0, transition: { duration: m.duration.normal, ease: m.easing.out } },
+          }}
+          className="flex items-center gap-2 text-sm"
+        >
+          <StatusDot status={statusKind[p.status] || 'idle'} size={7} />
           <span className="text-text-primary font-medium">{p.name}</span>
-          <span className="text-text-muted">— {p.status === 'online' ? 'Online' : p.status === 'beta' ? 'Beta' : 'Dev'}</span>
-        </div>
+          <span className="text-text-muted">— {statusLabel[p.status] || p.status}</span>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }

@@ -2,12 +2,16 @@
 
 import { motion, type Variants } from 'framer-motion';
 import { type ReactNode } from 'react';
+import { motion as m } from '@/design-system/motion';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08 },
+    transition: {
+      staggerChildren: m.stagger.default,
+      delayChildren: 0.04,
+    },
   },
 };
 
@@ -16,17 +20,29 @@ const itemVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.28, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] },
+    transition: { duration: m.duration.normal, ease: [...m.easing.out] },
   },
 };
 
-export function AnimatedGrid({ children, className = '' }: { children: ReactNode; className?: string }) {
+interface AnimatedGridProps {
+  children: ReactNode;
+  className?: string;
+  amount?: number;
+  once?: boolean;
+}
+
+export function AnimatedGrid({
+  children,
+  className = '',
+  amount = 0.15,
+  once = true,
+}: AnimatedGridProps) {
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once, amount }}
       className={className}
     >
       {children}
@@ -34,10 +50,17 @@ export function AnimatedGrid({ children, className = '' }: { children: ReactNode
   );
 }
 
-export function AnimatedCard({ children, className = '' }: { children: ReactNode; className?: string }) {
+interface AnimatedItemProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function AnimatedItem({ children, className = '' }: AnimatedItemProps) {
   return (
     <motion.div variants={itemVariants} className={className}>
       {children}
     </motion.div>
   );
 }
+
+export { containerVariants, itemVariants };

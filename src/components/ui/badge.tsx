@@ -2,6 +2,7 @@ interface BadgeProps {
   variant?: 'default' | 'success' | 'warning' | 'danger';
   children: string;
   className?: string;
+  pulse?: boolean;
 }
 
 const variantClasses: Record<string, string> = {
@@ -11,9 +12,15 @@ const variantClasses: Record<string, string> = {
   danger: 'bg-danger/10 text-danger',
 };
 
-export function Badge({ variant = 'default', children, className = '' }: BadgeProps) {
+export function Badge({ variant = 'default', children, className = '', pulse = false }: BadgeProps) {
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variantClasses[variant]} ${className}`}>
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${variantClasses[variant]} ${className}`}>
+      {pulse && (
+        <span
+          aria-hidden
+          className="w-1.5 h-1.5 rounded-full bg-current jf-pulse-dot"
+        />
+      )}
       {children}
     </span>
   );

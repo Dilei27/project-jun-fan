@@ -2,9 +2,11 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search } from 'lucide-react';
+import { Search, Sparkles, FileSearch } from 'lucide-react';
 import Link from 'next/link';
 import { searchAll } from '@/lib/search';
+import { motion as m } from '@/design-system/motion';
+import { EmptyState } from '@/components/shared/empty-state';
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
@@ -34,7 +36,7 @@ export function CommandPalette() {
 
   useEffect(() => {
     if (open) {
-      setTimeout(() => inputRef.current?.focus(), 100);
+      setTimeout(() => inputRef.current?.focus(), 120);
     }
   }, [open]);
 
@@ -58,69 +60,107 @@ export function CommandPalette() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.16 }}
-          className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-black/60 backdrop-blur-sm"
+          transition={{ duration: m.duration.fast, ease: m.easing.out }}
+          className="jf-glass-subtle fixed inset-0 z-50 flex items-start justify-center pt-[15vh]"
           onClick={handleClose}
           role="dialog"
           aria-modal="true"
           aria-label="Paleta de comandos"
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.16 }}
-            className="w-full max-w-[560px] bg-surface-elevated border border-border-subtle rounded-xl overflow-hidden shadow-2xl"
+            initial={{ opacity: 0, scale: 0.96, y: -8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: -4 }}
+            transition={{ duration: m.duration.normal, ease: m.easing.out }}
+            className="jf-glass-modal w-full max-w-[560px] rounded-xl overflow-hidden"
+            style={{
+              boxShadow:
+                'inset 0 1px 0 0 rgba(244, 247, 250, 0.06), 0 0 0 1px rgba(79, 140, 255, 0.06), 0 24px 64px -16px rgba(0, 0, 0, 0.7), 0 32px 80px -16px rgba(0, 0, 0, 0.5)',
+            }}
             onClick={e => e.stopPropagation()}
           >
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle">
-          <Search size={18} className="text-text-muted shrink-0" />
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={e => { setQuery(e.target.value); setSelectedIndex(0); }}
-            onKeyDown={handleKeyDown}
-            placeholder="Pesquisar produtos, projetos, docs..."
-            className="flex-1 bg-transparent text-text-primary text-sm placeholder:text-text-muted outline-none"
-            aria-label="Pesquisar"
-          />
-          <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-xs text-text-muted bg-surface-soft rounded">
-            ESC
-          </kbd>
-        </div>
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle/50">
+              <Search size={18} className="text-text-muted shrink-0" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={e => { setQuery(e.target.value); setSelectedIndex(0); }}
+                onKeyDown={handleKeyDown}
+                placeholder="Pesquisar produtos, projetos, docs..."
+                className="flex-1 bg-transparent text-text-primary text-sm placeholder:text-text-muted outline-none"
+                aria-label="Pesquisar"
+              />
+              <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-xs text-text-muted bg-surface-soft/60 rounded">
+                ESC
+              </kbd>
+            </div>
 
-        {results.length > 0 && (
-          <div className="max-h-64 overflow-y-auto p-2" role="listbox">
-            {results.map((r, i) => (
-              <Link
-                key={`${r.type}-${r.title}`}
-                href={r.url}
-                onClick={handleClose}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                  i === selectedIndex ? 'bg-surface-soft text-text-primary' : 'text-text-secondary'
-                }`}
-                role="option"
-                aria-selected={i === selectedIndex}
-              >
-                <span className="text-xs uppercase tracking-wider text-text-muted w-20 shrink-0">{r.type}</span>
-                <span className="flex-1 truncate">{r.title}</span>
-              </Link>
-            ))}
-          </div>
-        )}
+            <AnimatePresence mode="wait">
+              {results.length > 0 && (
+                <motion.div
+                  key={`results-${query}`}
+                  initial="hidden"
+                  animate="visible"
+                  exit={{ opacity: 0, transition: { duration: m.duration.fast } }}
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: m.stagger.tight } },
+                  }}
+                  className="max-h-64 overflow-y-auto p-2"
+                  role="listbox"
+                >
+                  {results.map((r, i) => (
+                    <motion.div
+                      key={`${r.type}-${r.title}`}
+                      variants={{
+                        hidden: { opacity: 0, y: 4 },
+                        visible: { opacity: 1, y: 0, transition: { duration: m.duration.fast, ease: m.easing.out } },
+                      }}
+                    >
+                      <Link
+                        href={r.url}
+                        onClick={handleClose}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200 ${
+                          i === selectedIndex
+                            ? 'bg-surface-soft/70 text-text-primary'
+                            : 'text-text-secondary hover:bg-surface-default/60'
+                        }`}
+                        role="option"
+                        aria-selected={i === selectedIndex}
+                      >
+                        <span className="text-xs uppercase tracking-wider text-text-muted w-20 shrink-0">
+                          {r.type}
+                        </span>
+                        <span className="flex-1 truncate">{r.title}</span>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-        {query && results.length === 0 && (
-          <div className="px-4 py-6 text-center text-sm text-text-muted">
-            Nenhum resultado para &ldquo;{query}&rdquo;
-          </div>
-        )}
+            {query && results.length === 0 && (
+              <EmptyState
+                icon={<FileSearch size={20} />}
+                title="Nenhum resultado encontrado"
+                description={`Não encontramos nada para "${query}". Tente outras palavras-chave ou explore a documentação.`}
+              />
+            )}
 
-        <div className="hidden sm:flex items-center gap-4 px-4 py-2 border-t border-border-subtle text-xs text-text-muted">
-          <span><kbd className="px-1 py-0.5 bg-surface-soft rounded">↑↓</kbd> Navegar</span>
-          <span><kbd className="px-1 py-0.5 bg-surface-soft rounded">Enter</kbd> Abrir</span>
-          <span><kbd className="px-1 py-0.5 bg-surface-soft rounded">Esc</kbd> Fechar</span>
-        </div>
+            {!query && results.length === 0 && (
+              <EmptyState
+                icon={<Sparkles size={20} />}
+                title="Comece a pesquisar"
+                description="Use palavras-chave como produto, projeto, decisão ou tecnologia para explorar o ecossistema."
+              />
+            )}
+
+            <div className="hidden sm:flex items-center gap-4 px-4 py-2 border-t border-border-subtle/50 text-xs text-text-muted">
+              <span><kbd className="px-1 py-0.5 bg-surface-soft/60 rounded">↑↓</kbd> Navegar</span>
+              <span><kbd className="px-1 py-0.5 bg-surface-soft/60 rounded">Enter</kbd> Abrir</span>
+              <span><kbd className="px-1 py-0.5 bg-surface-soft/60 rounded">Esc</kbd> Fechar</span>
+            </div>
           </motion.div>
         </motion.div>
       )}

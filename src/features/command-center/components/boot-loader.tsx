@@ -2,6 +2,7 @@
 
 import { useState, useEffect, startTransition } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { motion as m } from '@/design-system/motion';
 
 const bootLines = [
   '[BOOT] Inicializando QA Command Center...',
@@ -29,9 +30,10 @@ export function BootLoader() {
       startTransition(() => setVisibleLines(i));
       if (i >= bootLines.length) {
         clearInterval(interval);
-        startTransition(() => setDone(true));
+        const tid = setTimeout(() => startTransition(() => setDone(true)), 320);
+        return () => clearTimeout(tid);
       }
-    }, 280);
+    }, 320);
 
     return () => clearInterval(interval);
   }, []);
@@ -41,10 +43,18 @@ export function BootLoader() {
       {!done && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.16 } }}
-          className="fixed inset-0 z-[60] bg-bg-base flex items-center justify-center"
+          exit={{
+            opacity: 0,
+            scale: 1.02,
+            transition: { duration: m.duration.slow, ease: m.easing.out },
+          }}
+          className="fixed inset-0 z-70 bg-bg-base flex items-center justify-center"
           aria-live="polite"
           role="status"
+          style={{
+            backgroundImage:
+              'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(79, 140, 255, 0.04), transparent 70%)',
+          }}
         >
           <div className="font-mono text-sm space-y-1.5 max-w-md">
             {bootLines.slice(0, visibleLines).map((line, i) => (
@@ -52,13 +62,16 @@ export function BootLoader() {
                 key={line}
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.16 }}
+                transition={{ duration: m.duration.normal, ease: m.easing.out }}
                 className="text-text-secondary"
               >
                 <span className="text-accent-qa mr-2">&gt;</span>
                 {line}
-                {i === visibleLines - 1 && i < bootLines.length && (
-                  <span className="inline-block w-2 h-4 bg-accent-qa ml-1 animate-pulse" />
+                {i === visibleLines - 1 && i < bootLines.length - 1 && (
+                  <span className="jf-cursor bg-accent-qa" />
+                )}
+                {i === bootLines.length - 1 && i === visibleLines - 1 && (
+                  <span className="jf-cursor bg-success" />
                 )}
               </motion.div>
             ))}
