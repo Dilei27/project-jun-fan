@@ -57,9 +57,12 @@ export function useCamera(options: UseCameraOptions = {}) {
 
   const setImmediate = useCallback((target: CameraTarget) => {
     zoomMv.set(target.zoom);
+    zoom.set(target.zoom);
     panXMv.set(target.x);
+    panX.set(target.x);
     panYMv.set(target.y);
-  }, [zoomMv, panXMv, panYMv]);
+    panY.set(target.y);
+  }, [zoomMv, zoom, panXMv, panX, panYMv, panY]);
 
   /**
    * Travel to a target with cinematic easing.

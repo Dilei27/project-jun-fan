@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { useState, useCallback, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Maximize2, Minimize2, Keyboard, X } from 'lucide-react';
 import { getFilteredGraph, getNodeConnections, searchNodes } from '@/core';
@@ -16,6 +16,7 @@ import {
   useCamera,
   computeFocusTarget,
   computeInitialFit,
+  type CameraTarget,
 } from './lib/camera';
 import { findOneHop, findShortestPath } from './lib/path-finder';
 import { ConnectionPath, connectionIntensity } from './components/connection-path';
@@ -23,7 +24,6 @@ import { NodeShapeSVG, NodeRimLight, NodeInnerPattern } from './components/node-
 import { InfoPanel } from './components/info-panel';
 import { CinematicIntro, type IntroPhase } from './components/cinematic-intro';
 import { HoverPreview } from './components/hover-preview';
-import { useElementSize } from '@/hooks/use-element-size';
 
 /**
  * Virtual canvas size — independent from container size.
@@ -31,6 +31,12 @@ import { useElementSize } from '@/hooks/use-element-size';
  */
 const CANVAS_WIDTH = 1400;
 const CANVAS_HEIGHT = 900;
+
+// Instrumentation — set true to debug, false for production
+const DEBUG_GRAPH = true;
+function debugLog(...args: unknown[]) {
+  if (DEBUG_GRAPH) console.log('[KG]', ...args);
+}
 
 export function KnowledgeExplorer() {
   // State
@@ -50,17 +56,7 @@ export function KnowledgeExplorer() {
   // Refs
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Measure container — drives viewBox-aware scaling
-  const containerSize = useElementSize(containerRef, {
-    width: 1280,
-    height: 720,
-  });
-
-  // Camera — initial = centered + fitted (calculated once data is ready)
-  const camera = useCamera({
-    initial: { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2, zoom: 1 },
-  });
+  const cameraGroupRef = useRef<SVGGElement>(null);
 
   // Data
   const data = useMemo(() => getFilteredGraph(activeFilters), [activeFilters]);
@@ -74,66 +70,108 @@ export function KnowledgeExplorer() {
     );
     const map = new Map<string, { x: number; y: number }>();
     simNodes.forEach(n => map.set(n.id, { x: n.x, y: n.y }));
+
+    debugLog('nodes in', data.nodes.length);
+    debugLog('nodes out', simNodes.length);
+    debugLog('first 5 positions after sim:', simNodes.slice(0, 5).map(n => ({ id: n.id, x: n.x.toFixed(1), y: n.y.toFixed(1) })));
+
     return map;
   }, [data]);
 
+  // Canvas dimensions in viewBox space — camera operates in viewBox coordinates
+  const canvasSize = useMemo(
+    () => ({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }),
+    [],
+  );
+
+  // Compute fit target synchronously so the camera starts centered on first paint
+  const initialFit: CameraTarget = useMemo(() => {
+    if (positions.size === 0) {
+      debugLog('positions empty, returning identity transform');
+      return { x: 0, y: 0, zoom: 1 };
+    }
+    const arr = Array.from(positions.values());
+    const target = computeInitialFit(arr, canvasSize, 100);
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const p of arr) {
+      if (p.x < minX) minX = p.x;
+      if (p.x > maxX) maxX = p.x;
+      if (p.y < minY) minY = p.y;
+      if (p.y > maxY) maxY = p.y;
+    }
+    debugLog('bbox:', { minX: minX.toFixed(1), maxX: maxX.toFixed(1), minY: minY.toFixed(1), maxY: maxY.toFixed(1), w: (maxX - minX).toFixed(1), h: (maxY - minY).toFixed(1) });
+    debugLog('initialFit:', { x: target.x.toFixed(1), y: target.y.toFixed(1), zoom: target.zoom.toFixed(3) });
+    return target;
+  }, [positions, canvasSize]);
+
+  // Camera — initial fit already computed, no flash
+  const camera = useCamera({
+    initial: initialFit,
+  });
+
   /**
-   * Fit graph to virtual canvas.
+   * Fit graph to viewport.
    * Called on data change, container resize, and manual reset.
    */
   const fitToView = useCallback(
     (animated = true) => {
       if (positions.size === 0) return;
       const arr = Array.from(positions.values());
-      const target = computeInitialFit(
-        arr,
-        { width: CANVAS_WIDTH, height: CANVAS_HEIGHT },
-        100,
-      );
+      const target = computeInitialFit(arr, canvasSize, 100);
       if (animated) {
         camera.travelTo(target, 0.9);
       } else {
         camera.setImmediate(target);
       }
     },
-    [positions, camera],
+    [positions, canvasSize, camera],
   );
 
-  // Initial fit when data is ready (after mount) and on data change
-  const hasInitialFit = useRef(false);
+  // Initial fit is computed synchronously — no flash.
+  // Safety: force camera to initialFit after mount in case spring
+  // initialization drifts from the source MotionValue.
+  const appliedInitialFit = useRef(false);
+  useEffect(() => {
+    if (appliedInitialFit.current) return;
+    if (positions.size === 0) return;
+    appliedInitialFit.current = true;
+    camera.setImmediate(initialFit);
+    debugLog('safety enforce camera:', { x: initialFit.x.toFixed(1), y: initialFit.y.toFixed(1), zoom: initialFit.zoom.toFixed(3) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Fallback: force camera again after a short delay, in case the SVG
+  // layout / viewBox mapping was not ready during the first call.
   useEffect(() => {
     if (positions.size === 0) return;
-    if (!hasInitialFit.current) {
-      // First fit — instant
-      fitToView(false);
-      hasInitialFit.current = true;
-    } else {
-      // Subsequent data changes — animated
-      fitToView(true);
-    }
+    const id = setTimeout(() => {
+      const arr = Array.from(positions.values());
+      const target = computeInitialFit(arr, canvasSize, 100);
+      camera.setImmediate(target);
+      debugLog('fallback enforce camera:', { x: target.x.toFixed(1), y: target.y.toFixed(1), zoom: target.zoom.toFixed(3) });
+    }, 800);
+    return () => clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [positions]);
+  }, []);
 
-  // Refit on container size change (after initial fit) — debounced
-  useEffect(() => {
-    if (!hasInitialFit.current) return;
-    if (containerSize.width < 100 || containerSize.height < 100) return;
-    // Don't animate the size-driven refit (would feel jittery on resize)
-    // Just instantly re-fit if the data hasn't changed
-    const t = setTimeout(() => {
-      if (positions.size > 0) {
-        const arr = Array.from(positions.values());
-        const target = computeInitialFit(
-          arr,
-          { width: CANVAS_WIDTH, height: CANVAS_HEIGHT },
-          100,
-        );
-        camera.setImmediate(target);
-      }
-    }, 200);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [containerSize.width, containerSize.height]);
+  // Apply camera transform directly as SVG attribute (not CSS transform).
+  // useLayoutEffect ensures the transform is applied before browser paint,
+  // avoiding a flash of untransformed content on the first frame.
+  useLayoutEffect(() => {
+    const g = cameraGroupRef.current;
+    if (!g) return;
+    const updateTransform = () => {
+      g.setAttribute(
+        'transform',
+        `translate(${camera.panX.get()}, ${camera.panY.get()}) scale(${camera.zoom.get()})`,
+      );
+    };
+    const unsub1 = camera.panX.on('change', updateTransform);
+    const unsub2 = camera.panY.on('change', updateTransform);
+    const unsub3 = camera.zoom.on('change', updateTransform);
+    updateTransform();
+    return () => { unsub1(); unsub2(); unsub3(); };
+  }, [camera]);
 
   // Reveal waves (driven by intro phase)
   useEffect(() => {
@@ -178,12 +216,6 @@ export function KnowledgeExplorer() {
     if (!selectedNode || !selectedSecondary) return null;
     return findShortestPath(selectedNode.id, selectedSecondary.id, data.edges);
   }, [selectedNode, selectedSecondary, data.edges]);
-
-  // Canvas size is the **virtual** canvas (not the container)
-  const canvasSize = useMemo(
-    () => ({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }),
-    [],
-  );
 
   // Handlers
   const handleNodeClick = useCallback((node: GraphNode) => {
@@ -498,13 +530,17 @@ export function KnowledgeExplorer() {
           </filter>
         </defs>
 
-        <motion.g
-          style={{
-            x: camera.panX,
-            y: camera.panY,
-            scale: camera.zoom,
-          }}
+        <g
+          ref={cameraGroupRef}
         >
+          {/* Backdrop rect — verifies viewBox mapping and camera transform */}
+          <rect
+            x={0} y={0} width={CANVAS_WIDTH} height={CANVAS_HEIGHT}
+            fill="rgba(79, 140, 255, 0.03)"
+            stroke="rgba(79, 140, 255, 0.15)"
+            strokeWidth={1}
+            pointerEvents="none"
+          />
           {data.edges.map((edge) => {
             const si = data.nodes.findIndex(n => n.id === edge.source);
             const ti = data.nodes.findIndex(n => n.id === edge.target);
@@ -568,20 +604,11 @@ export function KnowledgeExplorer() {
             const showLabel = identity.labelMode !== 'none' && (isHovered || isSelected || identity.labelMode === 'outside');
 
             return (
-              <motion.g
+              <g
                 key={node.id}
                 className="kg-node"
                 transform={`translate(${pos.x}, ${pos.y})`}
                 style={{ cursor: 'pointer', color }}
-                initial={{ opacity: 0, scale: 0.4 }}
-                animate={{
-                  opacity: isRevealed ? nodeOpacity : 0,
-                  scale: isRevealed ? scale : 0.4,
-                }}
-                transition={{
-                  opacity: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
-                  scale: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-                }}
                 onClick={() => handleNodeClick(node)}
                 onMouseEnter={(e) => {
                   setHoveredNode(node);
@@ -595,93 +622,105 @@ export function KnowledgeExplorer() {
                   setHoverScreen(null);
                 }}
               >
-                <circle
-                  r={haloR}
-                  fill="url(#kg-node-halo)"
-                  opacity={haloOpacity}
-                  style={{ transition: 'opacity 0.4s ease-out' }}
-                />
-                {(isSelected || isSecondary) && (
-                  <motion.circle
-                    r={r + 10}
-                    fill="none"
-                    stroke={color}
-                    strokeWidth={1.5}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 0.4, scale: 1 }}
-                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ animation: 'glow 3.5s ease-in-out infinite' }}
-                  />
-                )}
-                {isOnPath && !isSelected && !isSecondary && (
-                  <circle
-                    r={r + 4}
-                    fill="none"
-                    stroke="#4F8CFF"
-                    strokeWidth={1}
-                    opacity={0.6}
-                  />
-                )}
                 <motion.g
-                  animate={{ scale }}
-                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                  filter={isSelected ? 'url(#kg-node-glow)' : undefined}
+                  initial={{ opacity: 0, scale: 0.4 }}
+                  animate={{
+                    opacity: isRevealed ? nodeOpacity : 0,
+                    scale: isRevealed ? scale : 0.4,
+                  }}
+                  transition={{
+                    opacity: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                    scale: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                  }}
                 >
-                  <NodeShapeSVG
-                    shape={identity.shape}
-                    r={r}
-                    fill={color}
-                    stroke={isSelected || isSecondary ? '#F4F7FA' : 'none'}
-                    strokeWidth={isSelected || isSecondary ? 1.5 : 0}
-                    strokeDasharray={identity.borderStyle === 'dashed' ? '3 2' : undefined}
+                  <circle
+                    r={haloR}
+                    fill="url(#kg-node-halo)"
+                    opacity={haloOpacity}
+                    style={{ transition: 'opacity 0.4s ease-out' }}
                   />
-                  <NodeInnerPattern shape={identity.shape} r={r} color={color} />
-                  {identity.rimLight && <NodeRimLight shape={identity.shape} r={r} />}
-                  {identity.glyph && (
-                    <text
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      fill="rgba(244, 247, 250, 0.95)"
-                      fontSize={identity.glyphSize}
-                      fontWeight={600}
-                      className="pointer-events-none select-none"
-                    >
-                      {identity.glyph}
-                    </text>
+                  {(isSelected || isSecondary) && (
+                    <motion.circle
+                      r={r + 10}
+                      fill="none"
+                      stroke={color}
+                      strokeWidth={1.5}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 0.4, scale: 1 }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ animation: 'glow 3.5s ease-in-out infinite' }}
+                    />
                   )}
-                  {identity.labelMode === 'inside' && labelText && (
-                    <text
+                  {isOnPath && !isSelected && !isSecondary && (
+                    <circle
+                      r={r + 4}
+                      fill="none"
+                      stroke="#4F8CFF"
+                      strokeWidth={1}
+                      opacity={0.6}
+                    />
+                  )}
+                  <motion.g
+                    animate={{ scale }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    filter={isSelected ? 'url(#kg-node-glow)' : undefined}
+                  >
+                    <NodeShapeSVG
+                      shape={identity.shape}
+                      r={r}
+                      fill={color}
+                      stroke={isSelected || isSecondary ? '#F4F7FA' : 'none'}
+                      strokeWidth={isSelected || isSecondary ? 1.5 : 0}
+                      strokeDasharray={identity.borderStyle === 'dashed' ? '3 2' : undefined}
+                    />
+                    <NodeInnerPattern shape={identity.shape} r={r} color={color} />
+                    {identity.rimLight && <NodeRimLight shape={identity.shape} r={r} />}
+                    {identity.glyph && (
+                      <text
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fill="rgba(244, 247, 250, 0.95)"
+                        fontSize={identity.glyphSize}
+                        fontWeight={600}
+                        className="pointer-events-none select-none"
+                      >
+                        {identity.glyph}
+                      </text>
+                    )}
+                    {identity.labelMode === 'inside' && labelText && (
+                      <text
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fill="rgba(244, 247, 250, 0.95)"
+                        fontSize={identity.glyphSize}
+                        fontWeight={500}
+                        className="pointer-events-none select-none"
+                      >
+                        {labelText}
+                      </text>
+                    )}
+                  </motion.g>
+                  {identity.labelMode === 'outside' && showLabel && labelText && (
+                    <motion.text
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
                       textAnchor="middle"
-                      dominantBaseline="central"
-                      fill="rgba(244, 247, 250, 0.95)"
-                      fontSize={identity.glyphSize}
+                      dy={r + 14}
+                      fill="rgba(244, 247, 250, 0.9)"
+                      fontSize={10}
                       fontWeight={500}
                       className="pointer-events-none select-none"
+                      style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
                     >
                       {labelText}
-                    </text>
+                    </motion.text>
                   )}
                 </motion.g>
-                {identity.labelMode === 'outside' && showLabel && labelText && (
-                  <motion.text
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2 }}
-                    textAnchor="middle"
-                    dy={r + 14}
-                    fill="rgba(244, 247, 250, 0.9)"
-                    fontSize={10}
-                    fontWeight={500}
-                    className="pointer-events-none select-none"
-                    style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
-                  >
-                    {labelText}
-                  </motion.text>
-                )}
-              </motion.g>
+              </g>
             );
           })}
-        </motion.g>
+        </g>
       </svg>
 
       {/* Hover preview */}
