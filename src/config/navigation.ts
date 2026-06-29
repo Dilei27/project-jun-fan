@@ -4,6 +4,7 @@ export const navLinks = [
   { href: '/knowledge-graph/', label: 'Graph' },
   { href: '/docs/', label: 'Documentação' },
   { href: '/decisoes/', label: 'Decisões' },
+  { href: '/twin/', label: 'Twin' },
   { href: '/busca/', label: 'Busca' },
 ] as const;
 

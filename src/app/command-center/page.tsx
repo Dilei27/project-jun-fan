@@ -1,162 +1,173 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { getProducts, getProjects, getTimeline, getDecisions } from '@/lib/content';
 import { ProductGateway } from '@/components/cards/product-card';
 import { FeaturedProjects } from '@/components/cards/project-card';
-import { Timeline } from '@/components/shared/timeline';
 import { AIInsightCards } from '@/components/cards/ai-insight-card';
-import { HeroCommandCenter } from '@/features/command-center/components/hero-command-center';
-import { MetricsGrid } from '@/features/command-center/components/metrics-grid';
+import { BootLoader } from '@/features/command-center/components/boot-loader';
+import { DashboardHeader } from '@/features/command-center/components/dashboard-header';
+import { StatCardsGrid } from '@/features/command-center/components/stat-cards-grid';
+import { PipelineTimeline } from '@/features/command-center/components/pipeline-timeline';
+import { QualityRadar } from '@/features/command-center/components/quality-radar';
+import { RecentDecisions } from '@/features/command-center/components/recent-decisions';
+import { KnowledgeActivity } from '@/features/command-center/components/knowledge-activity';
+import { QuickActions } from '@/features/command-center/components/quick-actions';
+import { DashboardLoading } from '@/features/command-center/components/dashboard-loading';
+import { DashboardError } from '@/features/command-center/components/dashboard-error';
 import { SkillsCloud } from '@/features/command-center/components/skills-cloud';
 import { ArchitectureFlow } from '@/features/command-center/components/architecture-flow';
-import { BootLoader } from '@/features/command-center/components/boot-loader';
 import { StatusStrip } from '@/components/shared/status-strip';
 import { SectionReveal } from '@/components/shared/section-reveal';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { motion as m } from '@/design-system/motion';
+import { SectionDivider } from '@/components/shared/section-divider';
+import { CrossNav } from '@/components/platform/cross-nav';
+import { MiniKnowledgeGraph } from '@/components/platform/mini-knowledge-graph';
+import { CrossReferences, getModuleReferences } from '@/components/platform/cross-references';
+import { usePlatform } from '@/components/platform/platform-context';
 
 export default function CommandCenterPage() {
+  const { setCurrentModule } = usePlatform();
+  useEffect(() => { setCurrentModule('command-center'); }, [setCurrentModule]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const products = getProducts();
   const projects = getProjects();
   const timeline = getTimeline();
   const decisions = getDecisions();
 
+  if (error) {
+    return (
+      <div className="max-w-[1440px] mx-auto px-6 py-10">
+        <DashboardError message={error} onRetry={() => setError(null)} />
+      </div>
+    );
+  }
+
   return (
     <div>
       <BootLoader />
-      <HeroCommandCenter />
 
-      <div className="max-w-[1440px] mx-auto px-6">
-        <SectionReveal>
-          <section className="mb-16">
-            <h2 className="sr-only">Status dos Produtos</h2>
-            <StatusStrip products={products} />
-          </section>
-        </SectionReveal>
+      {loading ? (
+        <div className="max-w-[1440px] mx-auto px-6 py-10">
+          <DashboardLoading />
+        </div>
+      ) : (
+        <div className="max-w-[1440px] mx-auto px-6 py-10">
+          {/* Dashboard Header */}
+          <DashboardHeader />
 
-        <SectionReveal>
-          <section className="mb-16">
-            <h2 className="text-xl font-semibold text-text-primary mb-6 tracking-[-0.01em]">
-              Impacto Gerado
-            </h2>
-            <MetricsGrid />
-          </section>
-        </SectionReveal>
+          {/* Ambient glow */}
+          <div
+            aria-hidden
+            className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(ellipse 50% 60% at 50% 0%, rgba(79, 140, 255, 0.04), transparent 70%)',
+            }}
+          />
 
-        <SectionReveal>
-          <section className="mb-16" id="produtos">
-            <h2 className="text-xl font-semibold text-text-primary mb-6 tracking-[-0.01em]">
-              Produtos
-            </h2>
-            <ProductGateway products={products} />
-          </section>
-        </SectionReveal>
+          {/* Stat Cards */}
+          <StatCardsGrid />
 
-        <SectionReveal>
-          <section className="mb-16">
-            <h2 className="text-xl font-semibold text-text-primary mb-6 tracking-[-0.01em]">
-              Trajetória
-            </h2>
-            <Timeline entries={timeline} />
-          </section>
-        </SectionReveal>
+          <SectionDivider className="mb-8 max-w-3xl mx-auto" />
 
-        <SectionReveal>
-          <section className="mb-16">
-            <h2 className="text-xl font-semibold text-text-primary mb-6 tracking-[-0.01em]">
-              Stack Técnica
-            </h2>
-            <SkillsCloud />
-          </section>
-        </SectionReveal>
+          {/* Pipeline + Timeline */}
+          <PipelineTimeline limit={4} />
 
-        <SectionReveal>
-          <section className="mb-16">
-            <h2 className="text-xl font-semibold text-text-primary mb-6 tracking-[-0.01em]">
-              Arquitetura
-            </h2>
-            <ArchitectureFlow />
-          </section>
-        </SectionReveal>
+          {/* Quality Radar */}
+          <QualityRadar />
 
-        <SectionReveal>
-          <section className="mb-16">
-            <h2 className="text-xl font-semibold text-text-primary mb-6 tracking-[-0.01em]">
-              Projetos em Destaque
-            </h2>
-            <FeaturedProjects projects={projects} />
-          </section>
-        </SectionReveal>
+          {/* Recent Decisions */}
+          <RecentDecisions />
 
-        <SectionReveal>
-          <section className="mb-16">
-            <h2 className="text-xl font-semibold text-text-primary mb-6 tracking-[-0.01em]">
-              Decisões Técnicas
-            </h2>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.15 }}
-              variants={{
-                hidden: {},
-                visible: { transition: { staggerChildren: m.stagger.tight, delayChildren: 0.1 } },
-              }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
-            >
-              {decisions.slice(0, 2).map(d => (
-                <motion.div
-                  key={d.id}
-                  variants={{
-                    hidden: { opacity: 0, y: 12 },
-                    visible: { opacity: 1, y: 0, transition: { duration: m.duration.normal, ease: m.easing.out } },
-                  }}
-                  whileHover={{ y: -3, transition: { duration: m.duration.fast, ease: m.easing.out } }}
-                >
-                  <Link
-                    href={`/decisoes/#${d.id}`}
-                    className="jf-lift block p-4 bg-surface-default/80 border border-border-subtle/60 rounded-lg"
-                    style={{
-                      boxShadow:
-                        'inset 0 1px 0 0 rgba(244, 247, 250, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.3)',
-                    }}
-                  >
-                    <h3 className="text-sm font-semibold text-text-primary mb-1">{d.decision}</h3>
-                    <p className="text-xs text-text-muted">{d.context}</p>
-                  </Link>
-                </motion.div>
-              ))}
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0, y: 12 },
-                  visible: { opacity: 1, y: 0, transition: { duration: m.duration.normal, ease: m.easing.out } },
-                }}
-                whileHover={{ y: -3, transition: { duration: m.duration.fast, ease: m.easing.out } }}
-              >
-                <Link
-                  href="/decisoes/"
-                  className="jf-lift p-4 bg-surface-default/80 border border-border-subtle/60 rounded-lg flex items-center justify-center text-sm text-accent-qa h-full"
-                  style={{
-                    boxShadow:
-                      'inset 0 1px 0 0 rgba(244, 247, 250, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.3)',
-                  }}
-                >
-                  Ver todas as decisões →
-                </Link>
-              </motion.div>
-            </motion.div>
-          </section>
-        </SectionReveal>
+          {/* Knowledge Activity */}
+          <KnowledgeActivity />
 
-        <SectionReveal>
-          <section className="mb-10">
-            <h2 className="text-xl font-semibold text-text-primary mb-6 tracking-[-0.01em]">
-              Insights
-            </h2>
-            <AIInsightCards />
-          </section>
-        </SectionReveal>
-      </div>
+          {/* Quick Actions */}
+          <QuickActions />
+
+          {/* Cross Navigation + Mini KG */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="md:col-span-2">
+              <CrossNav module="qa" />
+            </div>
+            <div className="space-y-4">
+              <MiniKnowledgeGraph />
+              <CrossReferences references={getModuleReferences('command-center')} title="Navegação Rápida" />
+            </div>
+          </div>
+
+          <SectionDivider className="mb-12 max-w-3xl mx-auto" />
+
+          {/* === EXISTING SECTIONS === */}
+
+          <SectionReveal>
+            <section className="mb-12">
+              <h2 className="sr-only">Status dos Produtos</h2>
+              <StatusStrip products={products} />
+            </section>
+          </SectionReveal>
+
+          <SectionReveal>
+            <section className="mb-12" id="produtos">
+              <h2 className="text-base font-semibold text-text-primary mb-5 tracking-[-0.01em] flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-qa/60" />
+                Produtos
+              </h2>
+              <ProductGateway products={products} />
+            </section>
+          </SectionReveal>
+
+          <SectionDivider className="mb-12 max-w-3xl mx-auto" />
+
+          <SectionReveal>
+            <section className="mb-12">
+              <h2 className="text-base font-semibold text-text-primary mb-5 tracking-[-0.01em] flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#22D3EE' }} />
+                Stack Técnica
+              </h2>
+              <SkillsCloud />
+            </section>
+          </SectionReveal>
+
+          <SectionDivider className="mb-12 max-w-3xl mx-auto" />
+
+          <SectionReveal>
+            <section className="mb-12">
+              <h2 className="text-base font-semibold text-text-primary mb-5 tracking-[-0.01em] flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#C084FC' }} />
+                Arquitetura
+              </h2>
+              <ArchitectureFlow />
+            </section>
+          </SectionReveal>
+
+          <SectionDivider className="mb-12 max-w-3xl mx-auto" />
+
+          <SectionReveal>
+            <section className="mb-12">
+              <h2 className="text-base font-semibold text-text-primary mb-5 tracking-[-0.01em] flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#22C55E' }} />
+                Projetos em Destaque
+              </h2>
+              <FeaturedProjects projects={projects} />
+            </section>
+          </SectionReveal>
+
+          <SectionDivider className="mb-12 max-w-3xl mx-auto" />
+
+          <SectionReveal>
+            <section className="mb-10">
+              <h2 className="text-base font-semibold text-text-primary mb-5 tracking-[-0.01em] flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#F59E0B' }} />
+                Insights
+              </h2>
+              <AIInsightCards />
+            </section>
+          </SectionReveal>
+        </div>
+      )}
     </div>
   );
 }

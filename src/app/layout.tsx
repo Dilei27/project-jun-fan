@@ -6,6 +6,12 @@ import { Footer } from '@/components/layout/footer';
 import { CommandPalette } from '@/features/command-palette/command-palette';
 import { AIDock } from '@/features/ai-dock/ai-dock';
 import { AtmosphereBackground } from '@/components/atmosphere/atmosphere-background';
+import { ContextBar } from '@/components/platform/context-bar';
+import { SenseiFab } from '@/components/platform/sensei-fab';
+import { PlatformProvider } from '@/components/platform/platform-context';
+import { LivingStatusBar } from '@/components/platform/living-status-bar';
+import { WelcomeExperience } from '@/components/platform/welcome-experience';
+import { ExplorationHistory } from '@/components/platform/exploration-history';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -22,24 +28,29 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="pt-BR"
-      data-scroll-behavior="smooth"
-      className={`${inter.variable} h-full`}
-    >
+    <html lang="pt-BR" data-scroll-behavior="smooth" className={`${inter.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-bg-base text-text-primary font-sans antialiased relative">
-        <a href="#main-content" className="jf-skip-link">
-          Pular para o conteúdo
-        </a>
+        <a href="#main-content" className="jf-skip-link">Pular para o conteúdo</a>
         <AtmosphereBackground />
         <div className="relative z-10 flex flex-col min-h-screen">
-          <Header />
-          <main id="main-content" className="flex-1 pt-14" tabIndex={-1}>
-            {children}
-          </main>
-          <Footer />
-          <CommandPalette />
-          <AIDock />
+          <PlatformProvider>
+            <Header />
+            <main id="main-content" className="flex-1 pt-14" tabIndex={-1}>
+              <ContextBar />
+              {children}
+            </main>
+            <Footer />
+            <CommandPalette />
+            <AIDock />
+            <SenseiFab />
+            <LivingStatusBar />
+            <WelcomeExperience />
+
+            {/* Hot zone: exploration history in header area */}
+            <div className="fixed top-14 right-4 z-40">
+              <ExplorationHistory />
+            </div>
+          </PlatformProvider>
         </div>
       </body>
     </html>

@@ -1,25 +1,57 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Sparkles, FileSearch } from 'lucide-react';
+import { Search, Sparkles, FileSearch, Command, GitFork, Shield, FileText, BookOpen, Home, Activity } from 'lucide-react';
 import Link from 'next/link';
 import { searchAll } from '@/lib/search';
 import { motion as m } from '@/design-system/motion';
 import { EmptyState } from '@/components/shared/empty-state';
 
+interface QuickAction {
+  label: string
+  href: string
+  icon: typeof Home
+  category: string
+}
+
+const QUICK_ACTIONS: QuickAction[] = [
+  { label: 'Início', href: '/', icon: Home, category: 'Navegação' },
+  { label: 'Knowledge Graph', href: '/knowledge-graph/', icon: GitFork, category: 'Navegação' },
+  { label: 'QA Command Center', href: '/command-center/', icon: Shield, category: 'Navegação' },
+  { label: 'Documentação', href: '/docs/', icon: FileText, category: 'Navegação' },
+  { label: 'Decision Center', href: '/decisoes/', icon: BookOpen, category: 'Navegação' },
+  { label: 'Digital Twin', href: '/twin/', icon: Activity, category: 'Navegação' },
+  { label: 'Timeline', href: '/command-center/timeline/', icon: Shield, category: 'Navegação' },
+  { label: 'Arquitetura', href: '/command-center/architecture/', icon: Shield, category: 'Navegação' },
+];
+
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [mode, setMode] = useState<'search' | 'navigate'>('search');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const results = query.trim() ? searchAll(query) : [];
+  const searchResults = query.trim() ? searchAll(query) : [];
+  const filteredActions = useMemo(() => {
+    if (!query.trim()) return QUICK_ACTIONS;
+    const q = query.toLowerCase();
+    return QUICK_ACTIONS.filter(a => a.label.toLowerCase().includes(q) || a.category.toLowerCase().includes(q));
+  }, [query]);
+
+  const allResults = useMemo(() => {
+    if (mode === 'navigate') return filteredActions.map(a => ({ type: a.category, title: a.label, url: a.href }));
+    return searchResults;
+  }, [mode, searchResults, filteredActions]);
+
+  const results = query.trim() ? allResults : filteredActions.map(a => ({ type: a.category, title: a.label, url: a.href }));
 
   const handleClose = useCallback(() => {
     setOpen(false);
     setQuery('');
     setSelectedIndex(0);
+    setMode('search');
   }, []);
 
   useEffect(() => {
@@ -35,9 +67,7 @@ export function CommandPalette() {
   }, [handleClose]);
 
   useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 120);
-    }
+    if (open) setTimeout(() => inputRef.current?.focus(), 120);
   }, [open]);
 
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -91,6 +121,15 @@ export function CommandPalette() {
                 className="flex-1 bg-transparent text-text-primary text-sm placeholder:text-text-muted outline-none"
                 aria-label="Pesquisar"
               />
+              <span className="hidden sm:flex items-center gap-1 text-[9px] text-text-muted/40">
+                <Command size={10} />
+                <span
+                  className="px-1 py-0.5 rounded cursor-pointer hover:bg-white/5 transition-colors"
+                  onClick={() => setMode(m => m === 'search' ? 'navigate' : 'search')}
+                >
+                  {mode === 'search' ? 'Navegar' : 'Buscar'}
+                </span>
+              </span>
               <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-xs text-text-muted bg-surface-soft/60 rounded">
                 ESC
               </kbd>
@@ -99,7 +138,7 @@ export function CommandPalette() {
             <AnimatePresence mode="wait">
               {results.length > 0 && (
                 <motion.div
-                  key={`results-${query}`}
+                  key={`results-${query}-${mode}`}
                   initial="hidden"
                   animate="visible"
                   exit={{ opacity: 0, transition: { duration: m.duration.fast } }}
@@ -129,7 +168,7 @@ export function CommandPalette() {
                         role="option"
                         aria-selected={i === selectedIndex}
                       >
-                        <span className="text-xs uppercase tracking-wider text-text-muted w-20 shrink-0">
+                        <span className="text-[9px] uppercase tracking-wider text-text-muted w-20 shrink-0">
                           {r.type}
                         </span>
                         <span className="flex-1 truncate">{r.title}</span>
@@ -159,7 +198,15 @@ export function CommandPalette() {
             <div className="hidden sm:flex items-center gap-4 px-4 py-2 border-t border-border-subtle/50 text-xs text-text-muted">
               <span><kbd className="px-1 py-0.5 bg-surface-soft/60 rounded">↑↓</kbd> Navegar</span>
               <span><kbd className="px-1 py-0.5 bg-surface-soft/60 rounded">Enter</kbd> Abrir</span>
+              <span><kbd className="px-1 py-0.5 bg-surface-soft/60 rounded">⌘K</kbd> Alternar</span>
               <span><kbd className="px-1 py-0.5 bg-surface-soft/60 rounded">Esc</kbd> Fechar</span>
+              <span className="text-text-muted/40">·</span>
+              <button
+                onClick={() => setMode(m => m === 'search' ? 'navigate' : 'search')}
+                className="text-text-muted/60 hover:text-text-primary transition-colors cursor-pointer"
+              >
+                {mode === 'search' ? 'Modo navegação' : 'Modo busca'}
+              </button>
             </div>
           </motion.div>
         </motion.div>

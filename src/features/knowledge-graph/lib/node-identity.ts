@@ -222,16 +222,16 @@ export const nodeIdentity: Record<string, NodeIdentity> = {
 export const entityColors: Record<string, string> = {
   product: '#4F8CFF',
   project: '#60A5FA',
-  agent: '#F97316',
+  agent: '#FB923C',
   doc: '#EAB308',
-  architecture: '#06B6D4',
-  decision: '#A855F7',
-  mission: '#22C55E',
-  timeline: '#10B981',
-  technology: '#FBBF24',
-  skill: '#9AA6B8',
-  metric: '#F59E0B',
-  lab: '#687385',
+  architecture: '#22D3EE',
+  decision: '#C084FC',
+  mission: '#4ADE80',
+  timeline: '#34D399',
+  technology: '#FACC15',
+  skill: '#94A3B8',
+  metric: '#FBBF24',
+  lab: '#64748B',
 };
 
 export function getNodeIdentity(type: string): NodeIdentity {

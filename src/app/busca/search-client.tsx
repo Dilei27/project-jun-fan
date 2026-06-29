@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { searchAll } from '@/lib/search';
 import { PageEntry } from '@/components/shared/page-entry';
 import { motion as m } from '@/design-system/motion';
@@ -10,7 +11,10 @@ import { useMemo } from 'react';
 const cardShadow =
   'inset 0 1px 0 0 rgba(244, 247, 250, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.3)';
 
-export function SearchClient({ initialQuery }: { initialQuery: string }) {
+export function SearchClient() {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get('q') || '';
+
   const results = useMemo(
     () => (initialQuery ? searchAll(initialQuery) : []),
     [initialQuery],

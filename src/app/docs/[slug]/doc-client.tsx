@@ -1,14 +1,20 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { DocsSidebar } from '@/features/docs/docs-sidebar';
 import { ArrowLeft } from 'lucide-react';
 import { PageEntry } from '@/components/shared/page-entry';
 import { motion as m } from '@/design-system/motion';
+import { CrossReferences, getModuleReferences } from '@/components/platform/cross-references';
+import { usePlatform } from '@/components/platform/platform-context';
 import type { Doc } from '@/types';
 
 export function DocDetailClient({ doc, allDocs }: { doc: Doc; allDocs: Doc[] }) {
+  const { setCurrentModule } = usePlatform();
+  useEffect(() => { setCurrentModule('docs'); }, [setCurrentModule]);
+
   return (
     <PageEntry className="max-w-[1440px] mx-auto px-6 py-10">
       <Link
@@ -52,6 +58,10 @@ export function DocDetailClient({ doc, allDocs }: { doc: Doc; allDocs: Doc[] }) 
             ))}
           </motion.div>
         </article>
+
+        <div className="w-full md:w-48 shrink-0">
+          <CrossReferences references={getModuleReferences('docs')} title="Navegação Rápida" />
+        </div>
       </div>
     </PageEntry>
   );

@@ -1,5 +1,18 @@
-import { loaders } from '@/core/loaders'
+import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter'
+import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository'
+import { filterGraph, searchNodes as serviceSearch, findNodeById } from '@/core/knowledge/services/node-service'
 import { entityColors } from '@/core/types'
+import type { KnowledgeNode, KnowledgeEdge } from '@/core/knowledge/types'
+
+let _repo: KnowledgeRepository | null = null
+
+function getRepo(): KnowledgeRepository {
+  if (!_repo) {
+    _repo = new KnowledgeRepository(new MockAdapter())
+    _repo.initialize()
+  }
+  return _repo
+}
 
 export interface GraphNode {
   id: string
@@ -24,147 +37,70 @@ export interface GraphData {
   edges: GraphEdge[]
 }
 
-function buildNodes(): GraphNode[] {
-  const nodes: GraphNode[] = []
-
-  for (const p of loaders.products.getAll()) {
-    nodes.push({
-      id: `product-${p.id}`,
-      type: 'product',
-      label: p.name as string,
-      description: p.shortDescription as string,
-      color: (p.accentColor as string) || entityColors.product,
-      size: 20,
-      url: `/produto/${p.id}/`,
-      group: 'product',
-    })
-    for (const skill of (p.stack as string[]) || []) {
-      if (!nodes.find(n => n.id === `skill-${skill}`)) {
-        nodes.push({
-          id: `skill-${skill}`,
-          type: 'skill',
-          label: skill,
-          description: `Tecnologia usada em ${p.name as string}`,
-          color: entityColors.skill,
-          size: 10,
-          url: '',
-          group: 'skill',
-        })
-      }
-    }
+function knowledgeNodeToGraphNode(node: KnowledgeNode): GraphNode {
+  const sizeMap: Record<string, number> = {
+    product: 20,
+    project: 16,
+    decision: 14,
+    document: 12,
+    event: 12,
+    skill: 10,
+    metric: 8,
   }
 
-  for (const p of loaders.projects.getAll()) {
-    nodes.push({
-      id: `project-${p.id}`,
-      type: 'project',
-      label: p.title as string,
-      description: p.context as string,
-      color: entityColors.project,
-      size: 16,
-      url: `/projeto/${p.id}/`,
-      group: 'project',
-    })
-    for (const skill of (p.stack as string[]) || []) {
-      if (!nodes.find(n => n.id === `skill-${skill}`)) {
-        nodes.push({
-          id: `skill-${skill}`,
-          type: 'skill',
-          label: skill,
-          description: 'Skill',
-          color: entityColors.skill,
-          size: 10,
-          url: '',
-          group: 'skill',
-        })
-      }
-    }
+  const colorMap: Record<string, string> = {
+    product: entityColors.product,
+    project: entityColors.project,
+    decision: entityColors.decision,
+    document: entityColors.doc,
+    event: entityColors.timeline,
+    skill: entityColors.skill,
+    metric: entityColors.metric,
   }
 
-  for (const d of loaders.decisions.getAll()) {
-    const label = d.decision as string
-    nodes.push({
-      id: `decision-${d.id}`,
-      type: 'decision',
-      label: label.length > 40 ? label.substring(0, 40) + '…' : label,
-      description: d.context as string,
-      color: entityColors.decision,
-      size: 14,
-      url: `/decisoes/#${d.id}`,
-      group: 'decision',
-    })
+  let url = ''
+  switch (node.type) {
+    case 'product':
+      url = `/produto/${node.id.replace('product-', '')}/`
+      break
+    case 'project':
+      url = `/projeto/${node.id.replace('project-', '')}/`
+      break
+    case 'document':
+      url = `/docs/${node.id.replace('document-', '')}/`
+      break
+    case 'event':
+      url = '/command-center/timeline/'
+      break
+    default:
+      url = ''
   }
 
-  for (const doc of loaders.docs.getAll()) {
-    nodes.push({
-      id: `doc-${doc.id}`,
-      type: 'doc',
-      label: doc.title as string,
-      description: doc.description as string,
-      color: entityColors.doc,
-      size: 12,
-      url: `/docs/${doc.id}/`,
-      group: 'doc',
-    })
+  return {
+    id: node.id,
+    type: node.type,
+    label: node.title,
+    description: node.description,
+    color: (node.metadata?.accentColor as string) || colorMap[node.type] || '#9AA6B8',
+    size: sizeMap[node.type] || 10,
+    url,
+    group: node.type,
   }
-
-  for (const t of loaders.timeline.getAll()) {
-    nodes.push({
-      id: `timeline-${t.year}`,
-      type: 'timeline',
-      label: `${t.year} — ${t.milestone as string}`,
-      description: t.description as string,
-      color: entityColors.timeline,
-      size: 12,
-      url: '/command-center/timeline/',
-      group: 'timeline',
-    })
-  }
-
-  return nodes
 }
 
-function buildEdges(nodes: GraphNode[]): GraphEdge[] {
-  const edges: GraphEdge[] = []
-
-  for (const p of loaders.products.getAll()) {
-    const productNode = nodes.find(n => n.id === `product-${p.id}`)
-    if (!productNode) continue
-    for (const skill of (p.stack as string[]) || []) {
-      const skillNode = nodes.find(n => n.id === `skill-${skill}`)
-      if (skillNode) {
-        edges.push({ source: productNode.id, target: skillNode.id, type: 'uses', label: 'usa' })
-      }
-    }
+function ksEdgeToGraphEdge(edge: KnowledgeEdge): GraphEdge {
+  return {
+    source: edge.source,
+    target: edge.target,
+    type: edge.type,
+    label: edge.label,
   }
-
-  for (const proj of loaders.projects.getAll()) {
-    const projectNode = nodes.find(n => n.id === `project-${proj.id}`)
-    if (!projectNode) continue
-    for (const skill of (proj.stack as string[]) || []) {
-      const skillNode = nodes.find(n => n.id === `skill-${skill}`)
-      if (skillNode) {
-        edges.push({ source: projectNode.id, target: skillNode.id, type: 'uses', label: 'usa' })
-      }
-    }
-    for (const decId of (proj.decisions as string[]) || []) {
-      const decisionNode = nodes.find(n => n.id === `decision-${decId}`)
-      if (decisionNode) {
-        edges.push({ source: projectNode.id, target: decisionNode.id, type: 'generates', label: 'gerou' })
-      }
-    }
-  }
-
-  const deduped = edges.filter(
-    (e, i, arr) => i === arr.findIndex(e2 => e2.source === e.source && e2.target === e.target)
-  )
-
-  return deduped
 }
 
 export function getGraphData(): GraphData {
-  const nodes = buildNodes()
-  const edges = buildEdges(nodes)
+  const repo = getRepo()
+  const nodes = repo.getAllNodes().map(knowledgeNodeToGraphNode)
+  const edges = repo.getAllEdges().map(ksEdgeToGraphEdge)
   return { nodes, edges }
 }
 
@@ -173,30 +109,22 @@ export function getFullGraph(): GraphData {
 }
 
 export function getFilteredGraph(types: string[]): GraphData {
-  const all = getGraphData()
-  const activeIds = new Set(all.nodes.filter(n => types.includes(n.type)).map(n => n.id))
-
-  const connectedIds = new Set(activeIds)
-  for (const edge of all.edges) {
-    if (activeIds.has(edge.source) && !activeIds.has(edge.target)) connectedIds.add(edge.target)
-    if (activeIds.has(edge.target) && !activeIds.has(edge.source)) connectedIds.add(edge.source)
-  }
-
+  const repo = getRepo()
+  const filtered = filterGraph(repo, types)
   return {
-    nodes: all.nodes.filter(n => connectedIds.has(n.id)),
-    edges: all.edges.filter(e => connectedIds.has(e.source) && connectedIds.has(e.target)),
+    nodes: filtered.nodes.map(knowledgeNodeToGraphNode),
+    edges: filtered.edges.map(ksEdgeToGraphEdge),
   }
 }
 
 export function getNodeConnections(nodeId: string): GraphEdge[] {
-  const all = getGraphData()
-  return all.edges.filter(e => e.source === nodeId || e.target === nodeId)
+  const repo = getRepo()
+  const edges = repo.getIndex().getEdges(nodeId)
+  return edges.map(ksEdgeToGraphEdge)
 }
 
 export function searchNodes(query: string): GraphNode[] {
-  const all = getGraphData()
-  const q = query.toLowerCase()
-  return all.nodes.filter(
-    n => n.label.toLowerCase().includes(q) || n.description.toLowerCase().includes(q)
-  )
+  const repo = getRepo()
+  const results = serviceSearch(repo, query)
+  return results.map(knowledgeNodeToGraphNode)
 }

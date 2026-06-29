@@ -15,13 +15,17 @@ interface ConnectionPathProps {
   delay?: number;
   /** Stable unique key for gradient (edge.source+target) */
   gradientKey: string;
+  /** Show directional arrowhead */
+  showArrow?: boolean;
+  /** Enable flow animation (hover-driven) */
+  hoverFlow?: boolean;
 }
 
 const INTENSITY_CONFIG = {
-  dim: { strokeWidth: 0.5, opacity: 0.08, dash: undefined as string | undefined, duration: 800 },
-  normal: { strokeWidth: 0.75, opacity: 0.25, dash: undefined, duration: 800 },
-  highlight: { strokeWidth: 1.5, opacity: 0.75, dash: undefined, duration: 400 },
-  path: { strokeWidth: 2, opacity: 0.9, dash: '6 4', duration: 400 },
+  dim: { strokeWidth: 0.5, opacity: 0.08, dash: undefined as string | undefined, duration: 800, glow: false },
+  normal: { strokeWidth: 0.75, opacity: 0.25, dash: undefined, duration: 800, glow: false },
+  highlight: { strokeWidth: 1.5, opacity: 0.7, dash: undefined, duration: 400, glow: true },
+  path: { strokeWidth: 2, opacity: 0.9, dash: '5 3', duration: 400, glow: true },
 } as const;
 
 /**
@@ -38,23 +42,25 @@ export function ConnectionPath({
   targetColor,
   delay = 0,
   gradientKey,
+  showArrow = false,
+  hoverFlow = false,
 }: ConnectionPathProps) {
   const cfg = INTENSITY_CONFIG[intensity];
 
-  // Stable gradient ID — never changes between renders
   const gradientId = `eg-${gradientKey}`;
 
-  // Midpoint with perpendicular offset for organic curve
-  const midX = (x1 + x2) / 2;
-  const midY = (y1 + y2) / 2;
   const dx = x2 - x1;
   const dy = y2 - y1;
   const dist = Math.sqrt(dx * dx + dy * dy);
-  const offset = Math.min(dist * 0.04, 12);
+  const offset = Math.min(dist * 0.06, 16);
   const perpX = dist > 0.5 ? (-dy / dist) * offset : 0;
   const perpY = dist > 0.5 ? (dx / dist) * offset : 0;
+  const midX = (x1 + x2) / 2;
+  const midY = (y1 + y2) / 2;
   const cx = midX + perpX;
   const cy = midY + perpY;
+
+  const edgeClass = ['kg-edge-body', hoverFlow ? 'kg-lh-edge-flow' : ''].filter(Boolean).join(' ')
 
   return (
     <g>
@@ -69,12 +75,24 @@ export function ConnectionPath({
           <stop offset="100%" stopColor={targetColor} stopOpacity={cfg.opacity} />
         </linearGradient>
       </defs>
+      {cfg.glow && intensity !== 'dim' && (
+        <path
+          d={`M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`}
+          stroke={intensity === 'path' ? '#4F8CFF' : targetColor}
+          strokeWidth={cfg.strokeWidth * 3}
+          fill="none"
+          opacity={0.1}
+          style={{ filter: 'blur(3px)' }}
+        />
+      )}
       <motion.path
         d={`M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`}
         stroke={intensity === 'path' ? '#4F8CFF' : `url(#${gradientId})`}
         strokeWidth={cfg.strokeWidth}
-        strokeDasharray={cfg.dash}
+        strokeDasharray={hoverFlow ? undefined : cfg.dash}
+        className={edgeClass}
         fill="none"
+        markerEnd={showArrow ? 'url(#kg-arrow)' : undefined}
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{
           pathLength: 1,

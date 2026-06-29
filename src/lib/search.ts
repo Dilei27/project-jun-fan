@@ -1,10 +1,21 @@
-import { getProducts, getProjects, getDocs, getDecisions } from './content';
+import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter';
+import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository';
 
-interface SearchResult {
+export interface SearchResult {
   type: string;
   title: string;
   url: string;
   snippet: string;
+}
+
+let _repo: KnowledgeRepository | null = null;
+
+function getRepo(): KnowledgeRepository {
+  if (!_repo) {
+    _repo = new KnowledgeRepository(new MockAdapter());
+    _repo.initialize();
+  }
+  return _repo;
 }
 
 export function searchAll(query: string): SearchResult[] {
@@ -12,69 +23,58 @@ export function searchAll(query: string): SearchResult[] {
   if (!q) return [];
   const results: SearchResult[] = [];
 
-  const products = getProducts();
-  for (const p of products) {
-    if (
-      p.name.toLowerCase().includes(q) ||
-      p.shortDescription.toLowerCase().includes(q) ||
-      p.stack.some(s => s.toLowerCase().includes(q))
-    ) {
+  try {
+    const repo = getRepo();
+    const nodes = repo.getIndex().search(q);
+
+    for (const node of nodes) {
+      let url = '';
+      switch (node.type) {
+        case 'product':
+          url = `/produto/${node.id.replace('product-', '')}/`;
+          break;
+        case 'project':
+          url = `/projeto/${node.id.replace('project-', '')}/`;
+          break;
+        case 'document':
+          url = `/docs/${node.id.replace('document-', '')}/`;
+          break;
+        case 'decision':
+          url = `/decisoes/#${node.id.replace('decision-', '')}`;
+          break;
+        case 'event':
+          url = '/command-center/timeline/';
+          break;
+        case 'skill':
+          url = '/command-center/';
+          break;
+        case 'metric':
+          url = '/command-center/';
+          break;
+        default:
+          url = '/';
+      }
+
+      const typeLabel: Record<string, string> = {
+        product: 'produto',
+        project: 'projeto',
+        decision: 'decisão técnica',
+        document: 'documentação',
+        event: 'marco',
+        skill: 'skill',
+        metric: 'métrica',
+      };
+
       results.push({
-        type: 'produto',
-        title: p.name,
-        url: `/produto/${p.id}/`,
-        snippet: p.shortDescription,
+        type: typeLabel[node.type] || node.type,
+        title: node.title,
+        url,
+        snippet: node.description,
       });
     }
-  }
 
-  const projects = getProjects();
-  for (const p of projects) {
-    if (
-      p.title.toLowerCase().includes(q) ||
-      p.context.toLowerCase().includes(q) ||
-      p.stack.some(s => s.toLowerCase().includes(q))
-    ) {
-      results.push({
-        type: 'projeto',
-        title: p.title,
-        url: `/projeto/${p.id}/`,
-        snippet: p.context,
-      });
-    }
+    return results;
+  } catch {
+    return results;
   }
-
-  const docs = getDocs();
-  for (const d of docs) {
-    if (
-      d.title.toLowerCase().includes(q) ||
-      d.description.toLowerCase().includes(q) ||
-      d.sections.some(s => s.heading.toLowerCase().includes(q) || s.content.toLowerCase().includes(q))
-    ) {
-      results.push({
-        type: 'documentação',
-        title: d.title,
-        url: `/docs/${d.id}/`,
-        snippet: d.description,
-      });
-    }
-  }
-
-  const decisions = getDecisions();
-  for (const d of decisions) {
-    if (
-      d.decision.toLowerCase().includes(q) ||
-      d.context.toLowerCase().includes(q) ||
-      d.rationale.toLowerCase().includes(q)
-    ) {
-      results.push({
-        type: 'decisão técnica',
-        title: d.decision,
-        url: `/decisoes/#${d.id}`,
-        snippet: d.context,
-      });
-    }
-  }
-
-  return results;
 }

@@ -21,6 +21,15 @@ export function AtmosphereBackground() {
       aria-hidden
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
     >
+      {/* Camada 1b: Ambient drift — gradiente que respira lentamente */}
+      <div
+        className="absolute inset-0 jf-ambient-drift"
+        style={{
+          background:
+            'radial-gradient(ellipse 100% 60% at 50% 50%, rgba(79, 140, 255, 0.03), transparent 50%)',
+        }}
+      />
+
       {/* Camada 2: Top ambient light — luz que vem "do céu" */}
       <div
         className="absolute inset-0"
