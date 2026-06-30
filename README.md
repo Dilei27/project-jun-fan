@@ -1,5 +1,7 @@
 # Project Jun Fan
 
+[![Deployed to GitHub Pages](https://img.shields.io/badge/🌐%20GitHub%20Pages-online-2ea44f?style=for-the-badge)](https://dilei27.github.io/project-jun-fan/)
+
 **Advancing Frontiers**
 
 **Absorb. Refine. Build.**
