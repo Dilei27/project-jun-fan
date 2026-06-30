@@ -1,5 +1,6 @@
 export const navLinks = [
   { href: '/', label: 'Início' },
+  { href: '/profile/', label: 'Profile' },
   { href: '/command-center/', label: 'Command Center' },
   { href: '/knowledge-graph/', label: 'Graph' },
   { href: '/docs/', label: 'Documentação' },
