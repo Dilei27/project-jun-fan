@@ -25,12 +25,12 @@ export class MockAdapter implements IKnowledgeAdapter {
     const decisions: KnowledgeDecision[] = []
     const metrics: KnowledgeMetric[] = []
 
-    const productNodes = this.loadProducts(nodes, edges, documents)
+    this.loadProducts(nodes, edges)
     this.loadProjects(nodes, edges)
     const decisionNodes = this.loadDecisions(nodes, decisions)
     this.loadDocuments(docsData as JsonRecord[], nodes, documents, decisionNodes)
     this.loadTimeline(nodes)
-    this.loadSkills(nodes, edges)
+    this.loadSkills(nodes)
     this.loadMetricNodes(nodes, metrics)
 
     const modules = this.buildModules(nodes)
@@ -41,7 +41,6 @@ export class MockAdapter implements IKnowledgeAdapter {
   private loadProducts(
     nodes: KnowledgeNode[],
     edges: KnowledgeEdge[],
-    documents: KnowledgeDocument[],
   ): string[] {
     const productIds: string[] = []
     for (const p of productsData as JsonRecord[]) {
@@ -264,7 +263,7 @@ export class MockAdapter implements IKnowledgeAdapter {
     }
   }
 
-  private loadSkills(nodes: KnowledgeNode[], edges: KnowledgeEdge[]): void {
+  private loadSkills(nodes: KnowledgeNode[]): void {
     const seen = new Set<string>()
     for (const cat of skillsData as JsonRecord[]) {
       const category = cat.area as string

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { getClusterForType, CLUSTERS, getClusterBounds } from '../lib/cluster';
+import { CLUSTERS, getClusterBounds } from '../lib/cluster';
 import type { GraphNode } from '@/core';
 
 export function ClusterContours({

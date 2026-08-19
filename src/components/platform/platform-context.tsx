@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
 import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter';
 import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository';
-import { getNodeStatistics, getEdgeStatistics, getModuleStatistics } from '@/core/knowledge/services/statistics-service';
+import { getNodeStatistics, getEdgeStatistics } from '@/core/knowledge/services/statistics-service';
 
 export interface BreadcrumbItem {
   label: string
@@ -71,7 +71,6 @@ function computeStatus(): PlatformStatus {
     repo.initialize();
     const nodeStats = getNodeStatistics(repo);
     const edgeStats = getEdgeStatistics(repo);
-    const moduleStats = getModuleStatistics(repo);
     const decisionCount = repo.getIndex().getByType('decision').length;
     const totalNodes = nodeStats.totalNodes;
     const healthyCount = nodeStats.byHealth['healthy'] ?? 0;

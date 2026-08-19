@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Briefcase, ExternalLink } from 'lucide-react';
+import { ChevronDown, Briefcase } from 'lucide-react';
 import { motion as m } from '@/design-system/motion';
 import { PROFILE } from '../data/profile';
 

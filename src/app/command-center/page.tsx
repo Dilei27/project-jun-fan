@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getProducts, getProjects, getTimeline, getDecisions } from '@/lib/content';
+import { getProducts, getProjects } from '@/lib/content';
 import { ProductGateway } from '@/components/cards/product-card';
 import { FeaturedProjects } from '@/components/cards/project-card';
 import { AIInsightCards } from '@/components/cards/ai-insight-card';
@@ -28,14 +28,11 @@ import { usePlatform } from '@/components/platform/platform-context';
 export default function CommandCenterPage() {
   const { setCurrentModule } = usePlatform();
   useEffect(() => { setCurrentModule('command-center'); }, [setCurrentModule]);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const products = getProducts();
   const projects = getProjects();
-  const timeline = getTimeline();
-  const decisions = getDecisions();
-
   if (error) {
     return (
       <div className="max-w-[1440px] mx-auto px-6 py-10">

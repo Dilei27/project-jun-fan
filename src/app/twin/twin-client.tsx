@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Box, GitBranch, Shield, FileText, Beaker, ArrowRight, Search, AlertTriangle, Activity } from 'lucide-react';
+import { Box, GitBranch, Shield, FileText, Beaker, ArrowRight, Search, AlertTriangle } from 'lucide-react';
 import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter';
 import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository';
 import { TwinEngine, ImpactEngine, HealthEngine } from '@/core/twin/engine';
@@ -10,7 +10,6 @@ import type { TwinData } from '@/core/twin/engine';
 import type { EngineeringComponent } from '@/core/twin/types/component';
 import { CrossReferences, getModuleReferences } from '@/components/platform/cross-references';
 import { usePlatform } from '@/components/platform/platform-context';
-import { motion as m } from '@/design-system/motion';
 
 const healthColor: Record<string, string> = {
   excellent: '#22C55E',

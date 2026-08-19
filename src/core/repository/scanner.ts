@@ -1,4 +1,4 @@
-import type { Repository, Module, Folder, File, ScanResult, FileLanguage, FileCategory, ModuleType } from './types'
+import type { Repository, Module, Folder, File, ScanResult } from './types'
 
 /* ─── Interface ─── */
 
@@ -155,11 +155,11 @@ export class MockScanner implements RepositoryScanner {
 
   async scanRepository(repo: Repository): Promise<ScanResult> {
     await this.simulateDelay()
-    const modules = await this.scanModules(repo)
+    const modules = await this.scanModules()
     const allFolders: Folder[] = []
     const allFiles: File[] = []
-    for (const mod of modules) {
-      const folders = await this.scanFolders(mod)
+    for (let i = 0; i < modules.length; i++) {
+      const folders = await this.scanFolders()
       allFolders.push(...folders)
       for (const f of folders) {
         allFiles.push(...f.files)
@@ -176,17 +176,17 @@ export class MockScanner implements RepositoryScanner {
     }
   }
 
-  async scanModules(_repo: Repository): Promise<Module[]> {
+  async scanModules(): Promise<Module[]> {
     await this.simulateDelay()
     return MOCK_MODULES.map(m => ({ ...m }))
   }
 
-  async scanFolders(_module: Module): Promise<Folder[]> {
+  async scanFolders(): Promise<Folder[]> {
     await this.simulateDelay()
     return MOCK_FOLDERS.map(f => this.cloneFolder(f))
   }
 
-  async scanFiles(_folder: Folder): Promise<File[]> {
+  async scanFiles(): Promise<File[]> {
     await this.simulateDelay()
     return [...allFiles]
   }

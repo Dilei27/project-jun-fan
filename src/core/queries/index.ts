@@ -1,6 +1,6 @@
 import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter'
 import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository'
-import { filterGraph, searchNodes as serviceSearch, findNodeById } from '@/core/knowledge/services/node-service'
+import { filterGraph, searchNodes as serviceSearch } from '@/core/knowledge/services/node-service'
 import { entityColors } from '@/core/types'
 import type { KnowledgeNode, KnowledgeEdge } from '@/core/knowledge/types'
 

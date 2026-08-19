@@ -46,10 +46,10 @@ export function useExploration(nodes: GraphNode[], edges: GraphEdge[]) {
   )
 
   // Cache derived data reactively — only recompute when engine state changes
-  const visibleNodeIds = useMemo(() => engine.visibleNodeIds, [state, engine])
-  const filteredNodes = useMemo(() => engine.filteredNodes, [state, engine])
-  const filteredEdges = useMemo(() => engine.filteredEdges, [state, engine])
-  const nodeContext = useMemo(() => engine.nodeContext, [state, engine])
+  const visibleNodeIds = engine.visibleNodeIds
+  const filteredNodes = engine.filteredNodes
+  const filteredEdges = engine.filteredEdges
+  const nodeContext = engine.nodeContext
 
   return useMemo(() => ({
     state,

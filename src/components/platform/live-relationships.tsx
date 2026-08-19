@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GitBranch, FileText, Shield, Siren, ChevronDown, Share2 } from 'lucide-react';
+import { ChevronDown, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter';
 import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository';

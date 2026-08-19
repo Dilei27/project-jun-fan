@@ -1,4 +1,4 @@
-import type { RelationshipType, NodeType } from '../knowledge/types'
+import type { RelationshipType } from '../knowledge/types'
 
 /* ─── Enums ─── */
 

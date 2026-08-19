@@ -60,7 +60,7 @@ export function ExplorationHistory() {
               </span>
             </div>
             <div className="max-h-48 overflow-y-auto py-1">
-              {navigationHistory.slice(-20).reverse().map((entry, i) => (
+              {navigationHistory.slice(-20).reverse().map(entry => (
                 <Link
                   key={`${entry.href}-${entry.timestamp}`}
                   href={entry.href}

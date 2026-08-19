@@ -15,7 +15,6 @@ export function findRelatedDocuments(
     if (doc) results.push(doc)
   }
 
-  const documents = repo.getAllDocuments()
   const nodeTypeDocIds = new Set(
     repo
       .getAllNodes()

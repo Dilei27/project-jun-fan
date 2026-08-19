@@ -35,7 +35,7 @@ import { ContextNavigator } from './components/context-navigator';
 import { ContextActions } from './components/context-actions';
 import { ReplayBar } from './components/replay-bar';
 import { useLivingHover } from './hooks/use-living-hover';
-import { LH, shouldEdgeFlow, getNodeHoverClass } from './lib/living-hover';
+import { shouldEdgeFlow, getNodeHoverClass } from './lib/living-hover';
 
 const CANVAS_WIDTH = 1400;
 const CANVAS_HEIGHT = 900;
@@ -44,13 +44,6 @@ const FILTER_TYPES = [
   'mission', 'product', 'project', 'agent', 'architecture',
   'decision', 'doc', 'timeline', 'metric', 'technology', 'lab', 'skill',
 ] as const;
-
-const SEED_TYPES = ['mission', 'product'];
-
-const DEBUG_GRAPH = true;
-function debugLog(...args: unknown[]) {
-  if (DEBUG_GRAPH) console.log('[KG]', ...args);
-}
 
 type StoryPhase = 'idle' | 'clusters' | 'connections' | 'done';
 
@@ -254,14 +247,6 @@ export function KnowledgeExplorer() {
     exploration.selectEdge(source, target);
   }, [exploration]);
 
-  const handlePanelNavigate = useCallback((node: GraphNode) => {
-    exploration.selectNode(node.id);
-    exploration.expandNode(node.id);
-    setSelectedSecondary(null);
-    const pos = positions.get(node.id);
-    if (pos) travelTo(computeFocusTarget(pos, canvasSize, 1.4), 0.9);
-  }, [positions, canvasSize, travelTo, exploration]);
-
   const handleSearch = useCallback((q: string) => {
     setSearchQuery(q);
     if (!q.trim()) return;
@@ -301,8 +286,6 @@ export function KnowledgeExplorer() {
     const target = computeFocusTarget({ x: vx, y: vy }, canvasSize, 1);
     travelTo(target, 0.5);
   }, [canvasSize, travelTo]);
-
-  const [replayActive, setReplayActive] = useState(false);
 
   const handleReplayCamera = useCallback((target: { clusterId: string; zoom?: number }) => {
     const clusterPositions = positions;
@@ -1050,7 +1033,7 @@ export function KnowledgeExplorer() {
       {/* Replay Bar */}
       <ReplayBar
         onCameraTarget={handleReplayCamera}
-        onReplayActive={setReplayActive}
+        onReplayActive={() => {}}
       />
 
       {/* Bottom HUD: stats */}

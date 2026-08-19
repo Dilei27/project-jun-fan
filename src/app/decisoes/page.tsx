@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, GitBranch, FileText, ArrowRight, Calendar, Tag } from 'lucide-react';
+import { Shield, GitBranch, FileText, Calendar, Tag } from 'lucide-react';
 import Link from 'next/link';
 import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter';
 import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository';
@@ -96,7 +96,7 @@ export default function DecisionsPage() {
             }}
             className="space-y-4"
           >
-            {decisions.map((d, i) => (
+            {decisions.map(d => (
               <motion.div
                 key={d.id}
                 id={d.id}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Activity, GitBranch, FileText, Shield, BarChart3, RefreshCw, CheckCircle2,

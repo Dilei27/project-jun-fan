@@ -1,6 +1,5 @@
-import type { EngineeringReview, ReviewFinding, ReviewCategory, ReviewEvidence } from './types'
-import type { EngineeringScore, ReviewCategoryScore } from './types'
-import type { RuleContext, ReviewRule } from './rules'
+import type { EngineeringReview, ReviewFinding } from './types'
+import type { RuleContext } from './rules'
 import { ruleRegistry, registerDefaultRules } from './rules'
 import { RecommendationEngine, defaultRecommendationEngine } from './recommendation-engine'
 import { calculateScores, buildCategoryScores, MOCK_ENGINEERING_SCORE } from './scoring'

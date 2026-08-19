@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
-import { motion as m } from '@/design-system/motion';
 import type { ReactNode } from 'react';
 
 export interface StatCardData {

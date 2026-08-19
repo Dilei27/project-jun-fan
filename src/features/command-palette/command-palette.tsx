@@ -33,7 +33,7 @@ export function CommandPalette() {
   const [mode, setMode] = useState<'search' | 'navigate'>('search');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const searchResults = query.trim() ? searchAll(query) : [];
+  const searchResults = useMemo(() => query.trim() ? searchAll(query) : [], [query]);
   const filteredActions = useMemo(() => {
     if (!query.trim()) return QUICK_ACTIONS;
     const q = query.toLowerCase();

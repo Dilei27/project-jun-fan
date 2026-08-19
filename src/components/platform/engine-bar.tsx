@@ -3,10 +3,9 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Brain, GitBranch, FileText, Shield, Activity, ChevronDown,
+  Brain, Shield, ChevronDown,
   Layers, GitFork, Gauge,
 } from 'lucide-react';
-import { motion as m } from '@/design-system/motion';
 import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter';
 import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository';
 import { getNodeStatistics, getEdgeStatistics, getModuleStatistics } from '@/core/knowledge/services/statistics-service';

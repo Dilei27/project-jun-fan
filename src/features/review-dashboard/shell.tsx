@@ -1,20 +1,17 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, RotateCcw, ClipboardCheck } from 'lucide-react';
 import { motion as m } from '@/design-system/motion';
 import { usePlatform } from '@/components/platform/platform-context';
 import {
   ReviewPipeline,
-  RecommendationEngine,
   defaultRecommendationEngine,
-  defaultReviewPipeline,
   reviewHistoryStore,
   MOCK_SNAPSHOTS,
   type EngineeringReview,
   type ReviewEventCallback,
-  type RecommendationEngine as RecommendationEngineType,
 } from '@/core/review';
 import { defaultKnowledgeBuilder, defaultScanner, defaultGraphBuilder, type Repository } from '@/core/repository';
 import { ScoreRadar } from './components/score-radar';
@@ -58,10 +55,10 @@ export function ReviewDashboardShell() {
     setStageLog(prev => [...prev.slice(-99), `${stage}: ${status}${detail ? ` (${JSON.stringify(detail)})` : ''}`])
   }, [])
 
-  const pipeline = new ReviewPipeline({
+  const pipeline = useMemo(() => new ReviewPipeline({
     recommendationEngine: defaultRecommendationEngine,
     onEvent: handleEvent,
-  })
+  }), [handleEvent])
 
   const handleRun = useCallback(async () => {
     setRunning(true)

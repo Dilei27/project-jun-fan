@@ -59,7 +59,6 @@ export function CareerKnowledgeGraph() {
 
         {/* Nodes */}
         {NODES.map((node, i) => {
-          const edgeCount = EDGES.filter(e => e.from === node.id || e.to === node.id).length
           return (
             <motion.g
               key={node.id}

@@ -11,10 +11,6 @@ export interface GraphBuilder {
   fileBelongsToModule(file: File, module: Module): RepoRelationship
 }
 
-function buildId(type: string, a: string, b: string): string {
-  return `rel-${type}-${a}-${b}`
-}
-
 /* ─── Mock Graph Builder ─── */
 
 export class MockGraphBuilder implements GraphBuilder {

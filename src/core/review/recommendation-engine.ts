@@ -1,6 +1,6 @@
 import type {
   ReviewFinding, ReviewRecommendation, ImprovementOpportunity,
-  RecommendationPriority, RecommendationEffort, ReviewCategory,
+  RecommendationPriority, RecommendationEffort,
 } from './types'
 
 /* ─── Improvement logic ─── */

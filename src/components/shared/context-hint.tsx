@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, GitFork, Shield, FileText, BookOpen, Compass } from 'lucide-react';
+import { ArrowRight, Compass } from 'lucide-react';
 import { motion as m } from '@/design-system/motion';
 
 interface Suggestion {
@@ -17,10 +17,6 @@ interface ContextHintProps {
   description: string
   suggestions: Suggestion[]
 }
-
-const ICON_MAP = {
-  Compass, GitFork, Shield, FileText, BookOpen, ArrowRight,
-};
 
 export function ContextHint({ icon: Icon = Compass, title, description, suggestions }: ContextHintProps) {
   return (

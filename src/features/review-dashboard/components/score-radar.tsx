@@ -1,7 +1,7 @@
 'use client';
 
 import type { EngineeringScore, ReviewCategory } from '@/core/review';
-import { REVIEW_CATEGORY_LABELS, REVIEW_CATEGORY_COLORS } from '@/core/review';
+import { REVIEW_CATEGORY_COLORS } from '@/core/review';
 
 interface ScoreRadarProps {
   score: EngineeringScore

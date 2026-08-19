@@ -1,12 +1,11 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, GitFork, Shield, FileText, Gauge, Activity, Wifi,
 } from 'lucide-react';
 import { usePlatform } from './platform-context';
-import { StatusDot } from '@/components/shared/status-dot';
 
 const moduleIcons: Record<string, typeof Brain> = {
   home: Brain,

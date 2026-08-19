@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { Shield, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { motion as m } from '@/design-system/motion';
 import { getDecisions } from '@/lib/content';
 
 const decisionTypes = [

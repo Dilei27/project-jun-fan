@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { getFullGraph } from '@/core';
-import type { GraphNode } from '@/core';
 
 interface Dims {
   vw: number; vh: number;

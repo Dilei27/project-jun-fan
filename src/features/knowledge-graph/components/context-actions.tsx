@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Shield, GitBranch, Crosshair, Expand, Link2 } from 'lucide-react';
+import { FileText, GitBranch, Crosshair, Expand, Link2 } from 'lucide-react';
 
 interface ContextActionsProps {
   actions: Array<{ label: string; action: string; href?: string }>

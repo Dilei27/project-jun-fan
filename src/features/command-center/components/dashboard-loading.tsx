@@ -1,7 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
 function SkeletonBlock({ className = '' }: { className?: string }) {
   return (
     <div

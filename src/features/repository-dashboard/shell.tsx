@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, RotateCcw, Database } from 'lucide-react';
 import { motion as m } from '@/design-system/motion';
@@ -11,10 +11,7 @@ import {
   defaultMetadataProvider,
   defaultKnowledgeBuilder,
   defaultGraphBuilder,
-  defaultPipeline,
   type Repository,
-  type Workspace,
-  type Project,
   type PipelineResult,
   type PipelineEventCallback,
 } from '@/core/repository';
@@ -81,13 +78,13 @@ export function RepositoryDashboardShell() {
     setStageLog(prev => [...prev.slice(-99), `${stage}: ${status}`])
   }, [])
 
-  const pipeline = new AnalysisPipeline({
+  const pipeline = useMemo(() => new AnalysisPipeline({
     scanner: defaultScanner,
     metadata: defaultMetadataProvider,
     knowledgeBuilder: defaultKnowledgeBuilder,
     graphBuilder: defaultGraphBuilder,
     onEvent: handleEvent,
-  })
+  }), [handleEvent])
 
   const handleRun = useCallback(async () => {
     setRunning(true)

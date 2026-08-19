@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { GitBranch, FileText, Shield, PlayCircle, Brain, LayoutDashboard } from 'lucide-react';
-import { motion as m } from '@/design-system/motion';
 
 const actions = [
   { label: 'Knowledge Graph', href: '/knowledge-graph/', icon: GitBranch, color: '#4F8CFF' },

@@ -2,8 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { CheckCircle2, XCircle, Clock, GitPullRequest, ArrowUp } from 'lucide-react';
-import { motion as m } from '@/design-system/motion';
-import type { TimelineEntry } from '@/types';
 import { getTimeline } from '@/lib/content';
 
 interface PipelineTimelineProps {

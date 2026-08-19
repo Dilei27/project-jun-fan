@@ -110,7 +110,7 @@ export const duplicatedKeywordsRule: ReviewRule = {
   description: 'Detecta palavras-chave de teste duplicadas entre arquivos.',
   category: 'qa',
   severity: 'medium',
-  async run(ctx: RuleContext) {
+  async run() {
     return [{
       id: findingId(),
       title: 'Palavras-chave de teste compartilhadas',
@@ -277,7 +277,7 @@ export const brokenRelationshipsRule: ReviewRule = {
   description: 'Detecta referências no grafo de conhecimento que apontam para entidades inexistentes.',
   category: 'knowledge',
   severity: 'medium',
-  async run(ctx: RuleContext) {
+  async run() {
     return [{
       id: findingId(),
       title: 'Relacionamentos órfãos no grafo de conhecimento',
@@ -304,7 +304,7 @@ export const architectureSmellsRule: ReviewRule = {
   description: 'Detecta padrões arquiteturais problemáticos como módulos com responsabilidades misturadas.',
   category: 'architecture',
   severity: 'medium',
-  async run(ctx: RuleContext) {
+  async run() {
     return [{
       id: findingId(),
       title: 'Architecture smells detectados',
@@ -330,7 +330,7 @@ export const deadKnowledgeRule: ReviewRule = {
   description: 'Identifica nós de conhecimento que não são referenciados por nenhum outro nó ou documento.',
   category: 'knowledge',
   severity: 'low',
-  async run(ctx: RuleContext) {
+  async run() {
     return [{
       id: findingId(),
       title: 'Nós de conhecimento sem referências',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback, useEffect, useState } from 'react';
+import { useRef, useCallback } from 'react';
 import { computeMagneticOffset, LIVING_HOVER } from '../lib/living-hover';
 
 /**

@@ -6,7 +6,6 @@ import {
   ArrowRight, GitBranch, Command, Brain, FileText,
   type LucideIcon,
 } from 'lucide-react';
-import { motion as m } from '@/design-system/motion';
 import { StatusDot, type StatusKind } from '@/components/shared/status-dot';
 
 const ICON_MAP: Record<string, LucideIcon> = {

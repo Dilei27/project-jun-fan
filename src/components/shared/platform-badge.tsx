@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { motion as m } from '@/design-system/motion';
 
 export type BadgeKind =
   | 'healthy' | 'degraded' | 'critical'

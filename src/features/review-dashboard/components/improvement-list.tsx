@@ -3,8 +3,8 @@
 import { motion } from 'framer-motion';
 import { TrendingUp, Zap, Clock, Target } from 'lucide-react';
 import { motion as m } from '@/design-system/motion';
-import type { ImprovementOpportunity, ImprovementCategory, ReviewCategory } from '@/core/review';
-import { REVIEW_CATEGORY_COLORS, REVIEW_CATEGORY_LABELS, SEVERITY_COLORS, SEVERITY_LABELS } from '@/core/review';
+import type { ImprovementOpportunity, ImprovementCategory } from '@/core/review';
+import { REVIEW_CATEGORY_COLORS, REVIEW_CATEGORY_LABELS, SEVERITY_COLORS } from '@/core/review';
 
 const categoryConfig: Record<ImprovementCategory, { label: string; icon: React.ReactNode; color: string; description: string }> = {
   high_impact:   { label: 'Alto Impacto',  icon: <TrendingUp size={10} />, color: '#EF4444', description: 'Problemas críticos que afetam toda a plataforma' },
