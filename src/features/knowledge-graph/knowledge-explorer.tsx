@@ -470,8 +470,9 @@ export function KnowledgeExplorer() {
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     livingHover.handleMouseMove(e.clientX, e.clientY)
+    const sim = simRef.current;
+    if (sim) sim.applyMouse(clientToGraph(e.clientX, e.clientY));
     if (dragRef.current) {
-      const sim = simRef.current;
       if (sim && (e.buttons & 1) === 1) {
         const graph = clientToGraph(e.clientX, e.clientY);
         if (graph) {
@@ -840,6 +841,7 @@ export function KnowledgeExplorer() {
             simRef.current?.endDrag(dragRef.current.id);
             dragRef.current = null;
           }
+          simRef.current?.applyMouse(null);
           isDragging.current = false;
           setHoveredNode(null);
           setHoverScreen(null);
@@ -948,8 +950,8 @@ export function KnowledgeExplorer() {
             const labelText = getNodeLabel(node, identity, r);
             const showLabel = identity.labelMode !== 'none' && (
               isHovered || isSelected ||
-              labelLevel >= (identity.labelMode === 'outside' ? 1 : 2) ||
-              degree >= 5
+              degree >= 3 ||
+              labelLevel >= (identity.labelMode === 'outside' ? 1 : 2)
             );
 
             const hoverClass = getNodeHoverClass(isHovered, isNeighbor, isDimmed)

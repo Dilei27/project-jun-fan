@@ -272,6 +272,15 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
+
+  /* Knowledge Graph — neon glow on nodes (Obsidian/Neural style) */
+  .kg-node .kg-lh-shape-group {
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+  .kg-node:hover .kg-lh-shape-group,
+  .kg-node.kg-lh-hover .kg-lh-shape-group {
+    filter: drop-shadow(0 0 10px currentColor);
+  }
   .jf-glass-elevated {
     background: rgba(21, 29, 39, 0.65);
     backdrop-filter: blur(20px);
