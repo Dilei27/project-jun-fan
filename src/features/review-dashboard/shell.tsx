@@ -229,7 +229,7 @@ export function ReviewDashboardShell() {
             {/* Timeline + history */}
             <div className="space-y-4">
               <Timeline snapshots={[...MOCK_SNAPSHOTS, {
-                id: `snapshot-${Date.now()}`,
+                id: `snapshot-${review.id}`,
                 reviewId: review.id,
                 timestamp: review.createdAt,
                 score: review.score,

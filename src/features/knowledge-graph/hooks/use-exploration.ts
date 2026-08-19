@@ -1,17 +1,11 @@
 'use client';
 
-import { useRef, useSyncExternalStore, useCallback, useEffect, useMemo } from 'react';
-import { ExplorationEngine } from '../lib/exploration-engine';
+import { useSyncExternalStore, useCallback, useEffect, useMemo, useState } from 'react';
+import { ExplorationEngine, type FilterCriteria } from '../lib/exploration-engine';
 import type { GraphNode, GraphEdge } from '@/core';
 
 export function useExploration(nodes: GraphNode[], edges: GraphEdge[]) {
-  const engineRef = useRef<ExplorationEngine | null>(null)
-
-  if (!engineRef.current) {
-    engineRef.current = new ExplorationEngine()
-  }
-
-  const engine = engineRef.current
+  const [engine] = useState(() => new ExplorationEngine())
 
   useEffect(() => {
     engine.initialize(nodes, edges)
@@ -38,8 +32,8 @@ export function useExploration(nodes: GraphNode[], edges: GraphEdge[]) {
   const resetExpansion = useCallback(() => engine.resetExpansion(), [engine])
   const focusCluster = useCallback((id: string | null) => engine.focusCluster(id), [engine])
   const selectEdge = useCallback((s: string, t: string) => engine.selectEdge(s, t), [engine])
-  const setFilter = useCallback((key: string, values: string[]) => {
-    engine.setFilter(key as any, values)
+  const setFilter = useCallback((key: keyof FilterCriteria, values: string[]) => {
+    engine.setFilter(key, values)
   }, [engine])
   const resetFilters = useCallback(() => engine.resetFilters(), [engine])
   const getEdgeData = useCallback(
@@ -52,10 +46,10 @@ export function useExploration(nodes: GraphNode[], edges: GraphEdge[]) {
   )
 
   // Cache derived data reactively — only recompute when engine state changes
-  const visibleNodeIds = useMemo(() => engine.visibleNodeIds, [state])
-  const filteredNodes = useMemo(() => engine.filteredNodes, [state])
-  const filteredEdges = useMemo(() => engine.filteredEdges, [state])
-  const nodeContext = useMemo(() => engine.nodeContext, [state])
+  const visibleNodeIds = useMemo(() => engine.visibleNodeIds, [state, engine])
+  const filteredNodes = useMemo(() => engine.filteredNodes, [state, engine])
+  const filteredEdges = useMemo(() => engine.filteredEdges, [state, engine])
+  const nodeContext = useMemo(() => engine.nodeContext, [state, engine])
 
   return useMemo(() => ({
     state,

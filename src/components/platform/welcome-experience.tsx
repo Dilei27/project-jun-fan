@@ -57,15 +57,16 @@ const STEPS: Step[] = [
 export function WelcomeExperience() {
   const [visible, setVisible] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
-  const [dismissed, setDismissed] = useState(true);
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem(STORAGE_KEY) === 'true';
+  });
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) {
-      setDismissed(false);
-      setTimeout(() => setVisible(true), 800);
-    }
-  }, []);
+    if (dismissed) return;
+    const timer = setTimeout(() => setVisible(true), 800);
+    return () => clearTimeout(timer);
+  }, [dismissed]);
 
   const handleDismiss = () => {
     setVisible(false);

@@ -76,10 +76,10 @@ export function KnowledgeExplorer() {
   const [introPhase, setIntroPhase] = useState<IntroPhase>('ambient');
   const [revealedWaves, setRevealedWaves] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [graphError, setGraphError] = useState<string | null>(null);
   const [showMiniMap, setShowMiniMap] = useState(false);
   const [storyPhase, setStoryPhase] = useState<StoryPhase>('idle');
   const [storyClusterIndex, setStoryClusterIndex] = useState(0);
+  const [cameraSnapshot, setCameraSnapshot] = useState<CameraTarget | null>(null);
 
   /* ─── Refs ─── */
   const svgRef = useRef<SVGSVGElement>(null);
@@ -134,13 +134,9 @@ export function KnowledgeExplorer() {
     }
   }, [data]);
 
-  useLayoutEffect(() => {
-    if (data.nodes.length > 0 && positions.size === 0) {
-      setGraphError('Falha ao processar layout do grafo.');
-    } else {
-      setGraphError(null);
-    }
-  }, [data.nodes.length, positions.size]);
+  const graphError = data.nodes.length > 0 && positions.size === 0
+    ? 'Falha ao processar layout do grafo.'
+    : null;
 
   const canvasSize = useMemo(() => ({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }), []);
 
@@ -165,6 +161,7 @@ export function KnowledgeExplorer() {
       cameraRef.current.x = start.x + (target.x - start.x) * ease;
       cameraRef.current.y = start.y + (target.y - start.y) * ease;
       cameraRef.current.zoom = start.zoom + (target.zoom - start.zoom) * ease;
+      setCameraSnapshot({ ...cameraRef.current });
       updateTransform();
       if (t < 1) animFrameRef.current = requestAnimationFrame(step);
     };
@@ -174,6 +171,7 @@ export function KnowledgeExplorer() {
   const setCameraImmediate = useCallback((target: CameraTarget) => {
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     cameraRef.current = { ...target };
+    setCameraSnapshot({ ...target });
     updateTransform();
   }, [updateTransform]);
 
@@ -411,6 +409,7 @@ export function KnowledgeExplorer() {
       const scaleFactor = svg ? svg.clientWidth / CANVAS_WIDTH : 1;
       cameraRef.current.x = dragStartRef.current.panX + dx / scaleFactor;
       cameraRef.current.y = dragStartRef.current.panY + dy / scaleFactor;
+      setCameraSnapshot({ ...cameraRef.current });
       updateTransform();
     } else if (hoveredNode && svgRef.current) {
       const rect = svgRef.current.getBoundingClientRect();
@@ -474,7 +473,7 @@ export function KnowledgeExplorer() {
       className={`relative w-full h-full overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}
       style={{ background: 'rgb(7, 10, 18)' }}
     >
-      {hasError && <KGError message={graphError!} onRetry={() => setGraphError(null)} />}
+      {hasError && <KGError message={graphError!} onRetry={() => {}} />}
       <KGLoading visible={false} />
 
       {/* Ambient glow */}
@@ -1039,7 +1038,7 @@ export function KnowledgeExplorer() {
             <MiniMap
               nodes={visibleNodes}
               positions={positions}
-              camera={cameraRef.current}
+              camera={cameraSnapshot ?? initialFit}
               canvasWidth={CANVAS_WIDTH}
               canvasHeight={CANVAS_HEIGHT}
               onClick={handleMiniMapClick}

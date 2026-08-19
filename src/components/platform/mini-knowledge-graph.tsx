@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -53,45 +52,49 @@ const fallbackNodes: MiniNode[] = [
 
 const fallbackEdges: MiniEdge[] = [];
 
-export function MiniKnowledgeGraph() {
-  const { nodes, edges } = useMemo(() => {
-    try {
-      const repo = new KnowledgeRepository(new MockAdapter());
-      repo.initialize();
-      const modules = repo.getAllModules();
+function buildMiniGraph(): { nodes: MiniNode[]; edges: MiniEdge[] } {
+  try {
+    const repo = new KnowledgeRepository(new MockAdapter());
+    repo.initialize();
+    const modules = repo.getAllModules();
 
-      const moduleNodes: MiniNode[] = modules
-        .filter(m => positions[m.id])
-        .map(m => ({
-          id: m.id,
-          label: m.name,
-          href: m.route,
-          color: m.color,
-          x: positions[m.id].x,
-          y: positions[m.id].y,
-        }));
+    const moduleNodes: MiniNode[] = modules
+      .filter(m => positions[m.id])
+      .map(m => ({
+        id: m.id,
+        label: m.name,
+        href: m.route,
+        color: m.color,
+        x: positions[m.id].x,
+        y: positions[m.id].y,
+      }));
 
-      if (moduleNodes.length === 0) return { nodes: fallbackNodes, edges: fallbackEdges };
+    if (moduleNodes.length === 0) return { nodes: fallbackNodes, edges: fallbackEdges };
 
-      const nodeMap = new Map(moduleNodes.map((n, i) => [n.id, i]));
-      const moduleEdges: MiniEdge[] = [];
+    const nodeMap = new Map(moduleNodes.map((n, i) => [n.id, i]));
+    const moduleEdges: MiniEdge[] = [];
 
-      for (const [fromId, toId] of connections) {
-        const from = nodeMap.get(fromId);
-        const to = nodeMap.get(toId);
-        if (from !== undefined && to !== undefined) {
-          const fromNode = moduleNodes[from];
-          const toNode = moduleNodes[to];
-          const colors = [fromNode.color, toNode.color];
-          moduleEdges.push({ from, to, color: colors[(from + to) % colors.length] });
-        }
+    for (const [fromId, toId] of connections) {
+      const from = nodeMap.get(fromId);
+      const to = nodeMap.get(toId);
+      if (from !== undefined && to !== undefined) {
+        const fromNode = moduleNodes[from];
+        const toNode = moduleNodes[to];
+        const colors = [fromNode.color, toNode.color];
+        moduleEdges.push({ from, to, color: colors[(from + to) % colors.length] });
       }
-
-      return { nodes: moduleNodes, edges: moduleEdges };
-    } catch {
-      return { nodes: fallbackNodes, edges: fallbackEdges };
     }
-  }, []);
+
+    return { nodes: moduleNodes, edges: moduleEdges };
+  } catch {
+    return { nodes: fallbackNodes, edges: fallbackEdges };
+  }
+}
+
+const miniGraph = buildMiniGraph();
+
+export function MiniKnowledgeGraph() {
+  const { nodes, edges } = miniGraph;
 
   return (
     <Link href="/knowledge-graph/" className="block group">

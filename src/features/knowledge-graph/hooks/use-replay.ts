@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useSyncExternalStore, useCallback, useMemo } from 'react';
-import { ReplayEngine, type ReplayCallbacks, type ReplayPlayState, type ReplayEvent, type ReplayStage } from '../lib/replay-engine';
+import { useRef, useSyncExternalStore, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReplayEngine, type ReplayPlayState, type ReplayEvent, type ReplayStage } from '../lib/replay-engine';
 
 export interface ReplayAPI {
   state: ReplayPlayState
@@ -25,13 +25,7 @@ export interface ReplayAPI {
 }
 
 export function useReplay(): ReplayAPI {
-  const engineRef = useRef<ReplayEngine | null>(null)
-
-  if (!engineRef.current) {
-    engineRef.current = new ReplayEngine()
-  }
-
-  const engine = engineRef.current
+  const [engine] = useState(() => new ReplayEngine())
 
   const subscribe = useCallback(
     (fn: () => void) => engine.subscribe(fn),
@@ -55,9 +49,7 @@ export function useReplay(): ReplayAPI {
     onEvent: [],
   })
 
-  // Set up engine callbacks once
-  if (engineRef.current && !('_initialized' in engine)) {
-    (engine as any)._initialized = true
+  useEffect(() => {
     engine.setCallbacks({
       onStageChange: (stage, index) => {
         for (const fn of callbacksRef.current.onStageChange) fn(stage, index)
@@ -71,7 +63,7 @@ export function useReplay(): ReplayAPI {
       onPlayStateChange: () => {},
       onComplete: () => {},
     })
-  }
+  }, [engine])
 
   const api = useMemo<ReplayAPI>(() => ({
     state,

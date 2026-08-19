@@ -9,7 +9,7 @@ import { ReplayTimeline } from './replay-timeline';
 import { ReplayControls } from './replay-controls';
 import { ReplayStoryCard } from './replay-story-card';
 import { ReplayBookmarks } from './replay-bookmarks';
-import type { ReplayEvent, ReplayStage } from '../lib/replay-engine';
+import type { ReplayEvent } from '../lib/replay-engine';
 
 interface ReplayBarProps {
   onCameraTarget: (target: { clusterId: string; zoom?: number }) => void
@@ -28,7 +28,10 @@ export function ReplayBar({ onCameraTarget, onReplayActive }: ReplayBarProps) {
 
   // Camera target from replay engine
   const cameraCallbackRef = useRef(onCameraTarget)
-  cameraCallbackRef.current = onCameraTarget
+
+  useEffect(() => {
+    cameraCallbackRef.current = onCameraTarget
+  }, [onCameraTarget])
 
   useEffect(() => {
     replay.onCameraTarget((target) => {
