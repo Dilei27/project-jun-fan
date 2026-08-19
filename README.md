@@ -121,6 +121,10 @@ docker compose up --build
 | WhatsApp AI Assistant | `#2DD4BF` | Beta |
 | Vigilante AI | `#F97316` | Beta |
 
+## Nota Sobre Produtos Proprietários
+
+Alguns produtos apresentados aqui, incluindo o Vigilante AI, são exibidos apenas como prévia pública. Código-fonte, credenciais, configurações reais, dados de teste, imagens, logs e integrações privadas não fazem parte deste repositório público.
+
 ## Roadmap
 
 | Sprint | Foco |

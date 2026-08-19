@@ -31,14 +31,14 @@
     "id": "vigilante-ai",
     "name": "Vigilante AI",
     "status": "beta",
-    "shortDescription": "Monitoramento inteligente com IA que classifica eventos e reduz alertas inúteis.",
-    "problem": "Câmeras comuns geram alertas inúteis e exigem verificação manual constante.",
-    "solution": "Agente de monitoramento com detecção, classificação IA e alertas inteligentes para pessoa, animal, veículo e movimento irrelevante.",
+    "shortDescription": "MVP local validado para vigilância residencial com detecção de pessoa por IA e alerta via WhatsApp.",
+    "problem": "Câmeras comuns disparam por qualquer movimento e obrigam o usuário a verificar manualmente eventos irrelevantes.",
+    "solution": "Pipeline local que captura movimento, confirma presença humana com IA antes do alerta e envia uma notificação útil no WhatsApp.",
     "accentColor": "#F97316",
-    "stack": ["Python", "OpenCV", "IA", "TypeScript", "Next.js"],
-    "architectureFlow": "Câmera -> Detecção -> Classificação IA -> Regra -> Alerta -> Histórico",
-    "metrics": {"camera": 0, "eventos": 0, "alertas_criticos": 0},
-    "roadmap": ["Feed ao vivo", "Timeline por câmera", "Regras de notificação"],
-    "links": {"docs": "#", "repo": "#"}
+    "stack": ["Python", "Flask", "YOLOv8", "Motion", "Docker", "WhatsApp API"],
+    "architectureFlow": "Movimento -> Snapshot -> IA local -> Regra de alarme -> WhatsApp -> Registro do evento",
+    "metrics": {"mvp_validado": 1, "cameras_mvp": 1, "confianca_teste": 93},
+    "roadmap": ["Câmeras IP/RTSP reais", "Sirene física compartilhada", "Retenção automática de gravações"],
+    "links": {"docs": "/docs/vigilante-ai-preview/", "repo": "#"}
   }
 ]

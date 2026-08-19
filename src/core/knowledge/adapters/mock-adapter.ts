@@ -75,6 +75,7 @@ export class MockAdapter implements IKnowledgeAdapter {
         metadata: {
           accentColor: p.accentColor as string,
           stack,
+          metrics: p.metrics as Record<string, number>,
           architectureFlow: p.architectureFlow as string,
           roadmap: p.roadmap as string[],
           links: p.links as Record<string, string>,

@@ -26,13 +26,13 @@
   {
     "id": "vigilante-ai",
     "title": "Vigilante AI",
-    "context": "Câmeras residenciais geram excesso de alertas inúteis.",
-    "problem": "Usuário precisa verificar manualmente eventos irrelevantes, perdendo tempo e atenção.",
-    "solution": "Sistema de detecção com classificação por IA que distingue pessoa, animal, veículo e sombra.",
-    "stack": ["Python", "OpenCV", "IA", "TensorFlow", "Node.js"],
-    "impact": "Redução de ruído de alertas, priorização de eventos críticos e histórico organizado.",
+    "context": "Prévia pública de um produto proprietário para vigilância residencial inteligente.",
+    "problem": "Alertas de movimento sem inteligência geram ruído e atrasam a resposta a eventos realmente importantes.",
+    "solution": "MVP local com Motion, IA de pessoa, bot Flask e integração WhatsApp para avisar somente quando o evento é relevante.",
+    "stack": ["Python", "Flask", "YOLOv8", "Motion", "Docker", "WhatsApp API"],
+    "impact": "Fluxo local validado com detecção humana, envio de alerta com imagem e controle remoto por comandos no WhatsApp.",
     "status": "em_andamento",
     "decisions": ["Classificação on-device vs cloud", "Política de retenção de evidências"],
-    "links": {"docs": "#", "repo": "#"}
+    "links": {"docs": "/docs/vigilante-ai-preview/", "repo": "#"}
   }
 ]

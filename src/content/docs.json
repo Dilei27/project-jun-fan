@@ -32,6 +32,19 @@
     ]
   },
   {
+    "id": "vigilante-ai-preview",
+    "title": "Vigilante AI: Prévia Pública",
+    "description": "Resumo seguro do MVP local validado, sem código proprietário ou dados sensíveis.",
+    "sections": [
+      {"heading": "Status", "content": "O Vigilante AI possui uma prévia MVP local validada. O fluxo atual detecta movimento pela câmera do notebook, confirma presença humana com IA local e envia alerta com imagem para WhatsApp."},
+      {"heading": "Escopo Público", "content": "Esta página apresenta apenas visão de produto, arquitetura em alto nível e roadmap. Código-fonte, configuração real, tokens, IDs de grupo, imagens capturadas, logs e gravações permanecem privados."},
+      {"heading": "Fluxo Validado", "content": "Movimento detectado -> captura de snapshot -> análise local por IA -> confirmação de pessoa -> regra de alarme -> alerta via WhatsApp -> registro do evento."},
+      {"heading": "Funcionalidades", "content": "Controle por comandos no WhatsApp, grupo dedicado de alertas, webhook sem loop, detecção local de pessoa, captura de imagem e cooldown para evitar rajadas de mensagens."},
+      {"heading": "Próxima Fase", "content": "Instalação de câmeras IP/RTSP reais, integração com sirene física compartilhada e política automática de retenção de gravações."},
+      {"heading": "Confidencialidade", "content": "O código do Vigilante AI é proprietário. Este repositório público funciona como vitrine técnica e não distribui a implementação do produto."}
+    ]
+  },
+  {
     "id": "arquitetura",
     "title": "Arquitetura",
     "description": "Decisões de arquitetura e design do sistema.",
