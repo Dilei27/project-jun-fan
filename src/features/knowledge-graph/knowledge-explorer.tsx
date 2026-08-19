@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
+import { useState, useCallback, useMemo, useLayoutEffect, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Maximize2, Minimize2, Keyboard, X, Map as MapIcon, Play } from 'lucide-react';
 import { getFilteredGraph, getNodeConnections, searchNodes } from '@/core';
 import type { GraphNode, GraphEdge } from '@/core';
 import { motion as m } from '@/design-system/motion';
-import { runSimulation } from './lib/force-simulation';
+import { createLiveSimulation, type LiveSimulation } from './lib/live-simulation';
 import {
   getNodeIdentity,
   getNodeColor,
@@ -110,38 +110,89 @@ export function KnowledgeExplorer() {
     exploration.setFilter('types', activeFilters as unknown as string[])
   }, [activeFilters, exploration]);
 
-  /* ─── Simulation ─── */
-  const positions: Map<string, { x: number; y: number }> = useMemo(() => {
-    try {
-      const simNodes = runSimulation(
-        data.nodes.map(n => ({ id: n.id, type: n.type })),
-        data.edges,
-        { width: CANVAS_WIDTH, height: CANVAS_HEIGHT },
-      );
-      const map = new Map<string, { x: number; y: number }>();
-      simNodes.forEach(n => map.set(n.id, { x: n.x, y: n.y }));
-      return map;
-    } catch (err) {
-      console.error('[KG] simulation error:', err);
-      return new Map();
-    }
-  }, [data]);
+  /* ─── Live simulation (Obsidian-style physics) ─── */
+  const [positions, setPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
+  const [labelLevel, setLabelLevel] = useState(0);
+  const [simFailed, setSimFailed] = useState(false);
+  const simRef = useRef<LiveSimulation | null>(null);
+  const dragRef = useRef<{ id: string; moved: boolean; startX: number; startY: number } | null>(null);
+  const suppressClickRef = useRef(false);
+  const positionsRef = useRef<Map<string, { x: number; y: number }>>(new Map());
 
-  const graphError = data.nodes.length > 0 && positions.size === 0
+  const nodeById = useMemo(() => {
+    const map = new Map<string, GraphNode>();
+    for (const node of data.nodes) map.set(node.id, node);
+    return map;
+  }, [data.nodes]);
+
+  const nodeDegree = useMemo(() => {
+    const degree = new Map<string, number>();
+    for (const edge of data.edges) {
+      degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1);
+      degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1);
+    }
+    return degree;
+  }, [data.edges]);
+
+  const graphError = data.nodes.length > 0 && positions.size === 0 && simFailed
     ? 'Falha ao processar layout do grafo.'
     : null;
 
   const canvasSize = useMemo(() => ({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }), []);
 
-  const initialFit: CameraTarget = useMemo(() => {
-    if (positions.size === 0) return { x: 0, y: 0, zoom: 1 };
-    return computeInitialFit(Array.from(positions.values()), canvasSize, 100);
-  }, [positions, canvasSize]);
-
   useLayoutEffect(() => {
-    cameraRef.current = { ...initialFit };
-    updateTransform();
-  }, [initialFit, updateTransform]);
+    let raf = 0;
+    try {
+      const sim = createLiveSimulation(
+        data.nodes.map(n => ({ id: n.id, type: n.type })),
+        data.edges,
+        { width: CANVAS_WIDTH, height: CANVAS_HEIGHT },
+      );
+      simRef.current = sim;
+      const nextPositions = sim.positions();
+      const fit = computeInitialFit(Array.from(nextPositions.values()), canvasSize, 100);
+      cameraRef.current = { ...fit };
+      updateTransform();
+      raf = requestAnimationFrame(() => {
+        setPositions(nextPositions);
+        setCameraSnapshot({ ...fit });
+        setSimFailed(false);
+      });
+    } catch (err) {
+      console.error('[KG] live simulation error:', err);
+      simRef.current = null;
+      raf = requestAnimationFrame(() => {
+        setPositions(new Map());
+        setSimFailed(true);
+      });
+    }
+    return () => cancelAnimationFrame(raf);
+  }, [data, canvasSize, updateTransform]);
+
+  useEffect(() => {
+    let raf = 0;
+    let lastLabelLevel = -1;
+    const loop = () => {
+      const sim = simRef.current;
+      if (sim && sim.running()) {
+        sim.tick();
+        setPositions(sim.positions());
+      }
+      const zoom = cameraRef.current.zoom;
+      const level = zoom >= 1.6 ? 3 : zoom >= 1.15 ? 2 : zoom >= 0.85 ? 1 : 0;
+      if (level !== lastLabelLevel) {
+        lastLabelLevel = level;
+        setLabelLevel(level);
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  useEffect(() => {
+    positionsRef.current = positions;
+  }, [positions]);
 
   /* ─── Camera helpers ─── */
   const travelTo = useCallback((target: CameraTarget, duration: number) => {
@@ -169,12 +220,13 @@ export function KnowledgeExplorer() {
   }, [updateTransform]);
 
   const fitToView = useCallback((animated = true) => {
-    if (positions.size === 0) return;
-    const arr = Array.from(positions.values());
+    const current = positionsRef.current;
+    if (current.size === 0) return;
+    const arr = Array.from(current.values());
     const target = computeInitialFit(arr, canvasSize, 100);
     if (animated) travelTo(target, 0.9);
     else setCameraImmediate(target);
-  }, [positions, canvasSize, travelTo, setCameraImmediate]);
+  }, [canvasSize, travelTo, setCameraImmediate]);
 
   /* ─── Connections context (UI layer) ─── */
   const relatedEdges = useMemo<GraphEdge[]>(() => {
@@ -366,13 +418,46 @@ export function KnowledgeExplorer() {
   }, [runStoryCluster]);
 
   /* ─── Input handlers ─── */
+  const clientToGraph = useCallback((clientX: number, clientY: number): { x: number; y: number } | null => {
+    const svg = svgRef.current;
+    if (!svg) return null;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return null;
+    const point = svg.createSVGPoint();
+    point.x = clientX;
+    point.y = clientY;
+    const canvas = point.matrixTransform(ctm.inverse());
+    const cam = cameraRef.current;
+    return { x: (canvas.x - cam.x) / cam.zoom, y: (canvas.y - cam.y) / cam.zoom };
+  }, []);
+
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
     const factor = e.deltaY > 0 ? 0.92 : 1.08;
-    const cur = cameraRef.current;
-    const newZoom = Math.max(0.3, Math.min(3, cur.zoom * factor));
-    travelTo({ x: cur.x, y: cur.y, zoom: newZoom }, 0.15);
-  }, [travelTo]);
+    const cam = cameraRef.current;
+    const newZoom = Math.max(0.3, Math.min(3, cam.zoom * factor));
+    const graph = clientToGraph(e.clientX, e.clientY);
+    if (!graph) {
+      travelTo({ x: cam.x, y: cam.y, zoom: newZoom }, 0.15);
+      return;
+    }
+    const canvasX = graph.x * cam.zoom + cam.x;
+    const canvasY = graph.y * cam.zoom + cam.y;
+    travelTo(
+      { x: canvasX - graph.x * newZoom, y: canvasY - graph.y * newZoom, zoom: newZoom },
+      0.12,
+    );
+  }, [travelTo, clientToGraph]);
+
+  const handleNodePointerDown = useCallback((node: GraphNode, e: React.PointerEvent) => {
+    const sim = simRef.current;
+    if (!sim) return;
+    const graph = clientToGraph(e.clientX, e.clientY);
+    if (!graph) return;
+    e.stopPropagation();
+    sim.beginDrag(node.id, graph.x, graph.y);
+    dragRef.current = { id: node.id, moved: false, startX: e.clientX, startY: e.clientY };
+  }, [clientToGraph]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('.kg-node, .kg-hud, .kg-edge')) return;
@@ -385,6 +470,22 @@ export function KnowledgeExplorer() {
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     livingHover.handleMouseMove(e.clientX, e.clientY)
+    if (dragRef.current) {
+      const sim = simRef.current;
+      if (sim && (e.buttons & 1) === 1) {
+        const graph = clientToGraph(e.clientX, e.clientY);
+        if (graph) {
+          const dx = e.clientX - dragRef.current.startX;
+          const dy = e.clientY - dragRef.current.startY;
+          if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragRef.current.moved = true;
+          if (dragRef.current.moved) sim.dragTo(dragRef.current.id, graph.x, graph.y);
+        }
+      } else if (sim) {
+        sim.endDrag(dragRef.current.id);
+        dragRef.current = null;
+      }
+      return;
+    }
     if (isDragging.current) {
       const dx = e.clientX - dragStartRef.current.x;
       const dy = e.clientY - dragStartRef.current.y;
@@ -398,9 +499,16 @@ export function KnowledgeExplorer() {
       const rect = svgRef.current.getBoundingClientRect();
       setHoverScreen({ x: e.clientX - rect.left, y: e.clientY - rect.top });
     }
-  }, [hoveredNode, updateTransform, livingHover]);
+  }, [hoveredNode, updateTransform, livingHover, clientToGraph]);
 
-  const handleMouseUp = useCallback(() => { isDragging.current = false; }, []);
+  const handleMouseUp = useCallback(() => {
+    if (dragRef.current) {
+      suppressClickRef.current = dragRef.current.moved;
+      simRef.current?.endDrag(dragRef.current.id);
+      dragRef.current = null;
+    }
+    isDragging.current = false;
+  }, []);
 
   /* ─── Keyboard ─── */
   useLayoutEffect(() => {
@@ -727,7 +835,15 @@ export function KnowledgeExplorer() {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={() => { isDragging.current = false; setHoveredNode(null); setHoverScreen(null); }}
+        onMouseLeave={() => {
+          if (dragRef.current) {
+            simRef.current?.endDrag(dragRef.current.id);
+            dragRef.current = null;
+          }
+          isDragging.current = false;
+          setHoveredNode(null);
+          setHoverScreen(null);
+        }}
       >
         <defs>
           <radialGradient id="kg-node-halo" cx="50%" cy="50%" r="50%">
@@ -764,13 +880,11 @@ export function KnowledgeExplorer() {
 
           {/* Edges */}
           {data.edges.map(edge => {
-            const si = data.nodes.findIndex(n => n.id === edge.source);
-            const ti = data.nodes.findIndex(n => n.id === edge.target);
-            if (si === -1 || ti === -1 || !positions.has(edge.source) || !positions.has(edge.target)) return null;
+            const sourceNode = nodeById.get(edge.source);
+            const targetNode = nodeById.get(edge.target);
+            if (!sourceNode || !targetNode || !positions.has(edge.source) || !positions.has(edge.target)) return null;
             const p1 = positions.get(edge.source)!;
             const p2 = positions.get(edge.target)!;
-            const sourceNode = data.nodes[si];
-            const targetNode = data.nodes[ti];
             const intensity = connectionIntensity(
               edge, selectedNode?.id ?? null, oneHopData.neighbors, pathData?.edgeKeys ?? new Set(),
             );
@@ -825,13 +939,18 @@ export function KnowledgeExplorer() {
             const isDimmedByHover = !selectedNode && !selectedSecondary && !!hoveredNode && !isHovered && !hoverConnections.neighbors.has(node.id);
             const isDimmed = isDimmedBySelection || isDimmedByHover;
             const isNeighbor = !isHovered && !isDimmed && !!hoveredNode && hoverConnections.neighbors.has(node.id);
-            const r = identity.baseRadius;
+            const degree = nodeDegree.get(node.id) ?? 0;
+            const r = identity.baseRadius * (1 + Math.min(Math.log2(1 + degree) * 0.16, 0.65));
             const haloR = r * identity.haloRadius;
             const scale = isHovered ? 1.12 : isSelected ? 1.08 : 1;
             const haloOpacity = isDimmed ? 0 : isSelected ? 0.6 : isHovered ? 0.5 : isNeighbor ? 0.2 : identity.haloIntensity;
             const nodeOpacity = isDimmed ? 0.25 : isHovered ? 1 : 0.92;
             const labelText = getNodeLabel(node, identity, r);
-            const showLabel = identity.labelMode !== 'none' && (isHovered || isSelected || identity.labelMode === 'outside');
+            const showLabel = identity.labelMode !== 'none' && (
+              isHovered || isSelected ||
+              labelLevel >= (identity.labelMode === 'outside' ? 1 : 2) ||
+              degree >= 5
+            );
 
             const hoverClass = getNodeHoverClass(isHovered, isNeighbor, isDimmed)
             const magnetic = isHovered ? livingHover.magneticRef.current : { dx: 0, dy: 0 }
@@ -849,7 +968,14 @@ export function KnowledgeExplorer() {
                   '--kg-lh-magnetic-x': `${magnetic.dx}px`,
                   '--kg-lh-magnetic-y': `${magnetic.dy}px`,
                 } as React.CSSProperties}
-                onClick={() => handleNodeClick(node)}
+                onPointerDown={(e) => handleNodePointerDown(node, e)}
+                onClick={() => {
+                  if (suppressClickRef.current) {
+                    suppressClickRef.current = false;
+                    return;
+                  }
+                  handleNodeClick(node);
+                }}
                 onMouseEnter={(e) => {
                   setHoveredNode(node);
                   livingHover.setMagneticTarget(node.id, pos.x, pos.y, e.clientX, e.clientY)
@@ -1021,7 +1147,7 @@ export function KnowledgeExplorer() {
             <MiniMap
               nodes={visibleNodes}
               positions={positions}
-              camera={cameraSnapshot ?? initialFit}
+              camera={cameraSnapshot ?? { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2, zoom: 1 }}
               canvasWidth={CANVAS_WIDTH}
               canvasHeight={CANVAS_HEIGHT}
               onClick={handleMiniMapClick}
