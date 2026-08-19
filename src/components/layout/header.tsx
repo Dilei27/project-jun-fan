@@ -8,10 +8,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { navLinks } from '@/config/navigation';
 import { motion as m } from '@/design-system/motion';
 import { StatusDot } from '@/components/shared/status-dot';
+import { LanguageSwitcher } from './language-switcher';
+import { useLanguage } from '@/i18n/language-context';
+import type { TranslationKey } from '@/i18n/translations';
+
+const navLabelKeys: Record<string, TranslationKey> = {
+  '/': 'nav.home',
+  '/profile/': 'nav.profile',
+  '/command-center/': 'nav.commandCenter',
+  '/knowledge-graph/': 'nav.graph',
+  '/docs/': 'nav.docs',
+  '/decisoes/': 'nav.decisions',
+  '/twin/': 'nav.twin',
+  '/busca/': 'nav.search',
+};
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (menuOpen) {
@@ -63,16 +78,17 @@ export function Header() {
                     : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
-                {link.label}
+                {t(navLabelKeys[link.href] ?? 'nav.home')}
               </Link>
             );
           })}
         </nav>
 
         <div className="flex items-center gap-2">
-          <span className="hidden md:flex items-center gap-1.5 text-[10px] text-text-muted">
+          <LanguageSwitcher />
+          <span className="hidden md:flex items-center gap-1.5 text-[11px] text-text-muted">
             <StatusDot status="online" size={6} showHalo={false} />
-            <span className="uppercase tracking-wider">Online</span>
+            <span className="uppercase tracking-wider">{t('status.online')}</span>
           </span>
           <motion.button
             whileTap={m.tap.soft}
@@ -141,7 +157,7 @@ export function Header() {
                       }`}
                       onClick={() => setMenuOpen(false)}
                     >
-                      {link.label}
+                      {t(navLabelKeys[link.href] ?? 'nav.home')}
                     </Link>
                   </motion.div>
                 );

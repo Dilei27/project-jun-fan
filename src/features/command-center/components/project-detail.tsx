@@ -4,12 +4,14 @@ import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { motion as m } from '@/design-system/motion';
 import type { Project } from '@/types';
+import { useLanguage } from '@/i18n/language-context';
 
 const cardShadow =
   'inset 0 1px 0 0 rgba(244, 247, 250, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.3)';
 
 export function ProjectDetail({ project }: { project: Project }) {
-  const statusLabel = project.status === 'concluido' ? 'Concluído' : 'Em andamento';
+  const { t, td } = useLanguage();
+  const statusLabel = project.status === 'concluido' ? t('status.done') : t('status.inProgress');
   const statusVariant =
     project.status === 'concluido' ? 'success' : ('warning' as const);
 
@@ -45,9 +47,9 @@ export function ProjectDetail({ project }: { project: Project }) {
           style={{ boxShadow: cardShadow }}
         >
           <h2 className="text-xs font-semibold text-danger uppercase tracking-wider mb-2">
-            Problema
+            {t('label.problem')}
           </h2>
-          <p className="text-sm text-text-secondary">{project.problem}</p>
+          <p className="text-sm text-text-secondary">{td(`project.${project.id}.problem`, project.problem)}</p>
         </motion.div>
         <motion.div
           variants={{
@@ -58,9 +60,9 @@ export function ProjectDetail({ project }: { project: Project }) {
           style={{ boxShadow: cardShadow }}
         >
           <h2 className="text-xs font-semibold text-success uppercase tracking-wider mb-2">
-            Solução
+            {t('label.solution')}
           </h2>
-          <p className="text-sm text-text-secondary">{project.solution}</p>
+          <p className="text-sm text-text-secondary">{td(`project.${project.id}.solution`, project.solution)}</p>
         </motion.div>
       </div>
 
@@ -94,10 +96,10 @@ export function ProjectDetail({ project }: { project: Project }) {
         className="mb-8"
       >
         <h2 className="text-lg font-semibold text-text-primary mb-3 tracking-[-0.01em]">
-          Impacto
+          {t('label.impact')}
         </h2>
         <p className="text-sm text-text-secondary bg-surface-default/80 border border-border-subtle/60 rounded-lg p-4" style={{ boxShadow: cardShadow }}>
-          {project.impact}
+          {td(`project.${project.id}.impact`, project.impact)}
         </p>
       </motion.div>
 
@@ -109,7 +111,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           }}
         >
           <h2 className="text-lg font-semibold text-text-primary mb-3 tracking-[-0.01em]">
-            Decisões Técnicas
+            {t('label.technicalDecisions')}
           </h2>
           <motion.div
             initial="hidden"

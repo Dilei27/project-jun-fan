@@ -7,11 +7,13 @@ import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { PageEntry } from '@/components/shared/page-entry';
 import { motion as m } from '@/design-system/motion';
 import type { Product } from '@/types';
+import { useLanguage } from '@/i18n/language-context';
 
 const cardShadow =
   'inset 0 1px 0 0 rgba(244, 247, 250, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.3)';
 
 export function ProductClient({ product }: { product: Product }) {
+  const { t, td } = useLanguage();
   const statusVariant =
     product.status === 'online' ? 'success' : product.status === 'beta' ? 'warning' : 'default';
 
@@ -21,7 +23,7 @@ export function ProductClient({ product }: { product: Product }) {
         href="/"
         className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text-primary mb-6 transition-colors duration-200"
       >
-        <ArrowLeft size={14} /> Voltar
+        <ArrowLeft size={14} /> {t('label.back')}
       </Link>
 
       <motion.div
@@ -43,7 +45,7 @@ export function ProductClient({ product }: { product: Product }) {
             <h1 className="text-3xl font-extrabold text-text-primary mb-2 tracking-[-0.025em] text-balance">
               {product.name}
             </h1>
-            <p className="text-text-secondary max-w-2xl">{product.shortDescription}</p>
+            <p className="text-text-secondary max-w-2xl">{td(`product.${product.id}.shortDescription`, product.shortDescription)}</p>
           </div>
           <Badge
             variant={statusVariant as 'default' | 'success' | 'warning' | 'danger'}
@@ -62,8 +64,8 @@ export function ProductClient({ product }: { product: Product }) {
             className="jf-lift p-4 bg-surface-default/80 border border-border-subtle/60 rounded-lg"
             style={{ boxShadow: cardShadow }}
           >
-            <span className="text-xs font-semibold text-danger uppercase tracking-wider">Problema</span>
-            <p className="text-sm text-text-secondary mt-2">{product.problem}</p>
+            <span className="text-xs font-semibold text-danger uppercase tracking-wider">{t('label.problem')}</span>
+            <p className="text-sm text-text-secondary mt-2">{td(`product.${product.id}.problem`, product.problem)}</p>
           </motion.div>
           <motion.div
             variants={{
@@ -73,8 +75,8 @@ export function ProductClient({ product }: { product: Product }) {
             className="jf-lift p-4 bg-surface-default/80 border border-border-subtle/60 rounded-lg"
             style={{ boxShadow: cardShadow }}
           >
-            <span className="text-xs font-semibold text-success uppercase tracking-wider">Solução</span>
-            <p className="text-sm text-text-secondary mt-2">{product.solution}</p>
+            <span className="text-xs font-semibold text-success uppercase tracking-wider">{t('label.solution')}</span>
+            <p className="text-sm text-text-secondary mt-2">{td(`product.${product.id}.solution`, product.solution)}</p>
           </motion.div>
         </div>
 
@@ -86,13 +88,13 @@ export function ProductClient({ product }: { product: Product }) {
           className="mb-10"
         >
           <h2 className="text-lg font-semibold text-text-primary mb-4 tracking-[-0.01em]">
-            Arquitetura
+            {t('label.architecture')}
           </h2>
           <div
             className="flex items-center flex-wrap gap-2 p-4 bg-surface-default/80 border border-border-subtle/60 rounded-lg"
             style={{ boxShadow: cardShadow }}
           >
-            {product.architectureFlow.split(' -> ').map((step, i, arr) => (
+            {td(`product.${product.id}.architectureFlow`, product.architectureFlow).split(' -> ').map((step, i, arr) => (
               <span key={step} className="flex items-center">
                 <span className="px-3 py-1.5 bg-surface-soft text-text-secondary text-sm rounded-md border border-border-subtle/60 transition-colors duration-200 hover:border-border-strong hover:text-text-primary">
                   {step}
@@ -111,7 +113,7 @@ export function ProductClient({ product }: { product: Product }) {
             }}
           >
             <h2 className="text-lg font-semibold text-text-primary mb-4 tracking-[-0.01em]">
-              Métricas
+              {t('label.metrics')}
             </h2>
             <motion.div
               initial="hidden"
@@ -158,7 +160,7 @@ export function ProductClient({ product }: { product: Product }) {
                   style={{ boxShadow: cardShadow }}
                 >
                   <div className="w-1.5 h-1.5 rounded-full bg-accent-qa shrink-0" />
-                  <span className="text-sm text-text-secondary">{item}</span>
+                  <span className="text-sm text-text-secondary">{td(`product.${product.id}.roadmap.${i}`, item)}</span>
                 </div>
               ))}
             </div>
@@ -186,7 +188,7 @@ export function ProductClient({ product }: { product: Product }) {
             href={`/produto/${product.id}/demo/`}
             className="group inline-flex items-center gap-1.5 px-4 py-2 bg-surface-elevated/60 backdrop-blur-sm border border-border-subtle/60 rounded-lg text-sm text-text-primary shadow-[inset_0_1px_0_0_rgba(244,247,250,0.04)] hover:bg-surface-soft hover:border-border-strong transition-all duration-200 hover:-translate-y-0.5"
           >
-            Demo interativa{' '}
+            {t('label.interactiveDemo')}{' '}
             <ExternalLink
               size={14}
               className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"

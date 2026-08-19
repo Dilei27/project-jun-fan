@@ -4,8 +4,21 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { footerLinks } from '@/config/navigation';
 import { motion as m } from '@/design-system/motion';
+import { useLanguage } from '@/i18n/language-context';
+import type { TranslationKey } from '@/i18n/translations';
+
+const footerLabelKeys: Record<string, TranslationKey> = {
+  '/command-center/': 'nav.commandCenter',
+  '/knowledge-graph/': 'nav.graph',
+  '/docs/': 'nav.docs',
+  '/decisoes/': 'nav.decisions',
+  '/busca/': 'nav.search',
+  '/framework/': 'nav.framework',
+};
 
 export function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer
       className="mt-auto border-t border-border-subtle/40"
@@ -42,18 +55,18 @@ export function Footer() {
                   aria-hidden
                   className="w-1 h-1 rounded-full bg-accent-qa opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:scale-150"
                 />
-                {link.label}
+                {t(footerLabelKeys[link.href] ?? 'nav.commandCenter')}
               </Link>
             </motion.div>
           ))}
         </motion.nav>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-xs text-text-muted">
-          <p>Project Jun Fan &mdash; Build. Automate. Innovate.</p>
+          <p>Project Jun Fan - {t('footer.tagline')}</p>
           <span aria-hidden className="hidden sm:inline opacity-30">·</span>
           <span className="inline-flex items-center gap-1 tabular-nums">
             <span>v2.0.0</span>
             <span aria-hidden className="opacity-30">·</span>
-            <span>Phase 2 — RC-1</span>
+            <span>{t('footer.phase')}</span>
           </span>
         </div>
       </div>

@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { motion as m } from '@/design-system/motion';
+import { useLanguage } from '@/i18n/language-context';
+import { translations, type TranslationKey } from '@/i18n/translations';
 
 interface StatCounterProps {
   value: number;
@@ -15,6 +17,8 @@ function StatCounter({ value, suffix = '', label, duration = 1400 }: StatCounter
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const animated = useRef(false);
+  const { t } = useLanguage();
+  const translatedLabel = label in translations.pt ? t(label as TranslationKey) : label;
 
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -59,7 +63,7 @@ function StatCounter({ value, suffix = '', label, duration = 1400 }: StatCounter
         {count}{suffix}
       </div>
       <div className="text-[10px] uppercase tracking-[0.14em] text-text-muted mt-1.5 font-medium">
-        {label}
+        {translatedLabel}
       </div>
     </motion.div>
   );

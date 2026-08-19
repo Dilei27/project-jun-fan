@@ -7,6 +7,8 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { StatusDot, type StatusKind } from '@/components/shared/status-dot';
+import { TranslatedText } from '@/i18n/language-context';
+import type { TranslationKey } from '@/i18n/translations';
 
 const ICON_MAP: Record<string, LucideIcon> = {
   GitBranch, Command, Brain, FileText,
@@ -14,7 +16,8 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 interface ModuleCardProps {
   title: string;
-  description: string;
+  description?: string;
+  descriptionKey?: TranslationKey;
   href: string;
   icon: string;
   accentColor: string;
@@ -25,6 +28,7 @@ interface ModuleCardProps {
 export function ModuleCard({
   title,
   description,
+  descriptionKey,
   href,
   icon: iconName,
   accentColor,
@@ -76,7 +80,7 @@ export function ModuleCard({
             {title}
           </h3>
           <p className="text-xs text-text-muted leading-relaxed mb-4">
-            {description}
+            {descriptionKey ? <TranslatedText k={descriptionKey} /> : description}
           </p>
 
           <div

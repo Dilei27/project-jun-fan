@@ -6,6 +6,7 @@ import { TiltCard } from '@/components/shared/tilt-card';
 import { motion as m } from '@/design-system/motion';
 import type { Project } from '@/types';
 import Link from 'next/link';
+import { useLanguage } from '@/i18n/language-context';
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -17,7 +18,8 @@ const itemVariants: Variants = {
 };
 
 export function ProjectCard({ project }: { project: Project }) {
-  const statusLabel = project.status === 'concluido' ? 'Concluído' : 'Em andamento';
+  const { t, td } = useLanguage();
+  const statusLabel = project.status === 'concluido' ? t('status.done') : t('status.inProgress');
   const statusVariant = project.status === 'concluido' ? 'success' : 'warning';
 
   return (
@@ -43,8 +45,8 @@ export function ProjectCard({ project }: { project: Project }) {
               </h3>
               <Badge variant={statusVariant}>{statusLabel}</Badge>
             </div>
-            <p className="text-sm text-text-secondary mb-3">{project.context}</p>
-            <p className="text-xs text-text-muted">{project.impact}</p>
+            <p className="text-sm text-text-secondary mb-3">{td(`project.${project.id}.context`, project.context)}</p>
+            <p className="text-xs text-text-muted">{td(`project.${project.id}.impact`, project.impact)}</p>
           </article>
         </TiltCard>
       </Link>

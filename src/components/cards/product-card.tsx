@@ -6,6 +6,7 @@ import { TiltCard } from '@/components/shared/tilt-card';
 import { motion as m } from '@/design-system/motion';
 import type { Product } from '@/types';
 import Link from 'next/link';
+import { useLanguage } from '@/i18n/language-context';
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -25,6 +26,7 @@ function hexToRgb(hex: string): string {
 }
 
 export function ProductCard({ product }: { product: Product }) {
+  const { td } = useLanguage();
   const statusVariant =
     product.status === 'online' ? 'success' : product.status === 'beta' ? 'warning' : 'default';
   const accentRgb = hexToRgb(product.accentColor);
@@ -64,7 +66,7 @@ export function ProductCard({ product }: { product: Product }) {
             </div>
 
             <p className="relative text-sm text-text-secondary leading-relaxed mb-4">
-              {product.shortDescription}
+              {td(`product.${product.id}.shortDescription`, product.shortDescription)}
             </p>
 
             <div className="relative flex flex-wrap gap-1.5">

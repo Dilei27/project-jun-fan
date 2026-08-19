@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-bg-base: #0B0F14;
-  --color-bg-deep: #070A0F;
-  --color-surface-default: #111821;
-  --color-surface-elevated: #151D27;
-  --color-surface-soft: #1B2430;
-  --color-border-subtle: #263241;
-  --color-border-strong: #3A4658;
+  --color-bg-base: #0C1118;
+  --color-bg-deep: #080C12;
+  --color-surface-default: #121B26;
+  --color-surface-elevated: #182333;
+  --color-surface-soft: #202C3B;
+  --color-border-subtle: #344154;
+  --color-border-strong: #4C5A70;
   --color-text-primary: #F4F7FA;
-  --color-text-secondary: #9AA6B8;
-  --color-text-muted: #687385;
+  --color-text-secondary: #B8C4D4;
+  --color-text-muted: #8C98AA;
   --color-accent-qa: #4F8CFF;
   --color-accent-whatsapp: #2DD4BF;
   --color-accent-vigilante: #F97316;
@@ -58,14 +58,14 @@
     background-color: var(--color-bg-base);
     color: var(--color-text-primary);
     font-family: var(--font-sans);
-    line-height: 1.6;
+    line-height: 1.68;
     font-feature-settings: 'ss01', 'cv11', 'calt';
     font-synthesis: none;
   }
 
-  /* Premium hierarchy: tighter tracking on large headings */
+  /* Premium hierarchy with better readability on dark surfaces */
   h1, h2, h3, h4 {
-    letter-spacing: -0.022em;
+    letter-spacing: -0.014em;
   }
   h1 {
     font-weight: 800;
@@ -78,6 +78,20 @@
   h3 {
     font-weight: 600;
     line-height: 1.3;
+  }
+
+  p, li {
+    line-height: 1.72;
+  }
+
+  small,
+  .text-xs,
+  .text-\[10px\],
+  .text-\[9px\],
+  .text-\[8px\],
+  .text-\[7px\],
+  .text-\[6px\] {
+    letter-spacing: 0.01em;
   }
 
   a {
