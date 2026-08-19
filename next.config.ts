@@ -13,9 +13,6 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   basePath,
   assetPrefix,
-  experimental: {
-    viewTransition: true,
-  },
 };
 
 export default withMDX(nextConfig);
