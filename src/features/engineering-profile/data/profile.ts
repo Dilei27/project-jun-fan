@@ -302,7 +302,7 @@ export const PROFILE: ProfileData = {
   ],
 
   contact: {
-    github: 'https://github.com/anomalyco',
+    github: 'https://github.com/Dilei27',
     linkedin: 'https://linkedin.com/in/odirlei-alves',
     email: 'odirlei.alves@email.com',
   },

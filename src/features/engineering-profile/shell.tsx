@@ -7,11 +7,11 @@ import { CareerTimeline } from './components/career-timeline';
 import { EngineeringDNA } from './components/engineering-dna';
 import { SkillsGraph } from './components/skills-graph';
 import { ImpactMetrics } from './components/impact-metrics';
-import { FeaturedProjects } from './components/featured-projects';
 import { EngineeringPhilosophy } from './components/engineering-philosophy';
 import { KnowledgeConnections } from './components/knowledge-connections';
 import { CareerKnowledgeGraph } from './components/career-knowledge-graph';
 import { PublicPresence } from './components/public-presence';
+import { GitHubRepos } from './components/github-repos';
 
 export function EngineeringProfileShell() {
   return (
@@ -34,7 +34,7 @@ export function EngineeringProfileShell() {
         </div>
 
         <div className="grid grid-cols-2 gap-4 mt-4">
-          <FeaturedProjects />
+          <GitHubRepos />
           <EngineeringPhilosophy />
         </div>
 

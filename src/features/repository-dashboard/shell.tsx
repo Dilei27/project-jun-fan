@@ -26,7 +26,7 @@ const MOCK_REPOSITORY: Repository = {
   id: 'repo-junfan',
   name: 'Project Jun Fan',
   description: 'Plataforma de inteligência de engenharia — conhecimento, twin digital, exploração e replay.',
-  url: 'https://github.com/anomalyco/junfan',
+  url: 'https://github.com/Dilei27/project-jun-fan',
   defaultBranch: 'main',
   workspace: {
     id: 'ws-1',
