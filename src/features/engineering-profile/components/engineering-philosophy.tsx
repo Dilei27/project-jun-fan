@@ -14,7 +14,7 @@ export function EngineeringPhilosophy() {
     }}>
       <div className="flex items-center gap-1.5 mb-4">
         <Quote size={12} className="text-text-muted" />
-        <h2 className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">Filosofia de Engenharia</h2>
+        <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted">Filosofia de Engenharia</h2>
       </div>
 
       <div className="space-y-3">
@@ -36,7 +36,7 @@ export function EngineeringPhilosophy() {
             >
               {p.statement}
             </div>
-            <p className="text-[9px] text-text-muted/60 leading-relaxed">
+            <p className="text-[12px] text-text-muted/60 leading-relaxed">
               {p.explanation}
             </p>
           </motion.div>

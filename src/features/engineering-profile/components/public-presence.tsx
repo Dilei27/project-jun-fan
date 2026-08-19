@@ -33,7 +33,7 @@ export function PublicPresence() {
             <span className="text-text-muted/50 group-hover:text-text-primary transition-colors">
               {link.icon}
             </span>
-            <span className="text-[9px] text-text-muted/60 group-hover:text-text-primary transition-colors">
+            <span className="text-[12px] text-text-muted/60 group-hover:text-text-primary transition-colors">
               {link.label}
             </span>
             <ArrowUpRight size={7} className="text-text-muted/20 group-hover:text-text-muted/50 transition-all" />
@@ -44,7 +44,7 @@ export function PublicPresence() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="text-[7px] text-text-muted/20 ml-2"
+          className="text-[13px] text-text-muted/20 ml-2"
         >
           {PROFILE.contact.email}
         </motion.div>

@@ -33,7 +33,7 @@ export function CareerKnowledgeGraph() {
       backdropFilter: 'blur(12px)',
       border: '1px solid rgba(244, 247, 250, 0.04)',
     }}>
-      <h2 className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-3">
+      <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted mb-3">
         Career Graph
       </h2>
 

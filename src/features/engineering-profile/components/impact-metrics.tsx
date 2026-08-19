@@ -23,7 +23,7 @@ export function ImpactMetrics() {
     >
       <div className="flex items-center gap-1.5 mb-4">
         <TrendingUp size={12} className="text-text-muted" />
-        <h2 className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">Impacto</h2>
+        <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted">Impacto</h2>
       </div>
 
       <div className="grid grid-cols-5 gap-2">
@@ -42,8 +42,8 @@ export function ImpactMetrics() {
             <span className="text-lg font-bold tabular-nums" style={{ color: metric.color }}>
               {inView ? <Counter value={metric.value} suffix={metric.suffix} /> : `${metric.value}${metric.suffix}`}
             </span>
-            <span className="text-[7px] uppercase tracking-wider text-text-muted/60 mt-1">{metric.label}</span>
-            <span className="text-[7px] text-text-muted/30 mt-0.5">{metric.description}</span>
+            <span className="text-[13px] uppercase tracking-wider text-text-muted/60 mt-1">{metric.label}</span>
+            <span className="text-[13px] text-text-muted/30 mt-0.5">{metric.description}</span>
           </motion.div>
         ))}
       </div>

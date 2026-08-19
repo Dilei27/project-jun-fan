@@ -31,7 +31,7 @@ export function KnowledgeConnections() {
     }}>
       <div className="flex items-center gap-1.5 mb-4">
         <Share2 size={12} className="text-text-muted" />
-        <h2 className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">Conexões com a Plataforma</h2>
+        <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted">Conexões com a Plataforma</h2>
       </div>
 
       <div className="grid grid-cols-3 gap-2">
@@ -57,10 +57,10 @@ export function KnowledgeConnections() {
                 {conn.icon}
               </span>
               <div>
-                <span className="text-[9px] font-medium text-text-primary group-hover:text-accent-qa transition-colors block">
+                <span className="text-[12px] font-medium text-text-primary group-hover:text-accent-qa transition-colors block">
                   {conn.label}
                 </span>
-                <span className="text-[7px] text-text-muted/40">{conn.description}</span>
+                <span className="text-[13px] text-text-muted/40">{conn.description}</span>
               </div>
             </Link>
           </motion.div>

@@ -21,7 +21,7 @@ export function FeaturedProjects() {
     }}>
       <div className="flex items-center gap-1.5 mb-4">
         <FolderOpen size={12} className="text-text-muted" />
-        <h2 className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">Projetos</h2>
+        <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted">Projetos</h2>
       </div>
 
       <div className="space-y-1.5">
@@ -44,22 +44,22 @@ export function FeaturedProjects() {
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-medium text-text-primary group-hover:text-accent-qa transition-colors">
+                    <span className="text-[12px] font-medium text-text-primary group-hover:text-accent-qa transition-colors">
                       {proj.title}
                     </span>
                     <ArrowUpRight size={8} className="text-text-muted/30 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                  <p className="text-[8px] text-text-muted/60 mt-0.5 line-clamp-1">{proj.summary}</p>
+                  <p className="text-[13px] text-text-muted/60 mt-0.5 line-clamp-1">{proj.summary}</p>
                   <div className="flex items-center gap-1.5 mt-1">
                     <span
-                      className="text-[6px] font-medium uppercase tracking-wider px-1 py-0.5 rounded"
+                      className="text-[12px] font-medium uppercase tracking-wider px-1 py-0.5 rounded"
                       style={{ background: `${status.color}12`, color: status.color }}
                     >
                       {status.label}
                     </span>
                     <div className="flex gap-0.5 flex-wrap">
                       {proj.technologies.slice(0, 3).map(t => (
-                        <span key={t} className="text-[6px] text-text-muted/30">{t}</span>
+                        <span key={t} className="text-[12px] text-text-muted/30">{t}</span>
                       ))}
                     </div>
                   </div>

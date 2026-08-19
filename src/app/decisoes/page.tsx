@@ -66,17 +66,17 @@ export default function DecisionsPage() {
         </div>
 
         <div className="flex items-center gap-4 shrink-0">
-          <div className="flex items-center gap-1.5 text-[10px] text-text-muted/60">
+          <div className="flex items-center gap-1.5 text-[12px] text-text-muted/60">
             <Shield size={12} className="text-accent-qa" />
             <span className="tabular-nums font-medium text-text-primary">{stats.total}</span>
             <span>decisões</span>
           </div>
-          <div className="flex items-center gap-1.5 text-[10px] text-text-muted/60">
+          <div className="flex items-center gap-1.5 text-[12px] text-text-muted/60">
             <GitBranch size={12} style={{ color: '#22C55E' }} />
             <span className="tabular-nums font-medium text-text-primary">{stats.modules}</span>
             <span>módulos</span>
           </div>
-          <div className="flex items-center gap-1.5 text-[10px] text-text-muted/60">
+          <div className="flex items-center gap-1.5 text-[12px] text-text-muted/60">
             <FileText size={12} style={{ color: '#EAB308' }} />
             <span className="tabular-nums font-medium text-text-primary">{stats.relatedNodes}</span>
             <span>relações</span>
@@ -115,7 +115,7 @@ export default function DecisionsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
                       <span
-                        className="text-[9px] font-medium px-1.5 py-0.5 rounded uppercase tracking-wider"
+                        className="text-[12px] font-medium px-1.5 py-0.5 rounded uppercase tracking-wider"
                         style={{
                           background: `${d.type.color}15`,
                           color: d.type.color,
@@ -124,7 +124,7 @@ export default function DecisionsPage() {
                         {d.type.label}
                       </span>
                       <span
-                        className="text-[9px] px-1.5 py-0.5 rounded uppercase tracking-wider"
+                        className="text-[12px] px-1.5 py-0.5 rounded uppercase tracking-wider"
                         style={{
                           background: d.status === 'concluido' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)',
                           color: d.status === 'concluido' ? '#22C55E' : '#F59E0B',
@@ -137,33 +137,33 @@ export default function DecisionsPage() {
                       {d.decision}
                     </h2>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[9px] text-text-muted/40 shrink-0">
+                  <div className="flex items-center gap-1.5 text-[12px] text-text-muted/40 shrink-0">
                     <Calendar size={9} />
                     <span>{d.createdAt.substring(0, 10)}</span>
                   </div>
                 </div>
 
                 {/* Context */}
-                <p className="text-[11px] text-text-secondary leading-relaxed mb-3">
+                <p className="text-[13px] text-text-secondary leading-relaxed mb-3">
                   {d.context}
                 </p>
 
                 {/* Rationale + Tradeoffs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                   <div className="p-2.5 rounded-lg" style={{ background: 'rgba(244, 247, 250, 0.03)' }}>
-                    <span className="text-[8px] uppercase tracking-wider text-text-muted/50 font-medium">Rationale</span>
-                    <p className="text-[10px] text-text-secondary mt-1 leading-relaxed">{d.rationale}</p>
+                    <span className="text-[13px] uppercase tracking-wider text-text-muted/50 font-medium">Rationale</span>
+                    <p className="text-[12px] text-text-secondary mt-1 leading-relaxed">{d.rationale}</p>
                   </div>
                   <div className="p-2.5 rounded-lg" style={{ background: 'rgba(244, 247, 250, 0.03)' }}>
-                    <span className="text-[8px] uppercase tracking-wider text-text-muted/50 font-medium">Trade-offs</span>
-                    <p className="text-[10px] text-text-secondary mt-1 leading-relaxed">{d.tradeoffs}</p>
+                    <span className="text-[13px] uppercase tracking-wider text-text-muted/50 font-medium">Trade-offs</span>
+                    <p className="text-[12px] text-text-secondary mt-1 leading-relaxed">{d.tradeoffs}</p>
                   </div>
                 </div>
 
                 {/* Impact */}
                 <div className="mb-3">
-                  <span className="text-[8px] uppercase tracking-wider text-text-muted/50 font-medium">Impacto</span>
-                  <p className="text-[10px] text-text-secondary mt-0.5 leading-relaxed">{d.impact}</p>
+                  <span className="text-[13px] uppercase tracking-wider text-text-muted/50 font-medium">Impacto</span>
+                  <p className="text-[12px] text-text-secondary mt-0.5 leading-relaxed">{d.impact}</p>
                 </div>
 
                 {/* Footer: related modules + actions */}
@@ -172,25 +172,25 @@ export default function DecisionsPage() {
                     {d.relatedModules.slice(0, 3).map((mod) => (
                       <span
                         key={mod}
-                        className="flex items-center gap-1 text-[9px] text-text-muted/50"
+                        className="flex items-center gap-1 text-[12px] text-text-muted/50"
                       >
                         <Tag size={8} />
                         {mod}
                       </span>
                     ))}
-                    <span className="text-[9px] text-text-muted/30">{d.relatedCount} conexões</span>
+                    <span className="text-[12px] text-text-muted/30">{d.relatedCount} conexões</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/knowledge-graph/`}
-                      className="flex items-center gap-1 text-[9px] text-text-muted/40 hover:text-accent-qa transition-colors"
+                      className="flex items-center gap-1 text-[12px] text-text-muted/40 hover:text-accent-qa transition-colors"
                     >
                       <GitBranch size={9} />
                       Graph
                     </Link>
                     <Link
                       href={`/docs/`}
-                      className="flex items-center gap-1 text-[9px] text-text-muted/40 hover:text-accent-qa transition-colors"
+                      className="flex items-center gap-1 text-[12px] text-text-muted/40 hover:text-accent-qa transition-colors"
                     >
                       <FileText size={9} />
                       Docs

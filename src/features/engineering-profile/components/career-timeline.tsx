@@ -24,7 +24,7 @@ export function CareerTimeline() {
     }}>
       <div className="flex items-center gap-1.5 mb-4">
         <Briefcase size={12} className="text-text-muted" />
-        <h2 className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">Trajetória</h2>
+        <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted">Trajetória</h2>
       </div>
 
       <div className="relative space-y-0">
@@ -69,7 +69,7 @@ export function CareerTimeline() {
                     <span className="text-xs font-semibold text-text-primary">{entry.company}</span>
                     {entry.highlight && (
                       <span
-                        className="text-[7px] px-1 py-0.5 rounded uppercase font-medium"
+                        className="text-[13px] px-1 py-0.5 rounded uppercase font-medium"
                         style={{ background: `${color}15`, color }}
                       >
                         Atual
@@ -77,8 +77,8 @@ export function CareerTimeline() {
                     )}
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] text-text-muted/80">{entry.role}</span>
-                    <span className="text-[8px] text-text-muted/40">{entry.period}</span>
+                    <span className="text-[12px] text-text-muted/80">{entry.role}</span>
+                    <span className="text-[13px] text-text-muted/40">{entry.period}</span>
                   </div>
                 </div>
 
@@ -100,18 +100,18 @@ export function CareerTimeline() {
                     className="overflow-hidden"
                   >
                     <div className="pl-[31px] pb-3 space-y-3">
-                      <p className="text-[10px] text-text-muted/70 leading-relaxed">
+                      <p className="text-[12px] text-text-muted/70 leading-relaxed">
                         {entry.description}
                       </p>
 
                       {/* Technologies */}
                       <div>
-                        <span className="text-[8px] uppercase tracking-wider text-text-muted/40 mb-1 block">Tecnologias</span>
+                        <span className="text-[13px] uppercase tracking-wider text-text-muted/40 mb-1 block">Tecnologias</span>
                         <div className="flex flex-wrap gap-1">
                           {entry.technologies.map(t => (
                             <span
                               key={t}
-                              className="text-[8px] px-1.5 py-0.5 rounded"
+                              className="text-[13px] px-1.5 py-0.5 rounded"
                               style={{ background: 'rgba(244,247,250,0.04)', color: 'rgba(244,247,250,0.6)' }}
                             >
                               {t}
@@ -122,10 +122,10 @@ export function CareerTimeline() {
 
                       {/* Results */}
                       <div>
-                        <span className="text-[8px] uppercase tracking-wider text-text-muted/40 mb-1 block">Resultados</span>
+                        <span className="text-[13px] uppercase tracking-wider text-text-muted/40 mb-1 block">Resultados</span>
                         <ul className="space-y-0.5">
                           {entry.results.map(r => (
-                            <li key={r} className="flex items-start gap-1 text-[9px] text-text-muted/60">
+                            <li key={r} className="flex items-start gap-1 text-[12px] text-text-muted/60">
                               <span className="text-success mt-0.5 shrink-0">▸</span>
                               {r}
                             </li>
@@ -135,12 +135,12 @@ export function CareerTimeline() {
 
                       {/* Knowledge acquired */}
                       <div>
-                        <span className="text-[8px] uppercase tracking-wider text-text-muted/40 mb-1 block">Conhecimento adquirido</span>
+                        <span className="text-[13px] uppercase tracking-wider text-text-muted/40 mb-1 block">Conhecimento adquirido</span>
                         <div className="flex flex-wrap gap-1">
                           {entry.knowledge.map(k => (
                             <span
                               key={k}
-                              className="text-[8px] px-1.5 py-0.5 rounded"
+                              className="text-[13px] px-1.5 py-0.5 rounded"
                               style={{
                                 background: `${color}10`,
                                 color,

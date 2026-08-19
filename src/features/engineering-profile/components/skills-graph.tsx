@@ -35,7 +35,7 @@ export function SkillsGraph() {
       backdropFilter: 'blur(12px)',
       border: '1px solid rgba(244, 247, 250, 0.04)',
     }}>
-      <h2 className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-3">
+      <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted mb-3">
         Skills & Conexões
       </h2>
 
@@ -51,7 +51,7 @@ export function SkillsGraph() {
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <span className="w-1 h-1 rounded-full" style={{ background: catColor }} />
-                <span className="text-[7px] uppercase tracking-wider font-medium" style={{ color: catColor }}>
+                <span className="text-[13px] uppercase tracking-wider font-medium" style={{ color: catColor }}>
                   {category}
                 </span>
               </div>
@@ -80,10 +80,10 @@ export function SkillsGraph() {
                     </div>
 
                     {/* Name */}
-                    <span className="text-[9px] text-text-primary truncate flex-1">{skill.name}</span>
+                    <span className="text-[12px] text-text-primary truncate flex-1">{skill.name}</span>
 
                     {/* Project count */}
-                    <span className="text-[6px] text-text-muted/30">{skill.projects.length}p</span>
+                    <span className="text-[12px] text-text-muted/30">{skill.projects.length}p</span>
                   </motion.div>
                 ))}
               </div>

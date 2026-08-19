@@ -11,7 +11,7 @@ export function EngineeringDNA() {
       backdropFilter: 'blur(12px)',
       border: '1px solid rgba(244, 247, 250, 0.04)',
     }}>
-      <h2 className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-4">
+      <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted mb-4">
         Engineering DNA
       </h2>
 
@@ -40,10 +40,10 @@ export function EngineeringDNA() {
             </div>
 
             {/* Title */}
-            <h3 className="text-[10px] font-semibold text-text-primary mb-1">{p.title}</h3>
+            <h3 className="text-[12px] font-semibold text-text-primary mb-1">{p.title}</h3>
 
             {/* Description */}
-            <p className="text-[8px] text-text-muted/60 leading-relaxed">{p.description}</p>
+            <p className="text-[13px] text-text-muted/60 leading-relaxed">{p.description}</p>
           </motion.div>
         ))}
       </div>
