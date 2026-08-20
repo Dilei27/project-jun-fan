@@ -18,7 +18,7 @@ import { motion as m } from '@/design-system/motion';
 import type { Product } from '@/types';
 
 const steps = [
-  { title: 'Capture', detail: 'Click recorded at 842, 312', icon: MousePointer2 },
+  { title: 'Capture', detail: 'Interaction recorded in a private session', icon: MousePointer2 },
   { title: 'Discover', detail: 'Specific desktop control identified', icon: ScanLine },
   { title: 'Enrich', detail: 'Process, hierarchy and framework attached', icon: ShieldCheck },
   { title: 'Structure', detail: 'Evidence written to the session model', icon: FileJson },
@@ -71,13 +71,13 @@ export function DesktopDiscoveryDemo({ product }: { product: Product }) {
           Demonstracao guiada
         </div>
         <h1 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-[-0.03em] text-balance">
-          Desktop evidence, not a macro.
+          Observe the interface. Keep the evidence.
         </h1>
         <p className="mt-3 text-text-secondary leading-relaxed max-w-2xl">
-          Uma sessao ilustrativa de como o DDE registra uma interacao, identifica o controle e produz artefatos revisaveis.
+          Uma leitura navegavel de fatos anonimizados de uma sessao real: interacoes, descoberta de controles e artefatos revisaveis.
         </p>
         <p className="mt-3 text-xs text-text-muted">
-          Dados sinteticos para demonstracao. Nenhuma aplicacao desktop, captura ou repositorio privado e acessado nesta pagina.
+          A imagem da interface foi recriada para esta demonstracao. Nenhum nome de empresa, aplicacao, usuario, caminho, screenshot ou dado privado e exibido.
         </p>
       </div>
 
@@ -86,9 +86,9 @@ export function DesktopDiscoveryDemo({ product }: { product: Product }) {
           <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle/60 bg-surface-soft/50">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-success" />
-              <span className="text-xs font-semibold text-text-secondary">Target application</span>
+              <span className="text-xs font-semibold text-text-secondary">Sanitized desktop session</span>
             </div>
-            <span className="font-mono text-[11px] text-text-muted">Windows desktop / sample order</span>
+            <span className="font-mono text-[11px] text-text-muted">PRIVATE ENVIRONMENT / ANONYMIZED</span>
           </div>
 
           <div className="p-4 md:p-6 bg-[#0d121c]">
@@ -97,13 +97,13 @@ export function DesktopDiscoveryDemo({ product }: { product: Product }) {
                 <span className="w-2 h-2 rounded-full bg-[#f97316]" />
                 <span className="w-2 h-2 rounded-full bg-[#eab308]" />
                 <span className="w-2 h-2 rounded-full bg-[#22c55e]" />
-                <span className="ml-2 text-[11px] text-slate-300">Orders - June</span>
+                <span className="ml-2 text-[11px] text-slate-300">Legacy desktop workspace</span>
               </div>
               <div className="p-4 md:p-5">
                 <div className="flex items-center justify-between gap-3 mb-5">
                   <div>
-                    <p className="text-sm font-semibold text-slate-100">Order #4832</p>
-                    <p className="text-xs text-slate-400 mt-1">Supplier validation</p>
+                    <p className="text-sm font-semibold text-slate-100">Session interaction</p>
+                    <p className="text-xs text-slate-400 mt-1">Anonymized evidence view</p>
                   </div>
                   <div className="relative">
                     <button
@@ -114,7 +114,7 @@ export function DesktopDiscoveryDemo({ product }: { product: Product }) {
                           : 'border-slate-600 bg-slate-700 text-slate-200'
                       }`}
                     >
-                      Save order
+                      Inspect control
                     </button>
                     {inspected && (
                       <motion.span
@@ -128,7 +128,7 @@ export function DesktopDiscoveryDemo({ product }: { product: Product }) {
                   </div>
                 </div>
                 <div className="grid grid-cols-[1.2fr_0.8fr_0.7fr] border border-slate-700 rounded-md overflow-hidden text-[11px]">
-                  {['Supplier', 'Status', 'Value', 'Atlas Parts', 'Ready', '$ 12,480', 'Northwind', 'Pending', '$ 7,910'].map((value, index) => (
+                  {['UI region', 'Discovery', 'Evidence', 'Workspace', 'Available', 'Captured', 'Toolbar', 'Observed', 'Structured'].map((value, index) => (
                     <div
                       key={`${value}-${index}`}
                       className={`px-3 py-2 border-b border-r border-slate-700/80 ${
@@ -169,10 +169,10 @@ export function DesktopDiscoveryDemo({ product }: { product: Product }) {
           </div>
 
           <div className="space-y-3">
-            <LedgerRow label="Element" value={inspected ? 'Button: Save order' : 'Awaiting interaction'} active={inspected} />
-            <LedgerRow label="Framework" value={inspected ? 'WinForms / UIA' : '--'} active={inspected} />
-            <LedgerRow label="Locator" value={inspected ? 'AutomationId: btnSaveOrder' : '--'} active={inspected} />
-            <LedgerRow label="Confidence" value={inspected ? '96 / 100' : '--'} active={inspected} />
+            <LedgerRow label="Element" value={inspected ? 'Toolbar interaction' : 'Awaiting interaction'} active={inspected} />
+            <LedgerRow label="Framework" value={inspected ? 'Legacy desktop / UIA' : '--'} active={inspected} />
+            <LedgerRow label="Locator" value={inspected ? 'Class + bounds candidate' : '--'} active={inspected} />
+            <LedgerRow label="Evidence" value={inspected ? '43 actions / 100% UI coverage' : '--'} active={inspected} />
           </div>
 
           <div className="mt-6 pt-5 border-t border-border-subtle/60">
