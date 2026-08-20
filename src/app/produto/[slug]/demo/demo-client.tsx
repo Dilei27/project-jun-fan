@@ -8,6 +8,7 @@ import { PageEntry } from '@/components/shared/page-entry';
 import { motion as m } from '@/design-system/motion';
 import type { Product } from '@/types';
 import { DesktopDiscoveryDemo } from './desktop-discovery-demo';
+import { VigilanteDemo } from './vigilante-demo';
 
 const cardShadow =
   'inset 0 1px 0 0 rgba(244, 247, 250, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.3)';
@@ -24,6 +25,10 @@ const demoSteps = [
 export function DemoClient({ product }: { product: Product }) {
   if (product.id === 'desktop-discovery-engine') {
     return <DesktopDiscoveryDemo product={product} />;
+  }
+
+  if (product.id === 'vigilante-ai') {
+    return <VigilanteDemo product={product} />;
   }
 
   return <GenericDemo product={product} />;
