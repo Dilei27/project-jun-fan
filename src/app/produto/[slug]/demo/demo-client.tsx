@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, Play, RotateCcw } from 'lucide-react';
@@ -38,28 +38,39 @@ function GenericDemo({ product }: { product: Product }) {
   const [currentStep, setCurrentStep] = useState(-1);
   const [log, setLog] = useState<string[]>([]);
   const [running, setRunning] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const stopDemo = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    setRunning(false);
+  }, []);
+
+  useEffect(() => stopDemo, [stopDemo]);
 
   const runDemo = useCallback(() => {
+    stopDemo();
     setRunning(true);
     setCurrentStep(0);
     setLog([]);
     let i = 0;
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       if (i < demoSteps.length) {
         setCurrentStep(i);
         setLog(prev => [...prev, `${new Date().toLocaleTimeString()} — ${demoSteps[i].label}`]);
         i++;
       } else {
-        clearInterval(interval);
-        setRunning(false);
+        stopDemo();
       }
     }, 800);
-  }, []);
+  }, [stopDemo]);
 
   const resetDemo = () => {
+    stopDemo();
     setCurrentStep(-1);
     setLog([]);
-    setRunning(false);
   };
 
   return (
