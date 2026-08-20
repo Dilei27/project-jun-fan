@@ -8,7 +8,7 @@ const actions = [
   { label: 'Knowledge Graph', href: '/knowledge-graph/', icon: GitBranch, color: '#4F8CFF' },
   { label: 'Live Docs', href: '/docs/', icon: FileText, color: '#EAB308' },
   { label: 'Architecture', href: '/command-center/architecture/', icon: Shield, color: '#22D3EE' },
-  { label: 'Run Demo', href: '/produto/qa-command-center/demo/', icon: PlayCircle, color: '#22C55E' },
+  { label: 'DDE Demo', href: '/produto/desktop-discovery-engine/demo/', icon: PlayCircle, color: '#22C55E' },
   { label: 'AI Dock', href: '/', icon: Brain, color: '#C084FC' },
   { label: 'Dashboard', href: '/command-center/projects/', icon: LayoutDashboard, color: '#FB923C' },
 ];

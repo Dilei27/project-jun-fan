@@ -40,5 +40,19 @@
     "metrics": {"mvp_validado": 1, "cameras_mvp": 1, "confianca_teste": 93},
     "roadmap": ["Câmeras IP/RTSP reais", "Sirene física compartilhada", "Retenção automática de gravações"],
     "links": {"docs": "/docs/vigilante-ai-preview/", "repo": "#"}
+  },
+  {
+    "id": "desktop-discovery-engine",
+    "name": "Desktop Discovery Engine",
+    "status": "online",
+    "shortDescription": "Produto Windows para transformar interações manuais em conhecimento estruturado para automação de testes desktop.",
+    "problem": "Automação desktop baseada em coordenadas, imagens ou seletores frágeis exige manutenção contínua e perde o contexto de como a interface realmente funciona.",
+    "solution": "O DDE observa uma sessão manual, descobre os controles sob interação e entrega evidências estruturadas, locators, contexto técnico e artefatos para revisão e automação futura.",
+    "accentColor": "#4F8CFF",
+    "stack": ["Python", "pywinauto", "UI Automation", "Robot Framework"],
+    "architectureFlow": "Capture -> Discover -> Enrich -> Structure -> Review",
+    "metrics": {"pipeline_stages": 7, "artifact_types": 8, "validated_apps": 5},
+    "roadmap": ["Core estável para Windows", "Integrações consumidoras de conhecimento", "Evolução sem acoplar regras de aplicação"],
+    "links": {"docs": "#", "repo": "#"}
   }
 ]
