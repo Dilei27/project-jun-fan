@@ -14,13 +14,13 @@
   {
     "id": "whatsapp-ai",
     "title": "WhatsApp AI Assistant",
-    "context": "Pequenos negócios precisam de automação comercial acessível via WhatsApp.",
-    "problem": "Atendimento manual perde leads, esquece agendamentos e sobrecarrega equipe.",
-    "solution": "Assistente com LangChain, LangGraph e GPT-5.5-mini integrado ao WhatsApp Business API.",
-    "stack": ["LangChain", "LangGraph", "OpenAI", "GPT", "Node.js", "WhatsApp API"],
-    "impact": "Automação de respostas frequentes, qualificação de leads e agendamento automático.",
+    "context": "Mensagens de WhatsApp exigem respostas rápidas sem perder personalidade, contexto ou controle sobre decisões importantes.",
+    "problem": "Automação irrestrita pode responder fora de contexto, vazar conteúdo sensível ou assumir compromissos sem autorização.",
+    "solution": "Assistente com FastAPI, Evolution API, OpenAI e SQLite, protegido por allowlist, filtros de risco, persona persistida e escalonamento humano.",
+    "stack": ["Python", "FastAPI", "Evolution API", "OpenAI", "SQLite", "Docker"],
+    "impact": "Fluxo ponta a ponta validado: mensagem, filtros, IA, memória, resposta e encaminhamento de assuntos sensíveis.",
     "status": "em_andamento",
-    "decisions": ["Streaming de respostas", "Tools tenant-safe", "Handoff humano como fallback"],
+    "decisions": ["Persona persistida separada de RAG", "Segurança antes da geração", "Escalonamento humano para risco"],
     "links": {"docs": "#", "repo": "#"}
   },
   {
