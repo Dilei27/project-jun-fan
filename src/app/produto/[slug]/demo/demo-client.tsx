@@ -58,8 +58,9 @@ function GenericDemo({ product }: { product: Product }) {
     let i = 0;
     intervalRef.current = setInterval(() => {
       if (i < demoSteps.length) {
+        const step = demoSteps[i];
         setCurrentStep(i);
-        setLog(prev => [...prev, `${new Date().toLocaleTimeString()} — ${demoSteps[i].label}`]);
+        setLog(prev => [...prev, `${new Date().toLocaleTimeString()} — ${step.label}`]);
         i++;
       } else {
         stopDemo();
