@@ -1,10 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { AtSign, FileText } from 'lucide-react';
 import { motion as m } from '@/design-system/motion';
 import { PROFILE } from '../data/profile';
 
 export function HeroExperience() {
+  const [resumeLanguage, setResumeLanguage] = useState<'pt' | 'en'>('pt');
+  const resumeLabel = resumeLanguage === 'pt' ? 'Baixar currículo' : 'Download resume';
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -65,6 +70,47 @@ export function HeroExperience() {
       >
         {PROFILE.bio}
       </motion.p>
+
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.52, ease: m.easing.out }}
+        className="mt-5 flex flex-wrap gap-2"
+      >
+        <a
+          href={PROFILE.contact.linkedin}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border-subtle/60 bg-surface-default/70 px-3 py-2 text-xs font-medium text-text-primary transition-colors hover:border-accent-qa/50 hover:text-accent-qa"
+        >
+          <AtSign size={13} /> LinkedIn
+        </a>
+        <div className="inline-flex rounded-lg border border-border-subtle/60 bg-surface-default/70 p-0.5" aria-label="Idioma do currículo">
+          <button
+            type="button"
+            onClick={() => setResumeLanguage('pt')}
+            aria-pressed={resumeLanguage === 'pt'}
+            className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${resumeLanguage === 'pt' ? 'bg-accent-qa text-white' : 'text-text-muted hover:text-text-primary'}`}
+          >
+            PT
+          </button>
+          <button
+            type="button"
+            onClick={() => setResumeLanguage('en')}
+            aria-pressed={resumeLanguage === 'en'}
+            className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${resumeLanguage === 'en' ? 'bg-accent-qa text-white' : 'text-text-muted hover:text-text-primary'}`}
+          >
+            EN
+          </button>
+        </div>
+        <a
+          href={PROFILE.contact.resumes[resumeLanguage]}
+          download
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border-subtle/60 bg-surface-default/70 px-3 py-2 text-xs font-medium text-text-primary transition-colors hover:border-accent-qa/50 hover:text-accent-qa"
+        >
+          <FileText size={13} /> {resumeLabel}
+        </a>
+      </motion.div>
 
       {/* Decorative line */}
       <motion.div

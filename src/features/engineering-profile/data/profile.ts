@@ -59,6 +59,10 @@ export interface ContactInfo {
   github: string
   linkedin: string
   email: string
+  resumes: {
+    pt: string
+    en: string
+  }
 }
 
 export interface ProfileData {
@@ -305,5 +309,9 @@ export const PROFILE: ProfileData = {
     github: 'https://github.com/Dilei27',
     linkedin: 'https://linkedin.com/in/odirlei-alves',
     email: 'odirlei.alves@email.com',
+    resumes: {
+      pt: '/curriculo-odirlei-alves-pt.pdf',
+      en: '/curriculo-odirlei-alves-en.pdf',
+    },
   },
 }
