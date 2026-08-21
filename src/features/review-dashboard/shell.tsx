@@ -107,8 +107,8 @@ export function ReviewDashboardShell() {
             <ClipboardCheck size={16} />
           </div>
           <div>
-            <h1 className="text-sm font-semibold text-text-primary">Engineering Review</h1>
-            <p className="text-[10px] text-text-muted/60">Avaliação técnica por regras</p>
+            <h1 className="text-sm font-semibold text-text-primary">Revisão de Engenharia</h1>
+            <p className="text-[10px] text-text-muted/60">Cenário local demonstrativo de avaliação por regras</p>
           </div>
         </div>
 

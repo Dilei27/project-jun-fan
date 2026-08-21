@@ -2,14 +2,13 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { DocsSidebar } from '@/features/docs/docs-sidebar';
-import { ArrowLeft } from 'lucide-react';
 import { PageEntry } from '@/components/shared/page-entry';
 import { motion as m } from '@/design-system/motion';
 import { CrossReferences, getModuleReferences } from '@/components/platform/cross-references';
 import { usePlatform } from '@/components/platform/platform-context';
 import type { Doc } from '@/types';
+import { DocsBreadcrumb } from '@/features/docs/docs-breadcrumb';
 
 export function DocDetailClient({ doc, allDocs }: { doc: Doc; allDocs: Doc[] }) {
   const { setCurrentModule } = usePlatform();
@@ -17,12 +16,7 @@ export function DocDetailClient({ doc, allDocs }: { doc: Doc; allDocs: Doc[] }) 
 
   return (
     <PageEntry className="max-w-[1440px] mx-auto px-6 py-10">
-      <Link
-        href="/docs/"
-        className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text-primary mb-6 transition-colors duration-200"
-      >
-        <ArrowLeft size={14} /> Documentação
-      </Link>
+      <DocsBreadcrumb current={doc.title} />
 
       <div className="flex flex-col md:flex-row gap-8">
         <DocsSidebar docs={allDocs} currentId={doc.id} />

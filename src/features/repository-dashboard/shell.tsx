@@ -121,8 +121,8 @@ export function RepositoryDashboardShell() {
             <Database size={16} />
           </div>
           <div>
-            <h1 className="text-sm font-semibold text-text-primary">Repository Intelligence</h1>
-            <p className="text-[10px] text-text-muted/60">Pipeline de análise de repositório</p>
+            <h1 className="text-sm font-semibold text-text-primary">Inteligência do Repositório</h1>
+            <p className="text-[10px] text-text-muted/60">Cenário local demonstrativo do pipeline de análise</p>
           </div>
         </div>
 

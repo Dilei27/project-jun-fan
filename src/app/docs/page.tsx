@@ -10,6 +10,7 @@ import { PageEntry } from '@/components/shared/page-entry';
 import { motion as m } from '@/design-system/motion';
 import { CrossReferences, getModuleReferences } from '@/components/platform/cross-references';
 import { usePlatform } from '@/components/platform/platform-context';
+import { DocsBreadcrumb } from '@/features/docs/docs-breadcrumb';
 
 export default function DocsIndexPage() {
   const { setCurrentModule } = usePlatform();
@@ -20,6 +21,7 @@ export default function DocsIndexPage() {
     <PageEntry className="max-w-[1440px] mx-auto px-6 py-10">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
+          <DocsBreadcrumb />
           <h1 className="text-3xl font-extrabold text-text-primary mb-2 tracking-[-0.025em] text-balance">
             Documentação
           </h1>
