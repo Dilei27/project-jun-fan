@@ -15,6 +15,22 @@
  * O conteúdo fica acima via z-index de `depth.card`+.
  */
 
+export function AmbientLightField({ className = '' }: { className?: string }) {
+  return (
+    <div
+      aria-hidden
+      className={`jf-ambient-light-field pointer-events-none absolute -inset-[60%] ${className}`}
+      style={{
+        background: [
+          'radial-gradient(ellipse 54% 44% at 42% 50%, rgba(79, 140, 255, 0.13), transparent 72%)',
+          'radial-gradient(ellipse 46% 36% at 62% 56%, rgba(45, 212, 191, 0.04), transparent 76%)',
+        ].join(', '),
+        filter: 'blur(58px)',
+      }}
+    />
+  );
+}
+
 export function AtmosphereBackground() {
   return (
     <div
@@ -22,16 +38,7 @@ export function AtmosphereBackground() {
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
     >
       {/* Large environmental light field: illumination, never a visible object. */}
-      <div
-        className="jf-ambient-light-field absolute -inset-[35%]"
-        style={{
-          background: [
-            'radial-gradient(ellipse 48% 38% at 38% 46%, rgba(79, 140, 255, 0.055), transparent 72%)',
-            'radial-gradient(ellipse 42% 32% at 66% 58%, rgba(45, 212, 191, 0.018), transparent 74%)',
-          ].join(', '),
-          filter: 'blur(42px)',
-        }}
-      />
+      <AmbientLightField />
 
       {/* Camada 1b: Ambient drift — gradiente que respira lentamente */}
       <div

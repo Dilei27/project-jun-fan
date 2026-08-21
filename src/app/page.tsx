@@ -20,6 +20,7 @@ import { TranslatedText } from '@/i18n/language-context';
 import { LivingKnowledgeHero } from '@/features/knowledge-graph/living-knowledge-hero';
 import { HomeGraphSignal } from '@/features/knowledge-graph/home-graph-signal';
 import { EnterSystemLink } from '@/features/knowledge-graph/enter-system-link';
+import { AmbientLightField } from '@/components/atmosphere/atmosphere-background';
 
 export default function HomePage() {
   const projects = getProjects();
@@ -30,6 +31,7 @@ export default function HomePage() {
 
       {/* === HERO === */}
       <HeroStage className="relative left-1/2 h-[calc(100svh-3.5rem)] min-h-[620px] w-screen -translate-x-1/2 overflow-hidden bg-bg-deep mb-20">
+        <AmbientLightField />
         <LivingKnowledgeHero />
         <div className="relative z-10 mx-auto flex h-full max-w-[1440px] items-end px-6 py-12 md:py-20">
           <div className="max-w-md">
