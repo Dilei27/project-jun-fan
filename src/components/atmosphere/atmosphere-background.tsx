@@ -21,6 +21,18 @@ export function AtmosphereBackground() {
       aria-hidden
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
     >
+      {/* Large environmental light field: illumination, never a visible object. */}
+      <div
+        className="jf-ambient-light-field absolute -inset-[35%]"
+        style={{
+          background: [
+            'radial-gradient(ellipse 48% 38% at 38% 46%, rgba(79, 140, 255, 0.055), transparent 72%)',
+            'radial-gradient(ellipse 42% 32% at 66% 58%, rgba(45, 212, 191, 0.018), transparent 74%)',
+          ].join(', '),
+          filter: 'blur(42px)',
+        }}
+      />
+
       {/* Camada 1b: Ambient drift — gradiente que respira lentamente */}
       <div
         className="absolute inset-0 jf-ambient-drift"

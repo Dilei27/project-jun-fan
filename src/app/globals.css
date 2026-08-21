@@ -325,6 +325,12 @@
     75% { transform: translate(0.5px, -0.5px); }
     100% { transform: translate(0, 0); }
   }
+  @keyframes ambient-light-field {
+    0%, 100% { transform: translate3d(-3%, -2%, 0) scale(1); }
+    28% { transform: translate3d(5%, -4%, 0) scale(1.035); }
+    58% { transform: translate3d(8%, 4%, 0) scale(0.98); }
+    82% { transform: translate3d(-5%, 3%, 0) scale(1.02); }
+  }
   @keyframes grid-drift {
     0% { background-position: 0 0; }
     100% { background-position: 32px 32px; }
@@ -340,6 +346,10 @@
 
   .jf-ambient-drift {
     animation: ambient-drift 12s ease-in-out infinite;
+  }
+  .jf-ambient-light-field {
+    animation: ambient-light-field 28s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform;
   }
   .jf-grid-drift {
     animation: grid-drift 24s linear infinite;
