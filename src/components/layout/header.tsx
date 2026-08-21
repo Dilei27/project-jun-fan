@@ -16,7 +16,7 @@ const navLabelKeys: Record<string, TranslationKey> = {
   '/': 'nav.home',
   '/profile/': 'nav.profile',
   '/command-center/': 'nav.commandCenter',
-  '/knowledge-graph/': 'nav.graph',
+  '/command-center/projects/': 'nav.projects',
   '/docs/': 'nav.docs',
   '/decisoes/': 'nav.decisions',
   '/twin/': 'nav.twin',

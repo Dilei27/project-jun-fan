@@ -4,7 +4,6 @@ import { getFullGraph } from '@/core';
 import { ProductGateway } from '@/components/cards/product-card';
 import { FeaturedProjects } from '@/components/cards/project-card';
 import { AIInsightCards } from '@/components/cards/ai-insight-card';
-import { ArrowRight, GitBranch } from 'lucide-react';
 import { FadeIn, HeroStage } from '@/components/shared/reveal';
 import { SectionReveal } from '@/components/shared/section-reveal';
 import { SectionDivider } from '@/components/shared/section-divider';
@@ -21,6 +20,7 @@ import { PlatformStatus } from '@/components/platform/platform-status';
 import { TranslatedText } from '@/i18n/language-context';
 import { LivingKnowledgeHero } from '@/features/knowledge-graph/living-knowledge-hero';
 import { HomeGraphSignal } from '@/features/knowledge-graph/home-graph-signal';
+import { EnterSystemLink } from '@/features/knowledge-graph/enter-system-link';
 
 export default function HomePage() {
   const products = getProducts();
@@ -63,16 +63,7 @@ export default function HomePage() {
 
             <FadeIn delay={0.65} y={6}>
               <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/knowledge-graph/"
-                  className="group inline-flex items-center gap-2 border-b border-accent-qa/60 pb-1 text-sm font-medium tracking-[0.08em] text-text-primary transition-colors hover:border-text-primary"
-                >
-                  <GitBranch size={14} /> ENTER SYSTEM{' '}
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5"
-                  />
-                </Link>
+                <EnterSystemLink />
               </div>
             </FadeIn>
           </div>

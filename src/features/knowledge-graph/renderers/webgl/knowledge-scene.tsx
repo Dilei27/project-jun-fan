@@ -16,16 +16,19 @@ function hash(value: string) {
   return Array.from(value).reduce((total, character) => ((total << 5) - total) + character.charCodeAt(0), 0);
 }
 
-function SceneNode({ node, position, selected, hovered, onSelect, onHover, variant, mode, motionEnabled }: { node: ReturnType<typeof getFullGraph>['nodes'][number]; position: Position; selected: boolean; hovered: boolean; onSelect: () => void; onHover: (active: boolean) => void; variant: 'home' | 'explorer'; mode: 'explore' | 'architect'; motionEnabled: boolean }) {
+function SceneNode({ node, position, selected, hovered, onSelect, onHover, variant, mode, motionEnabled, anticipating }: { node: ReturnType<typeof getFullGraph>['nodes'][number]; position: Position; selected: boolean; hovered: boolean; onSelect: () => void; onHover: (active: boolean) => void; variant: 'home' | 'explorer'; mode: 'explore' | 'architect'; motionEnabled: boolean; anticipating: boolean }) {
   const mesh = useRef<Group>(null);
   const identity = getNodeIdentity(node.type);
   const scale = identity.baseRadius / 38;
-  useFrame(({ clock }) => {
+  useFrame(({ clock, pointer }) => {
     if (!mesh.current) return;
     if (!motionEnabled) return;
     const energy = selected ? 1.22 : hovered ? 1.12 : 1 + Math.sin(clock.elapsedTime * 0.8 + hash(node.id)) * horizonScene.motion.nodePulse;
     mesh.current.scale.setScalar(scale * energy);
     mesh.current.rotation.z += identity.pulse === 'slow-rotate' ? horizonScene.motion.coreRotation : horizonScene.motion.nodeRotation;
+    const phase = hash(node.id) * 0.01;
+    const magnetic = Math.max(0, 1 - Math.hypot(position[0] - pointer.x * 8, position[1] - pointer.y * 5) / 8);
+    mesh.current.position.set(position[0] + Math.sin(clock.elapsedTime * 0.36 + phase) * 0.035 + pointer.x * magnetic * 0.05, position[1] + Math.cos(clock.elapsedTime * 0.29 + phase) * 0.028 + pointer.y * magnetic * 0.04, position[2] + Math.sin(clock.elapsedTime * 0.23 + phase) * 0.06);
   });
 
   const geometry = identity.shape === 'hexagon' ? <cylinderGeometry args={[0.5, 0.5, 0.16, 6]} />
@@ -39,13 +42,13 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
   return <group ref={mesh} position={position} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }} onPointerOver={(event: ThreeEvent<PointerEvent>) => { event.stopPropagation(); onHover(true); }} onPointerOut={() => onHover(false)}>
     <mesh>
       {geometry}
-      <meshStandardMaterial color={new Color(activeColor)} emissive={new Color(activeColor)} emissiveIntensity={mode === 'architect' ? 0.1 : selected ? 1.35 : hovered ? 0.48 : 0.012} transparent opacity={mode === 'architect' ? 0.42 : identity.shape === 'ring' ? 0.42 : variant === 'home' ? 0.38 : 0.5} roughness={0.5} metalness={0.42} wireframe={mode === 'architect' && identity.shape !== 'ring'} />
+      <meshStandardMaterial color={new Color(activeColor)} emissive={new Color(activeColor)} emissiveIntensity={mode === 'architect' ? 0.1 : selected ? 1.35 : hovered ? 0.48 : anticipating && major ? 0.14 : 0.012} transparent opacity={mode === 'architect' ? 0.42 : identity.shape === 'ring' ? 0.42 : variant === 'home' ? anticipating && major ? 0.56 : 0.38 : 0.5} roughness={0.5} metalness={0.42} wireframe={mode === 'architect' && identity.shape !== 'ring'} />
     </mesh>
     {major && <mesh rotation={[0.8, 0.25, 0]}><torusGeometry args={[0.61, 0.018, 6, 28, Math.PI * 1.15]} /><meshBasicMaterial color={selected || hovered ? horizonScene.core.energy : horizonScene.node.dormant} transparent opacity={selected || hovered ? 0.55 : 0.16} /></mesh>}
   </group>;
 }
 
-function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, variant }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; variant: 'home' | 'explorer' }) {
+function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, variant, anticipating }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; variant: 'home' | 'explorer'; anticipating: boolean }) {
   const core = useRef<Group | null>(null);
   const computeCore = useRef<Group | null>(null);
   const transfer = useRef<Mesh | null>(null);
@@ -71,7 +74,7 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
     }
   });
   return <group ref={core} position={position} scale={variant === 'home' ? 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
-    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={active ? 0.42 : 0.2} transparent opacity={0.32} roughness={0.18} metalness={0.58} /></mesh>
+    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={anticipating ? 0.7 : active ? 0.42 : 0.2} transparent opacity={0.32} roughness={0.18} metalness={0.58} /></mesh>
     <mesh scale={1.16}><icosahedronGeometry args={[0.62, 1]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.18} wireframe /></mesh>
     <group ref={computeCore}>
       <mesh scale={0.54}><octahedronGeometry args={[0.56, 1]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={0.28} transparent opacity={0.7} roughness={0.22} metalness={0.7} /></mesh>
@@ -140,7 +143,7 @@ function PathPulse({ from, to, delay, enabled }: { from: Position; to: Position;
   return <mesh ref={pulse} position={from}><sphereGeometry args={[0.07, 10, 10]} /><meshBasicMaterial color={horizonScene.edge.path} /></mesh>;
 }
 
-function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNodeIds, graph, variant, motionEnabled }: { onSelect: (id: string) => void; mode: 'explore' | 'architect'; selectedIds: Set<string>; pathEdgeKeys: Set<string>; pathNodeIds: Set<string>; graph: GraphData; variant: 'home' | 'explorer'; motionEnabled: boolean }) {
+function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNodeIds, graph, variant, motionEnabled, anticipating }: { onSelect: (id: string) => void; mode: 'explore' | 'architect'; selectedIds: Set<string>; pathEdgeKeys: Set<string>; pathNodeIds: Set<string>; graph: GraphData; variant: 'home' | 'explorer'; motionEnabled: boolean; anticipating: boolean }) {
   const { nodes, edges, positions, coreId } = useMemo(() => {
     const degree = new Map<string, number>();
     graph.edges.forEach(edge => { degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1); degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1); });
@@ -178,7 +181,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
       const pathIndex = pathNodeIds.has(edge.source) && pathNodeIds.has(edge.target) ? Math.min([...pathNodeIds].indexOf(edge.source), [...pathNodeIds].indexOf(edge.target)) : -1;
       return <group key={`${edge.source}-${edge.target}`}><line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.34 : 0.15} /></line>{onPath && pathIndex >= 0 && <PathPulse from={from} to={to} delay={pathIndex * 0.22} enabled={motionEnabled} />}</group>;
     })}
-    {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} variant={variant} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} mode={mode} motionEnabled={motionEnabled} />)}
+    {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} variant={variant} anticipating={anticipating} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} mode={mode} motionEnabled={motionEnabled} anticipating={anticipating} />)}
     {focusedNode && <SpatialAnnotation node={focusedNode} position={positions.get(focusedNode.id)!} relationCount={focusedRelations.length} primary />}
     {focusedRelations.slice(0, 3).map(edge => {
       const relatedId = edge.source === focusedNode?.id ? edge.target : edge.source;
@@ -189,7 +192,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
   </>;
 }
 
-export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onUnavailable, mode = 'explore', quality = 'standard', focusId, selectedIds = [], pathNodeIds = [], pathEdgeKeys = [], graphData, variant = 'explorer', overviewVersion = 0 }: { className?: string; onNodeSelect?: (id: string) => void; onEmptySpace?: () => void; onUnavailable?: () => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null; selectedIds?: string[]; pathNodeIds?: string[]; pathEdgeKeys?: string[]; graphData?: GraphData; variant?: 'home' | 'explorer'; overviewVersion?: number }) {
+export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onUnavailable, mode = 'explore', quality = 'standard', focusId, selectedIds = [], pathNodeIds = [], pathEdgeKeys = [], graphData, variant = 'explorer', overviewVersion = 0, anticipating = false }: { className?: string; onNodeSelect?: (id: string) => void; onEmptySpace?: () => void; onUnavailable?: () => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null; selectedIds?: string[]; pathNodeIds?: string[]; pathEdgeKeys?: string[]; graphData?: GraphData; variant?: 'home' | 'explorer'; overviewVersion?: number; anticipating?: boolean }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [isPageVisible, setIsPageVisible] = useState(true);
@@ -223,7 +226,7 @@ export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onU
   return <div ref={hostRef} className={className} aria-label="Visualização espacial do conhecimento">
     <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: variant === 'home' ? [0, 0, 5.8] : [0, 0, 13], fov: 46 }} dpr={reducedMotion ? [1, 1] : dpr} gl={{ antialias: quality !== 'low', alpha: true }} onPointerMissed={onEmptySpace} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
       <fog attach="fog" args={[horizonScene.environment.fog, 8, 22]} />
-      <KnowledgeUniverse graph={graph} variant={variant} mode={mode} motionEnabled={!reducedMotion} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} />
+      <KnowledgeUniverse graph={graph} variant={variant} mode={mode} motionEnabled={!reducedMotion} anticipating={anticipating} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} />
       {!reducedMotion && <CameraFocus target={focusPosition} overviewVersion={overviewVersion} variant={variant} />}
       <OrbitControls enabled={variant === 'explorer' && !focusId && !reducedMotion} enablePan enableZoom enableRotate minDistance={6} maxDistance={22} maxPolarAngle={Math.PI * 0.65} minPolarAngle={Math.PI * 0.35} />
     </Canvas>

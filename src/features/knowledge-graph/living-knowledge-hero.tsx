@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { getFullGraph } from '@/core';
 import { getHomeCoreGraph } from './home-core-data';
@@ -11,6 +11,7 @@ const KnowledgeScene = dynamic(() => import('./renderers/webgl/knowledge-scene')
 
 export function LivingKnowledgeHero() {
   const [unavailable, setUnavailable] = useState(false);
+  const [anticipating, setAnticipating] = useState(false);
   const { selectedNodeId, setSelectedNodeId, setSelectedKnowledgeNodeLabel, pushHistory } = usePlatform();
   const graph = useMemo(() => getFullGraph(), []);
   const homeGraph = useMemo(() => getHomeCoreGraph(), []);
@@ -21,8 +22,13 @@ export function LivingKnowledgeHero() {
     setSelectedKnowledgeNodeLabel(node?.label ?? null);
     if (node) pushHistory({ module: 'home', label: node.label, href: node.url || '/knowledge-graph/' });
   };
+  useEffect(() => {
+    const handler = (event: Event) => setAnticipating(Boolean((event as CustomEvent<boolean>).detail));
+    window.addEventListener('jf-enter-system', handler);
+    return () => window.removeEventListener('jf-enter-system', handler);
+  }, []);
   return <>
-    {!unavailable && <KnowledgeScene className="absolute inset-0 translate-y-14 opacity-90 sm:translate-y-0" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" />}
+    {!unavailable && <KnowledgeScene className="absolute inset-0 translate-y-14 opacity-90 sm:translate-y-0" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" anticipating={anticipating} />}
     {unavailable && <div className="absolute inset-0 flex items-center justify-center bg-bg-deep">
       <div className="text-center text-sm text-text-secondary">Knowledge Core indisponível neste dispositivo. <Link href="/knowledge-graph/" className="text-accent-qa hover:underline">Abrir Explorer em SVG</Link></div>
     </div>}
