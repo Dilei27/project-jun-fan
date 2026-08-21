@@ -61,7 +61,7 @@ function computeClusterIds(nodes: GraphNode[]): string[] {
   return CLUSTERS.filter(c => c.types.some(t => types.has(t))).map(c => c.id);
 }
 
-export function KnowledgeExplorer() {
+export function KnowledgeExplorer({ initialQuery }: { initialQuery?: string } = {}) {
   const searchParams = useSearchParams();
   /* ─── UI-only state ─── */
   const [selectedSecondary, setSelectedSecondary] = useState<GraphNode | null>(null);
@@ -325,12 +325,12 @@ export function KnowledgeExplorer() {
   }, [exploration, fitToView]);
 
   useEffect(() => {
-    const query = searchParams.get('q')?.trim() ?? '';
+    const query = initialQuery ?? searchParams.get('q')?.trim() ?? '';
     if (!query || processedQueryRef.current === query) return;
     processedQueryRef.current = query;
     const frame = requestAnimationFrame(() => handleSearch(query));
     return () => cancelAnimationFrame(frame);
-  }, [handleSearch, searchParams]);
+  }, [handleSearch, initialQuery, searchParams]);
 
   const toggleFilter = useCallback((type: string) => {
     setActiveFilters(prev =>

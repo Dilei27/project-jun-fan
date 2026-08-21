@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { Html, OrbitControls } from '@react-three/drei';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Mesh, Group } from 'three';
 import { Color, Vector3 } from 'three';
@@ -69,6 +69,29 @@ function CameraFocus({ target }: { target: Position | null }) {
   return null;
 }
 
+function SpatialAnnotation({ node, position, relationCount, primary }: { node: ReturnType<typeof getFullGraph>['nodes'][number]; position: Position; relationCount: number; primary: boolean }) {
+  return <Html position={position} center distanceFactor={9} style={{ pointerEvents: 'none' }}>
+    <div className={`whitespace-nowrap ${primary ? 'translate-x-10 -translate-y-10' : 'translate-x-4 -translate-y-4'} text-left`}>
+      <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.14em] text-text-primary">
+        <span className="h-px w-8 bg-accent-qa/70" />
+        {primary ? node.label : node.type}
+      </div>
+      {primary && <div className="mt-1 pl-10 text-[9px] uppercase tracking-[0.12em] text-text-muted">{node.type} · {relationCount} relações</div>}
+    </div>
+  </Html>;
+}
+
+function PathPulse({ from, to, delay, enabled }: { from: Position; to: Position; delay: number; enabled: boolean }) {
+  const pulse = useRef<Mesh>(null);
+  useFrame(({ clock }) => {
+    if (!pulse.current || !enabled) return;
+    const progress = (clock.elapsedTime * 0.55 - delay) % 1;
+    const t = progress < 0 ? progress + 1 : progress;
+    pulse.current.position.set(from[0] + (to[0] - from[0]) * t, from[1] + (to[1] - from[1]) * t, from[2] + (to[2] - from[2]) * t);
+  });
+  return <mesh ref={pulse} position={from}><sphereGeometry args={[0.07, 10, 10]} /><meshBasicMaterial color={horizonScene.edge.path} /></mesh>;
+}
+
 function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNodeIds, graph, variant, motionEnabled }: { onSelect: (id: string) => void; mode: 'explore' | 'architect'; selectedIds: Set<string>; pathEdgeKeys: Set<string>; pathNodeIds: Set<string>; graph: GraphData; variant: 'home' | 'explorer'; motionEnabled: boolean }) {
   const { nodes, edges, positions, coreId } = useMemo(() => {
     const degree = new Map<string, number>();
@@ -84,6 +107,10 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
     return { ...graph, positions, coreId };
   }, [graph]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const focusedNode = selectedIds.size > 0 ? nodes.find(node => selectedIds.has(node.id)) ?? null : null;
+  const focusedRelations = focusedNode
+    ? edges.filter(edge => edge.source === focusedNode.id || edge.target === focusedNode.id)
+    : [];
   return <>
     <ambientLight intensity={horizonScene.lighting.ambient} />
     <directionalLight position={[4, 5, 6]} intensity={horizonScene.lighting.keyIntensity} color={horizonScene.lighting.key} />
@@ -93,9 +120,17 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
       if (!from || !to) return null;
       const onPath = pathEdgeKeys.has(`${edge.source}->${edge.target}`);
       const active = onPath || selectedIds.has(edge.source) || selectedIds.has(edge.target) || hoveredId === edge.source || hoveredId === edge.target;
-      return <line key={`${edge.source}-${edge.target}`}><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.34 : 0.15} /></line>;
+      const pathIndex = pathNodeIds.has(edge.source) && pathNodeIds.has(edge.target) ? Math.min([...pathNodeIds].indexOf(edge.source), [...pathNodeIds].indexOf(edge.target)) : -1;
+      return <group key={`${edge.source}-${edge.target}`}><line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.34 : 0.15} /></line>{onPath && pathIndex >= 0 && <PathPulse from={from} to={to} delay={pathIndex * 0.22} enabled={motionEnabled} />}</group>;
     })}
     {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} mode={mode} motionEnabled={motionEnabled} />)}
+    {focusedNode && <SpatialAnnotation node={focusedNode} position={positions.get(focusedNode.id)!} relationCount={focusedRelations.length} primary />}
+    {focusedRelations.slice(0, 3).map(edge => {
+      const relatedId = edge.source === focusedNode?.id ? edge.target : edge.source;
+      const related = nodes.find(node => node.id === relatedId);
+      const position = positions.get(relatedId);
+      return related && position ? <SpatialAnnotation key={`annotation-${relatedId}`} node={related} position={position} relationCount={0} primary={false} /> : null;
+    })}
   </>;
 }
 

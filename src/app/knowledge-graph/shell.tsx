@@ -11,6 +11,7 @@ import { WebGLKnowledgeExplorer } from '@/features/knowledge-graph/webgl-knowled
 export function KnowledgeGraphShell() {
   const { setCurrentModule } = usePlatform();
   const [renderer, setRenderer] = useState<'webgl' | 'svg'>('webgl');
+  const [svgQuery, setSvgQuery] = useState<string | undefined>();
   useEffect(() => { setCurrentModule('knowledge-graph'); }, [setCurrentModule]);
   return (
     <motion.div
@@ -21,7 +22,7 @@ export function KnowledgeGraphShell() {
     >
       {/* Immersive graph — edge to edge */}
         <div className="absolute inset-0">
-          {renderer === 'webgl' ? <WebGLKnowledgeExplorer onUseSvg={() => setRenderer('svg')} /> : <KnowledgeExplorer />}
+          {renderer === 'webgl' ? <WebGLKnowledgeExplorer onUseSvg={query => { setSvgQuery(query); setRenderer('svg'); }} /> : <KnowledgeExplorer initialQuery={svgQuery} />}
         </div>
 
       {/* Compact title overlay — top right, out of the graph's way */}

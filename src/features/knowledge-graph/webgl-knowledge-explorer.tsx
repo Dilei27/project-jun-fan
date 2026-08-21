@@ -11,7 +11,7 @@ import { ReplayBar } from './components/replay-bar';
 
 const KnowledgeScene = dynamic(() => import('./renderers/webgl/knowledge-scene').then(module => module.KnowledgeScene), { ssr: false });
 
-export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
+export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: (query?: string) => void }) {
   const graph = useMemo(() => getFullGraph(), []);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [secondaryId, setSecondaryId] = useState<string | null>(null);
@@ -52,7 +52,7 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
 
   return (
     <div className="relative h-full overflow-hidden bg-bg-deep">
-      <KnowledgeScene className="absolute inset-0" onNodeSelect={selectNode} onEmptySpace={releaseFocus} onUnavailable={onUseSvg} focusId={secondaryId ?? selectedId} selectedIds={[selectedId, secondaryId].filter((id): id is string => Boolean(id))} pathNodeIds={path?.nodeIds ?? []} pathEdgeKeys={Array.from(path?.edgeKeys ?? [])} mode={mode} quality={quality} />
+      <KnowledgeScene className="absolute inset-0" onNodeSelect={selectNode} onEmptySpace={releaseFocus} onUnavailable={() => onUseSvg(selected?.label)} focusId={secondaryId ?? selectedId} selectedIds={[selectedId, secondaryId].filter((id): id is string => Boolean(id))} pathNodeIds={path?.nodeIds ?? []} pathEdgeKeys={Array.from(path?.edgeKeys ?? [])} mode={mode} quality={quality} />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(8,12,18,0.45)_100%)]" />
       <div className="absolute left-6 top-6 z-10 max-w-sm">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-accent-qa">Knowledge Core</p>
@@ -62,7 +62,7 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
       <div className="absolute right-6 top-6 z-10 flex gap-2">
         <Link href="/" className="inline-flex items-center gap-1.5 rounded-md border border-border-subtle/60 bg-surface-elevated/80 px-2.5 py-1.5 text-xs text-text-secondary hover:text-text-primary"><ArrowLeft size={13} /> Core</Link>
         <button type="button" onClick={releaseFocus} className="inline-flex items-center gap-1.5 rounded-md border border-border-subtle/60 bg-surface-elevated/80 px-2.5 py-1.5 text-xs text-text-secondary hover:text-text-primary"><RotateCcw size={13} /> Ajustar visão</button>
-        <button type="button" onClick={onUseSvg} className="inline-flex items-center gap-1.5 rounded-md border border-border-subtle/60 bg-surface-elevated/80 px-2.5 py-1.5 text-xs text-text-secondary hover:text-text-primary"><Maximize2 size={13} /> Modo SVG</button>
+        <button type="button" onClick={() => onUseSvg(selected?.label)} className="inline-flex items-center gap-1.5 rounded-md border border-border-subtle/60 bg-surface-elevated/80 px-2.5 py-1.5 text-xs text-text-secondary hover:text-text-primary"><Maximize2 size={13} /> Modo SVG</button>
       </div>
       <div className="absolute left-6 top-32 z-10 flex gap-1 rounded-lg border border-border-subtle/60 bg-surface-elevated/80 p-1 text-xs">
         {(['explore', 'architect'] as const).map(item => <button key={item} type="button" onClick={() => setMode(item)} className={`rounded-md px-2.5 py-1.5 ${mode === item ? 'bg-accent-qa text-white' : 'text-text-muted hover:text-text-primary'}`}>{item === 'explore' ? 'Explorar' : 'Arquiteto'}</button>)}
