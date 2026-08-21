@@ -10,8 +10,8 @@ function Instrument({ side, primary, secondary, active }: { side: 'left' | 'righ
   const color = active ? '#E8F4FF' : '#4F8CFF';
 
   return (
-    <div className={`pointer-events-none absolute top-10 hidden w-24 text-center lg:block ${side === 'left' ? 'left-10' : 'right-10'}`}>
-      <motion.svg viewBox="0 0 100 100" className="mx-auto h-24 w-24 overflow-visible" aria-hidden
+    <div className={`pointer-events-none absolute top-10 hidden w-28 text-center md:block lg:w-32 ${side === 'left' ? 'left-10' : 'right-10'}`}>
+      <motion.svg viewBox="0 0 100 100" className="mx-auto h-28 w-28 overflow-visible lg:h-32 lg:w-32" aria-hidden
         animate={reduced ? undefined : { rotate: side === 'left' ? 360 : -360 }}
         transition={{ duration: side === 'left' ? 28 : 34, repeat: Infinity, ease: 'linear' }}
       >
@@ -25,7 +25,7 @@ function Instrument({ side, primary, secondary, active }: { side: 'left' | 'righ
         })}
         <path d="M50 7v10M43 50h14" stroke={color} strokeOpacity={active ? 0.8 : 0.32} strokeWidth="0.8" />
       </motion.svg>
-      <div className="-mt-16 text-[8px] font-medium uppercase tracking-[0.16em] text-text-secondary">
+      <div className="-mt-[4.75rem] text-[9px] font-medium uppercase tracking-[0.16em] text-text-secondary lg:-mt-[5.5rem] lg:text-[10px]">
         <div>{primary}</div>
         <div className={active ? 'mt-1 text-accent-qa' : 'mt-1 text-text-muted'}>{secondary}</div>
       </div>
