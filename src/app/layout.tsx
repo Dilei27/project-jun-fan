@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { ProfileDock } from '@/components/layout/profile-dock';
 import { CommandPalette } from '@/features/command-palette/command-palette';
 import { AIDock } from '@/features/ai-dock/ai-dock';
 import { AtmosphereBackground } from '@/components/atmosphere/atmosphere-background';
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Footer />
               <CommandPalette />
               <AIDock />
+              <ProfileDock />
               <SenseiFab />
               <LivingStatusBar />
               <WelcomeExperience />
