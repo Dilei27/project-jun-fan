@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Mesh, Group } from 'three';
 import { Color, Vector3 } from 'three';
 import { getFullGraph } from '@/core';
+import type { GraphData } from '@/core';
 import { getNodeIdentity } from '@/features/knowledge-graph/lib/node-identity';
 import { horizonScene } from '@/design-system/scene-theme';
 
@@ -15,7 +16,7 @@ function hash(value: string) {
   return Array.from(value).reduce((total, character) => ((total << 5) - total) + character.charCodeAt(0), 0);
 }
 
-function SceneNode({ node, position, selected, onSelect }: { node: ReturnType<typeof getFullGraph>['nodes'][number]; position: Position; selected: boolean; onSelect: () => void }) {
+function SceneNode({ node, position, selected, onSelect, variant }: { node: ReturnType<typeof getFullGraph>['nodes'][number]; position: Position; selected: boolean; onSelect: () => void; variant: 'home' | 'explorer' }) {
   const mesh = useRef<Mesh>(null);
   const identity = getNodeIdentity(node.type);
   const scale = identity.baseRadius / 38;
@@ -35,7 +36,7 @@ function SceneNode({ node, position, selected, onSelect }: { node: ReturnType<ty
   return (
     <mesh ref={mesh} position={position} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
       {geometry}
-      <meshStandardMaterial color={new Color(node.color)} emissive={new Color(node.color)} emissiveIntensity={selected ? 1.5 : 0.35} transparent opacity={identity.shape === 'ring' ? 0.8 : 0.92} roughness={0.35} metalness={0.2} />
+      <meshStandardMaterial color={new Color(selected || variant === 'explorer' ? node.color : horizonScene.node.dormant)} emissive={new Color(node.color)} emissiveIntensity={selected ? 1.5 : variant === 'home' ? 0.08 : 0.35} transparent opacity={identity.shape === 'ring' ? 0.68 : variant === 'home' ? 0.58 : 0.92} roughness={0.35} metalness={0.2} />
     </mesh>
   );
 }
@@ -65,9 +66,8 @@ function CameraFocus({ target }: { target: Position | null }) {
   return null;
 }
 
-function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNodeIds }: { onSelect: (id: string) => void; mode: 'explore' | 'architect'; selectedIds: Set<string>; pathEdgeKeys: Set<string>; pathNodeIds: Set<string> }) {
+function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNodeIds, graph, variant }: { onSelect: (id: string) => void; mode: 'explore' | 'architect'; selectedIds: Set<string>; pathEdgeKeys: Set<string>; pathNodeIds: Set<string>; graph: GraphData; variant: 'home' | 'explorer' }) {
   const { nodes, edges, positions, coreId } = useMemo(() => {
-    const graph = getFullGraph();
     const degree = new Map<string, number>();
     graph.edges.forEach(edge => { degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1); degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1); });
     const coreId = [...graph.nodes].sort((a, b) => (degree.get(b.id) ?? 0) - (degree.get(a.id) ?? 0))[0]?.id;
@@ -79,7 +79,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
       positions.set(node.id, [Math.cos(angle) * radius, Math.sin(angle) * radius * 0.6, topologyDepth]);
     });
     return { ...graph, positions, coreId };
-  }, []);
+  }, [graph]);
   return <>
     <ambientLight intensity={horizonScene.lighting.ambient} />
     <directionalLight position={[4, 5, 6]} intensity={horizonScene.lighting.keyIntensity} color={horizonScene.lighting.key} />
@@ -91,16 +91,16 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
       const active = onPath || selectedIds.has(edge.source) || selectedIds.has(edge.target);
       return <line key={`${edge.source}-${edge.target}`}><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.34 : 0.15} /></line>;
     })}
-    {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} onSelect={() => onSelect(node.id)} />)}
+    {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} onSelect={() => onSelect(node.id)} variant={variant} />)}
   </>;
 }
 
-export function KnowledgeScene({ className = '', onNodeSelect, onUnavailable, mode = 'explore', quality = 'standard', focusId, selectedIds = [], pathNodeIds = [], pathEdgeKeys = [] }: { className?: string; onNodeSelect?: (id: string) => void; onUnavailable?: () => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null; selectedIds?: string[]; pathNodeIds?: string[]; pathEdgeKeys?: string[] }) {
+export function KnowledgeScene({ className = '', onNodeSelect, onUnavailable, mode = 'explore', quality = 'standard', focusId, selectedIds = [], pathNodeIds = [], pathEdgeKeys = [], graphData, variant = 'explorer' }: { className?: string; onNodeSelect?: (id: string) => void; onUnavailable?: () => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null; selectedIds?: string[]; pathNodeIds?: string[]; pathEdgeKeys?: string[]; graphData?: GraphData; variant?: 'home' | 'explorer' }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [isPageVisible, setIsPageVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const graph = useMemo(() => getFullGraph(), []);
+  const graph = useMemo(() => graphData ?? getFullGraph(), [graphData]);
   const focusPosition = useMemo(() => {
     if (!focusId) return null;
     const index = graph.nodes.findIndex(node => node.id === focusId);
@@ -125,7 +125,7 @@ export function KnowledgeScene({ className = '', onNodeSelect, onUnavailable, mo
   return <div ref={hostRef} className={className} aria-label="Visualização espacial do conhecimento">
     <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: [0, 0, 13], fov: 46 }} dpr={reducedMotion ? [1, 1] : dpr} gl={{ antialias: quality !== 'low', alpha: true }} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
       <fog attach="fog" args={[horizonScene.environment.fog, 8, 22]} />
-      <KnowledgeUniverse mode={mode} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} />
+      <KnowledgeUniverse graph={graph} variant={variant} mode={mode} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} />
       {!reducedMotion && <CameraFocus target={focusPosition} />}
       <OrbitControls enabled={!focusId && !reducedMotion} enablePan enableZoom enableRotate minDistance={6} maxDistance={22} maxPolarAngle={Math.PI * 0.65} minPolarAngle={Math.PI * 0.35} />
     </Canvas>
