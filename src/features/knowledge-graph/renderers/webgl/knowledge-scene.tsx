@@ -1,10 +1,10 @@
 'use client';
 
-import { Canvas, useFrame, type ThreeEvent } from '@react-three/fiber';
+import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { useMemo, useRef, useState } from 'react';
 import type { Mesh, Group } from 'three';
-import { Color } from 'three';
+import { Color, Vector3 } from 'three';
 import { getFullGraph } from '@/core';
 import { getNodeIdentity } from '@/features/knowledge-graph/lib/node-identity';
 
@@ -53,7 +53,18 @@ function KnowledgeCore({ position }: { position: Position }) {
   </group>;
 }
 
-function KnowledgeUniverse({ onSelect }: { onSelect: (id: string) => void }) {
+function CameraFocus({ target }: { target: Position | null }) {
+  const { camera } = useThree();
+  useFrame(() => {
+    if (!target) return;
+    const desired = new Vector3(target[0] * 1.12, target[1] * 1.12, target[2] + 6.4);
+    camera.position.lerp(desired, 0.045);
+    camera.lookAt(target[0], target[1], target[2]);
+  });
+  return null;
+}
+
+function KnowledgeUniverse({ onSelect, mode }: { onSelect: (id: string) => void; mode: 'explore' | 'architect' }) {
   const { nodes, edges, positions, coreId } = useMemo(() => {
     const graph = getFullGraph();
     const degree = new Map<string, number>();
@@ -78,18 +89,29 @@ function KnowledgeUniverse({ onSelect }: { onSelect: (id: string) => void }) {
       const from = positions.get(edge.source); const to = positions.get(edge.target);
       if (!from || !to) return null;
       const active = selected === edge.source || selected === edge.target;
-      return <line key={`${edge.source}-${edge.target}`}><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={active ? '#4F8CFF' : '#6D7B90'} transparent opacity={active ? 0.7 : 0.15} /></line>;
+      return <line key={`${edge.source}-${edge.target}`}><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={active ? '#4F8CFF' : '#6D7B90'} transparent opacity={active ? 0.7 : mode === 'architect' ? 0.34 : 0.15} /></line>;
     })}
     {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selected === node.id} onSelect={() => { setSelected(node.id); onSelect(node.id); }} />)}
   </>;
 }
 
-export function KnowledgeScene({ className = '', onNodeSelect }: { className?: string; onNodeSelect?: (id: string) => void }) {
+export function KnowledgeScene({ className = '', onNodeSelect, mode = 'explore', quality = 'standard', focusId }: { className?: string; onNodeSelect?: (id: string) => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null }) {
+  const graph = useMemo(() => getFullGraph(), []);
+  const focusPosition = useMemo(() => {
+    if (!focusId) return null;
+    const index = graph.nodes.findIndex(node => node.id === focusId);
+    if (index < 0) return null;
+    const angle = index * 2.399963;
+    const degree = graph.edges.filter(edge => edge.source === focusId || edge.target === focusId).length;
+    return [Math.cos(angle) * (2.2 + Math.sqrt(index) * 0.58), Math.sin(angle) * (2.2 + Math.sqrt(index) * 0.58) * 0.6, Math.min(2.8, Math.max(-2.8, (degree - 2) * -0.16 + Math.sin(index * 1.7)))] as Position;
+  }, [focusId, graph]);
+  const dpr: [number, number] = quality === 'low' ? [1, 1] : quality === 'ultra' ? [1, 2] : [1, 1.75];
   return <div className={className} aria-label="Visualização espacial do conhecimento">
-    <Canvas camera={{ position: [0, 0, 13], fov: 46 }} dpr={[1, 1.75]} gl={{ antialias: true, alpha: true }}>
+    <Canvas camera={{ position: [0, 0, 13], fov: 46 }} dpr={dpr} gl={{ antialias: quality !== 'low', alpha: true }}>
       <fog attach="fog" args={['#080C12', 8, 22]} />
-      <KnowledgeUniverse onSelect={onNodeSelect ?? (() => {})} />
-      <OrbitControls enablePan enableZoom enableRotate minDistance={6} maxDistance={22} maxPolarAngle={Math.PI * 0.65} minPolarAngle={Math.PI * 0.35} />
+      <KnowledgeUniverse mode={mode} onSelect={onNodeSelect ?? (() => {})} />
+      <CameraFocus target={focusPosition} />
+      <OrbitControls enabled={!focusId} enablePan enableZoom enableRotate minDistance={6} maxDistance={22} maxPolarAngle={Math.PI * 0.65} minPolarAngle={Math.PI * 0.35} />
     </Canvas>
   </div>;
 }
