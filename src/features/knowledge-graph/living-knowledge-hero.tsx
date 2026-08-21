@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { getFullGraph } from '@/core';
 import { getHomeCoreGraph } from './home-core-data';
@@ -10,6 +10,7 @@ import { usePlatform } from '@/components/platform/platform-context';
 const KnowledgeScene = dynamic(() => import('./renderers/webgl/knowledge-scene').then(module => module.KnowledgeScene), { ssr: false });
 
 export function LivingKnowledgeHero() {
+  const [unavailable, setUnavailable] = useState(false);
   const { selectedNodeId, setSelectedNodeId, setSelectedKnowledgeNodeLabel, pushHistory } = usePlatform();
   const graph = useMemo(() => getFullGraph(), []);
   const homeGraph = useMemo(() => getHomeCoreGraph(), []);
@@ -21,7 +22,10 @@ export function LivingKnowledgeHero() {
     if (node) pushHistory({ module: 'home', label: node.label, href: node.url || '/knowledge-graph/' });
   };
   return <>
-    <KnowledgeScene className="absolute inset-0 opacity-90" onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" />
+    {!unavailable && <KnowledgeScene className="absolute inset-0 opacity-90" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" />}
+    {unavailable && <div className="absolute inset-0 flex items-center justify-center bg-bg-deep">
+      <div className="text-center text-sm text-text-secondary">Knowledge Core indisponível neste dispositivo. <Link href="/knowledge-graph/" className="text-accent-qa hover:underline">Abrir Explorer em SVG</Link></div>
+    </div>}
     <nav className="sr-only" aria-label="Entidades do Knowledge Core">
       <ul>
         {homeGraph.nodes.map(node => (
