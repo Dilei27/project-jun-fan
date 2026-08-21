@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { motion as m } from '@/design-system/motion';
 import { PROFILE } from '../data/profile';
 import type { Skill } from '../data/profile';
+import { useLanguage } from '@/i18n/language-context';
+import { SectionHeading } from './section-heading';
 
 const CATEGORY_COLORS: Record<string, string> = {
   Automation: '#4F8CFF',
@@ -27,6 +29,7 @@ const LEVEL_DOT: Record<string, number> = {
 };
 
 export function SkillsGraph() {
+  const { td } = useLanguage();
   const grouped = groupBy(PROFILE.skills, 'category') as Record<string, Skill[]>
 
   return (
@@ -35,9 +38,10 @@ export function SkillsGraph() {
       backdropFilter: 'blur(12px)',
       border: '1px solid rgba(244, 247, 250, 0.04)',
     }}>
-      <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted mb-3">
-        Skills & Conexões
-      </h2>
+      <SectionHeading
+        title={td('profile.skills.title', 'Competências e Conexões')}
+        description={td('profile.skills.help', 'Tecnologias organizadas por área. Os pontos indicam o nível de domínio e o número mostra projetos relacionados.')}
+      />
 
       <div className="space-y-2">
         {Object.entries(grouped).map(([category, skills], ci) => {

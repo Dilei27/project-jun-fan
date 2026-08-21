@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { motion as m } from '@/design-system/motion';
+import { useLanguage } from '@/i18n/language-context';
+import { SectionHeading } from './section-heading';
 
 const NODES = [
   { id: 'odirlei', label: 'Odirlei Alves', color: '#4F8CFF', x: 50, y: 10, size: 22 },
@@ -25,6 +27,7 @@ const EDGES = [
 ];
 
 export function CareerKnowledgeGraph() {
+  const { td } = useLanguage();
   const nodeMap = new Map(NODES.map(n => [n.id, n]))
 
   return (
@@ -33,9 +36,10 @@ export function CareerKnowledgeGraph() {
       backdropFilter: 'blur(12px)',
       border: '1px solid rgba(244, 247, 250, 0.04)',
     }}>
-      <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted mb-3">
-        Career Graph
-      </h2>
+      <SectionHeading
+        title={td('profile.careerGraph.title', 'Grafo de Carreira')}
+        description={td('profile.careerGraph.help', 'Mapa visual que conecta a trajetória profissional às tecnologias e ao Project Jun Fan.')}
+      />
 
       <svg viewBox="0 0 100 95" className="w-full h-auto" style={{ maxHeight: 200 }}>
         {/* Edges */}

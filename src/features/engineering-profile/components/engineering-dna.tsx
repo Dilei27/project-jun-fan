@@ -3,17 +3,21 @@
 import { motion } from 'framer-motion';
 import { motion as m } from '@/design-system/motion';
 import { PROFILE } from '../data/profile';
+import { useLanguage } from '@/i18n/language-context';
+import { SectionHeading } from './section-heading';
 
 export function EngineeringDNA() {
+  const { td } = useLanguage();
   return (
     <div className="rounded-xl p-5" style={{
       background: 'rgba(17, 24, 33, 0.6)',
       backdropFilter: 'blur(12px)',
       border: '1px solid rgba(244, 247, 250, 0.04)',
     }}>
-      <h2 className="text-[12px] font-semibold uppercase tracking-wider text-text-muted mb-4">
-        Engineering DNA
-      </h2>
+      <SectionHeading
+        title={td('profile.engineeringDna.title', 'Identidade de Engenharia')}
+        description={td('profile.engineeringDna.help', 'Os princípios que orientam decisões, automação e qualidade no trabalho de engenharia.')}
+      />
 
       <div className="grid grid-cols-3 gap-2">
         {PROFILE.pillars.map((p, i) => (
