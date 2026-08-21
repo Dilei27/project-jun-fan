@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getProducts, getProjects } from '@/lib/content';
+import { getFullGraph } from '@/core';
 import { ProductGateway } from '@/components/cards/product-card';
 import { FeaturedProjects } from '@/components/cards/project-card';
 import { AIInsightCards } from '@/components/cards/ai-insight-card';
@@ -24,23 +25,15 @@ import { HomeGraphSignal } from '@/features/knowledge-graph/home-graph-signal';
 export default function HomePage() {
   const products = getProducts();
   const projects = getProjects();
+  const graph = getFullGraph();
 
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-10">
-      {/* Ambient glow — top */}
-      <div
-        aria-hidden
-        className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse 50% 60% at 50% 0%, rgba(79, 140, 255, 0.06), transparent 70%)',
-        }}
-      />
 
       {/* === HERO === */}
-      <HeroStage className="relative min-h-[100svh] overflow-hidden rounded-2xl -mt-2 mb-20">
+      <HeroStage className="relative left-1/2 h-[calc(100svh-3.5rem)] min-h-[620px] w-screen -translate-x-1/2 overflow-hidden bg-bg-deep mb-20">
         <LivingKnowledgeHero />
-        <div className="relative z-10 max-w-[1440px] mx-auto flex min-h-[100svh] items-end px-6 py-16 md:py-24">
+        <div className="relative z-10 mx-auto flex h-full max-w-[1440px] items-end px-6 py-12 md:py-20">
           <div className="max-w-md">
             <FadeIn delay={0.05} y={6}>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 text-xs font-medium text-accent-qa bg-accent-qa/8 border border-accent-qa/20 rounded-full shadow-[inset_0_1px_0_0_rgba(79,140,255,0.08)]">
@@ -138,8 +131,8 @@ export default function HomePage() {
           stats={[
             { value: products.length, suffix: '', label: 'home.stats.products' },
             { value: projects.length, suffix: '', label: 'home.stats.projects' },
-            { value: 12, suffix: '+', label: 'home.stats.agents' },
-            { value: 95, suffix: '%', label: 'home.stats.coverage' },
+            { value: graph.nodes.length, suffix: '', label: 'Entidades' },
+            { value: graph.edges.length, suffix: '', label: 'Relações' },
           ]}
         />
       </SectionReveal>
