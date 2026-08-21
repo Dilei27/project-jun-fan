@@ -12,6 +12,7 @@ import { KnowledgeConnections } from './components/knowledge-connections';
 import { CareerKnowledgeGraph } from './components/career-knowledge-graph';
 import { PublicPresence } from './components/public-presence';
 import { GitHubRepos } from './components/github-repos';
+import { AutomationCatalog } from './components/automation-catalog';
 
 export function EngineeringProfileShell() {
   return (
@@ -41,6 +42,10 @@ export function EngineeringProfileShell() {
         <div className="grid grid-cols-2 gap-4 mt-4">
           <KnowledgeConnections />
           <CareerKnowledgeGraph />
+        </div>
+
+        <div className="mt-4">
+          <AutomationCatalog />
         </div>
 
         <div className="mt-4">

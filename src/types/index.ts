@@ -4,3 +4,4 @@ export type { TimelineEntry } from './timeline';
 export type { Decision, Doc, DocSection, ResourceLinks, SkillCategory } from './content';
 export type { DashboardMetric, DashboardData, ActivityEntry } from './dashboard';
 export type { AIResponse, AIQuestion, AIAnswer } from './ai';
+export type { AutomationCatalogItem } from './automation-catalog';

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "desafio-qa-api-cypress",
+    "tool": "Cypress",
+    "title": "Desafio QA - Testes de API com Cypress",
+    "repositoryUrl": "https://github.com/Dilei27/desafio-qa-api-cypress",
+    "documentationUrl": "https://dilei27.github.io/desafio-qa-api-cypress/",
+    "technologies": ["Cypress", "Docker", "Mochawesome", "GitHub Actions"],
+    "evidence": "Testes da API Dog CEO com relatório e pipeline de CI.",
+    "relationNote": "Evidência de automação de API no ecossistema Jun Fan."
+  },
+  {
+    "id": "desafio-qa-performance",
+    "tool": "k6",
+    "title": "Desafio QA - Performance com k6",
+    "repositoryUrl": "https://github.com/Dilei27/desafio-qa-performance",
+    "documentationUrl": "https://dilei27.github.io/desafio-qa-performance/",
+    "technologies": ["k6", "Docker", "GitHub Actions", "k6-reporter"],
+    "evidence": "Cenário BlazeDemo com 250 VUs e meta P90 abaixo de 2 segundos.",
+    "relationNote": "Evidência de engenharia de performance no ecossistema Jun Fan."
+  },
+  {
+    "id": "desafio-qa-web-playwright",
+    "tool": "Playwright",
+    "title": "Desafio QA - Testes Web com Playwright",
+    "repositoryUrl": "https://github.com/Dilei27/desafio-qa-web-playwright",
+    "documentationUrl": "https://dilei27.github.io/desafio-qa-web-playwright/",
+    "technologies": ["Playwright", "Docker", "GitHub Actions", "Page Object Model"],
+    "evidence": "Automação web do Blog Agibank com cenários de navegação e busca.",
+    "relationNote": "Referência de automação web para a evolução do Jun Fan."
+  }
+]

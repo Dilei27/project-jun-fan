@@ -1,6 +1,8 @@
+import type { SearchResult } from '@/lib/search';
+
 export interface AIResponse {
   text: string;
-  link?: { href: string; label: string };
+  sources: SearchResult[];
 }
 
 export interface AIQuestion {
