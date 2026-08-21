@@ -6,6 +6,8 @@ import { useMemo, useState } from 'react';
 import { Maximize2, Move3D, RotateCcw } from 'lucide-react';
 import { getFullGraph } from '@/core';
 import { findShortestPath } from './lib/path-finder';
+import { CLUSTERS } from './lib/cluster';
+import { ReplayBar } from './components/replay-bar';
 
 const KnowledgeScene = dynamic(() => import('./renderers/webgl/knowledge-scene').then(module => module.KnowledgeScene), { ssr: false });
 
@@ -20,6 +22,11 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
   const selectNode = (id: string) => {
     if (!selectedId || secondaryId) { setSelectedId(id); setSecondaryId(null); return; }
     if (selectedId !== id) setSecondaryId(id);
+  };
+  const focusReplayCluster = (clusterId: string) => {
+    const cluster = CLUSTERS.find(item => item.id === clusterId);
+    const node = graph.nodes.find(item => cluster?.types.includes(item.type));
+    if (node) { setSelectedId(node.id); setSecondaryId(null); }
   };
 
   return (
@@ -42,6 +49,7 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
       <div className="absolute bottom-6 left-6 z-10 flex items-center gap-2 rounded-md border border-border-subtle/50 bg-surface-elevated/80 px-3 py-2 text-xs text-text-muted">
         <Move3D size={14} className="text-accent-qa" /> {graph.nodes.length} entidades reais · {graph.edges.length} relações
       </div>
+      <ReplayBar onCameraTarget={({ clusterId }) => focusReplayCluster(clusterId)} onReplayActive={() => {}} />
       {selected && (
         <aside className="absolute bottom-6 right-6 z-10 w-[min(22rem,calc(100vw-3rem))] rounded-xl border border-border-subtle/60 bg-surface-elevated/90 p-4 shadow-[var(--shadow-high)] backdrop-blur-xl">
           <p className="text-[10px] uppercase tracking-[0.14em] text-accent-qa">{selected.type}</p>
