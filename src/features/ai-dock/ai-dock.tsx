@@ -47,7 +47,17 @@ export function AIDock() {
     setIsThinking(true);
     setQuestion('');
     const answer: AIResponse = answerFromLocalKnowledge(text);
+    const normalized = text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+    const graphQuery = /\b(mostrar|mostrar|abrir|explorar|focar|conexoes|relacionados)\b/.test(normalized)
+      ? normalized
+        .replace(/\b(mostrar|abrir|explorar|focar|conexoes|relacionados|de|do|da|o|a)\b/g, ' ')
+        .trim()
+      : '';
     setTimeout(() => {
+      if (graphQuery) {
+        window.location.assign(`/knowledge-graph/?q=${encodeURIComponent(graphQuery)}`);
+        return;
+      }
       setResponse(answer);
       setIsThinking(false);
     }, 650);

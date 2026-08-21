@@ -18,6 +18,7 @@ import { MiniKnowledgeGraph } from '@/components/platform/mini-knowledge-graph';
 import { SetModule } from '@/components/platform/set-module';
 import { PlatformStatus } from '@/components/platform/platform-status';
 import { TranslatedText } from '@/i18n/language-context';
+import { LivingKnowledgeHero } from '@/features/knowledge-graph/living-knowledge-hero';
 
 export default function HomePage() {
   const products = getProducts();
@@ -36,8 +37,9 @@ export default function HomePage() {
       />
 
       {/* === HERO === */}
-      <HeroStage className="rounded-2xl -mt-2 mb-20">
-        <div className="relative max-w-[1440px] mx-auto px-6 py-20 md:py-28">
+      <HeroStage className="relative min-h-[100svh] overflow-hidden rounded-2xl -mt-2 mb-20">
+        <LivingKnowledgeHero />
+        <div className="relative z-10 max-w-[1440px] mx-auto px-6 py-20 md:py-28">
           <div className="max-w-4xl">
             <FadeIn delay={0.05} y={6}>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 text-xs font-medium text-accent-qa bg-accent-qa/8 border border-accent-qa/20 rounded-full shadow-[inset_0_1px_0_0_rgba(79,140,255,0.08)]">

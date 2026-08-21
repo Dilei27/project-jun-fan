@@ -25,6 +25,10 @@ const QUICK_ACTIONS: QuickAction[] = [
   { label: 'Digital Twin', href: '/twin/', icon: Activity, category: 'Navegação' },
   { label: 'Timeline', href: '/command-center/timeline/', icon: Shield, category: 'Navegação' },
   { label: 'Arquitetura', href: '/command-center/architecture/', icon: Shield, category: 'Navegação' },
+  { label: 'Abrir Knowledge Core', href: '/knowledge-graph/', icon: GitFork, category: 'Grafo' },
+  { label: 'Focar Desktop Discovery Engine', href: '/knowledge-graph/?q=Desktop%20Discovery%20Engine', icon: GitFork, category: 'Grafo' },
+  { label: 'Mostrar ecossistema de automação', href: '/knowledge-graph/?q=automacao', icon: GitFork, category: 'Grafo' },
+  { label: 'Mostrar decisões de QA', href: '/knowledge-graph/?q=decisao%20QA', icon: GitFork, category: 'Grafo' },
 ];
 
 export function CommandPalette() {

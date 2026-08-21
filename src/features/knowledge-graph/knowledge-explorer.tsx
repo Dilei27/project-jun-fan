@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo, useLayoutEffect, useRef, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Maximize2, Minimize2, Keyboard, X, Map as MapIcon, Play } from 'lucide-react';
 import { getFilteredGraph, getNodeConnections, searchNodes } from '@/core';
@@ -61,6 +62,7 @@ function computeClusterIds(nodes: GraphNode[]): string[] {
 }
 
 export function KnowledgeExplorer() {
+  const searchParams = useSearchParams();
   /* ─── UI-only state ─── */
   const [selectedSecondary, setSelectedSecondary] = useState<GraphNode | null>(null);
   const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null);
@@ -117,6 +119,7 @@ export function KnowledgeExplorer() {
   const simRef = useRef<LiveSimulation | null>(null);
   const dragRef = useRef<{ id: string; moved: boolean; startX: number; startY: number } | null>(null);
   const suppressClickRef = useRef(false);
+  const processedQueryRef = useRef<string | null>(null);
   const positionsRef = useRef<Map<string, { x: number; y: number }>>(new Map());
 
   const nodeById = useMemo(() => {
@@ -320,6 +323,14 @@ export function KnowledgeExplorer() {
     setSearchQuery('');
     fitToView(true);
   }, [exploration, fitToView]);
+
+  useEffect(() => {
+    const query = searchParams.get('q')?.trim() ?? '';
+    if (!query || processedQueryRef.current === query) return;
+    processedQueryRef.current = query;
+    const frame = requestAnimationFrame(() => handleSearch(query));
+    return () => cancelAnimationFrame(frame);
+  }, [handleSearch, searchParams]);
 
   const toggleFilter = useCallback((type: string) => {
     setActiveFilters(prev =>

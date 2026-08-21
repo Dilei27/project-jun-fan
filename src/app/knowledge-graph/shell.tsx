@@ -1,14 +1,16 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { KnowledgeExplorer } from '@/features/knowledge-graph/knowledge-explorer';
 import { motion as m } from '@/design-system/motion';
 import { CrossNav } from '@/components/platform/cross-nav';
 import { usePlatform } from '@/components/platform/platform-context';
+import { WebGLKnowledgeExplorer } from '@/features/knowledge-graph/webgl-knowledge-explorer';
 
 export function KnowledgeGraphShell() {
   const { setCurrentModule } = usePlatform();
+  const [renderer, setRenderer] = useState<'webgl' | 'svg'>('webgl');
   useEffect(() => { setCurrentModule('knowledge-graph'); }, [setCurrentModule]);
   return (
     <motion.div
@@ -18,9 +20,9 @@ export function KnowledgeGraphShell() {
       className="relative h-[calc(100vh-3.5rem)] min-h-[600px] w-full"
     >
       {/* Immersive graph — edge to edge */}
-      <div className="absolute inset-0">
-        <KnowledgeExplorer />
-      </div>
+        <div className="absolute inset-0">
+          {renderer === 'webgl' ? <WebGLKnowledgeExplorer onUseSvg={() => setRenderer('svg')} /> : <KnowledgeExplorer />}
+        </div>
 
       {/* Compact title overlay — top right, out of the graph's way */}
       <motion.div
