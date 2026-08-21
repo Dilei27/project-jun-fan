@@ -16,13 +16,13 @@ function hash(value: string) {
   return Array.from(value).reduce((total, character) => ((total << 5) - total) + character.charCodeAt(0), 0);
 }
 
-function SceneNode({ node, position, selected, onSelect, variant }: { node: ReturnType<typeof getFullGraph>['nodes'][number]; position: Position; selected: boolean; onSelect: () => void; variant: 'home' | 'explorer' }) {
+function SceneNode({ node, position, selected, hovered, onSelect, onHover, variant }: { node: ReturnType<typeof getFullGraph>['nodes'][number]; position: Position; selected: boolean; hovered: boolean; onSelect: () => void; onHover: (active: boolean) => void; variant: 'home' | 'explorer' }) {
   const mesh = useRef<Mesh>(null);
   const identity = getNodeIdentity(node.type);
   const scale = identity.baseRadius / 38;
   useFrame(({ clock }) => {
     if (!mesh.current) return;
-    const energy = selected ? 1.22 : 1 + Math.sin(clock.elapsedTime * 0.8 + hash(node.id)) * horizonScene.motion.nodePulse;
+    const energy = selected ? 1.22 : hovered ? 1.12 : 1 + Math.sin(clock.elapsedTime * 0.8 + hash(node.id)) * horizonScene.motion.nodePulse;
     mesh.current.scale.setScalar(scale * energy);
     mesh.current.rotation.z += identity.pulse === 'slow-rotate' ? horizonScene.motion.coreRotation : horizonScene.motion.nodeRotation;
   });
@@ -34,22 +34,24 @@ function SceneNode({ node, position, selected, onSelect, variant }: { node: Retu
           : <sphereGeometry args={[0.46, 20, 20]} />;
 
   return (
-    <mesh ref={mesh} position={position} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
+    <mesh ref={mesh} position={position} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }} onPointerOver={(event: ThreeEvent<PointerEvent>) => { event.stopPropagation(); onHover(true); }} onPointerOut={() => onHover(false)}>
       {geometry}
-      <meshStandardMaterial color={new Color(selected || variant === 'explorer' ? node.color : horizonScene.node.dormant)} emissive={new Color(node.color)} emissiveIntensity={selected ? 1.5 : variant === 'home' ? 0.08 : 0.35} transparent opacity={identity.shape === 'ring' ? 0.68 : variant === 'home' ? 0.58 : 0.92} roughness={0.35} metalness={0.2} />
+      <meshStandardMaterial color={new Color(selected || hovered || variant === 'explorer' ? node.color : horizonScene.node.dormant)} emissive={new Color(node.color)} emissiveIntensity={selected ? 1.5 : hovered ? 0.6 : variant === 'home' ? 0.08 : 0.35} transparent opacity={identity.shape === 'ring' ? 0.68 : variant === 'home' ? 0.58 : 0.92} roughness={0.35} metalness={0.2} />
     </mesh>
   );
 }
 
-function KnowledgeCore({ position }: { position: Position }) {
+function KnowledgeCore({ position, active }: { position: Position; active: boolean }) {
   const core = useRef<Group | null>(null);
-  useFrame(({ clock }) => {
+  useFrame(({ clock, pointer }) => {
     if (!core.current) return;
     core.current.rotation.y += horizonScene.motion.coreRotation;
+    core.current.rotation.x += pointer.y * 0.0008;
+    core.current.rotation.z += pointer.x * 0.0008;
     core.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 0.7) * 0.035);
   });
   return <group ref={core} position={position}>
-    <mesh><icosahedronGeometry args={[0.78, 2]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={0.8} transparent opacity={0.45} wireframe /></mesh>
+    <mesh><icosahedronGeometry args={[0.78, 2]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={active ? 1.3 : 0.8} transparent opacity={0.45} wireframe /></mesh>
     <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[1.02, 0.018, 8, 48]} /><meshBasicMaterial color={horizonScene.core.accent} transparent opacity={0.5} /></mesh>
     <mesh rotation={[0.65, 0.7, 0]}><torusGeometry args={[1.24, 0.012, 8, 48]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.3} /></mesh>
   </group>;
@@ -80,6 +82,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
     });
     return { ...graph, positions, coreId };
   }, [graph]);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   return <>
     <ambientLight intensity={horizonScene.lighting.ambient} />
     <directionalLight position={[4, 5, 6]} intensity={horizonScene.lighting.keyIntensity} color={horizonScene.lighting.key} />
@@ -88,10 +91,10 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
       const from = positions.get(edge.source); const to = positions.get(edge.target);
       if (!from || !to) return null;
       const onPath = pathEdgeKeys.has(`${edge.source}->${edge.target}`);
-      const active = onPath || selectedIds.has(edge.source) || selectedIds.has(edge.target);
+      const active = onPath || selectedIds.has(edge.source) || selectedIds.has(edge.target) || hoveredId === edge.source || hoveredId === edge.target;
       return <line key={`${edge.source}-${edge.target}`}><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.34 : 0.15} /></line>;
     })}
-    {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} onSelect={() => onSelect(node.id)} variant={variant} />)}
+    {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} />)}
   </>;
 }
 
