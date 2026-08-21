@@ -19,11 +19,20 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
   const [quality, setQuality] = useState<'low' | 'standard' | 'ultra'>(() => typeof window !== 'undefined' && window.innerWidth < 768 ? 'low' : 'standard');
   const selected = graph.nodes.find(node => node.id === selectedId) ?? null;
   const path = useMemo(() => selectedId && secondaryId ? findShortestPath(selectedId, secondaryId, graph.edges) : null, [graph.edges, secondaryId, selectedId]);
+  const relatedNodes = useMemo(() => selectedId
+    ? graph.edges
+      .filter(edge => edge.source === selectedId || edge.target === selectedId)
+      .map(edge => edge.source === selectedId ? edge.target : edge.source)
+      .filter((id, index, ids) => ids.indexOf(id) === index)
+      .map(id => graph.nodes.find(node => node.id === id))
+      .filter((node): node is NonNullable<typeof node> => Boolean(node))
+    : [], [graph.edges, graph.nodes, selectedId]);
   const selectNode = (id: string) => {
     if (!selectedId || secondaryId) { setSelectedId(id); setSecondaryId(null); return; }
     if (selectedId !== id) setSecondaryId(id);
   };
   const releaseFocus = () => { setSelectedId(null); setSecondaryId(null); };
+  const travelTo = (id: string) => { setSelectedId(id); setSecondaryId(null); };
   const focusReplayCluster = (clusterId: string) => {
     const cluster = CLUSTERS.find(item => item.id === clusterId);
     const node = graph.nodes.find(item => cluster?.types.includes(item.type));
@@ -68,6 +77,12 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
           <h2 className="mt-1 text-base font-semibold text-text-primary">{selected.label}</h2>
           <p className="mt-2 text-sm leading-relaxed text-text-secondary">{selected.description}</p>
           <p className="mt-3 text-xs text-text-muted">{secondaryId ? path ? `Caminho ativo com ${path.nodeIds.length - 1} relação(ões).` : 'Não há caminho conhecido entre essas entidades.' : 'Selecione uma segunda entidade para revelar o caminho mínimo.'}</p>
+          {relatedNodes.length > 0 && <div className="mt-3 border-t border-border-subtle/40 pt-3">
+            <p className="text-[10px] uppercase tracking-[0.14em] text-text-muted">Relações diretas</p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {relatedNodes.slice(0, 5).map(node => <button key={node.id} type="button" onClick={() => travelTo(node.id)} className="rounded-full border border-border-subtle/60 px-2 py-1 text-xs text-text-secondary hover:border-accent-qa/60 hover:text-text-primary">{node.label}</button>)}
+            </div>
+          </div>}
           {selected.url && <Link href={selected.url} className="mt-3 inline-flex text-sm text-accent-qa hover:underline">Abrir entidade</Link>}
         </aside>
       )}
