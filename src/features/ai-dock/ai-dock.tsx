@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { motion as m } from '@/design-system/motion';
 import { CursorSpotlight } from '@/components/shared/cursor-spotlight';
 import { ThinkingWave } from '@/components/shared/thinking-wave';
+import { useFocusTrap } from '@/hooks/use-focus-trap';
 import { answerFromLocalKnowledge } from '@/lib/search';
 import type { AIResponse } from '@/types';
 
@@ -28,6 +29,8 @@ export function AIDock() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, open);
 
   const closeDock = useCallback(() => {
     setOpen(false);
@@ -77,11 +80,13 @@ export function AIDock() {
             exit={{ opacity: 0, y: 12, scale: 0.97 }}
             transition={{ duration: m.duration.normal, ease: m.easing.out }}
             className="jf-glass-modal fixed bottom-20 right-6 z-60 w-[360px] rounded-xl overflow-hidden origin-bottom-right"
+            ref={dialogRef}
             style={{
               boxShadow:
                 'inset 0 1px 0 0 rgba(244, 247, 250, 0.06), 0 0 0 1px rgba(79, 140, 255, 0.06), 0 24px 64px -16px rgba(0, 0, 0, 0.6), 0 32px 80px -16px rgba(0, 0, 0, 0.5)',
             }}
             role="dialog"
+            aria-modal="true"
             aria-label="AI Dock"
           >
             <CursorSpotlight

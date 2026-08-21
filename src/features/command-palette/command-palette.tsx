@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { searchAll } from '@/lib/search';
 import { motion as m } from '@/design-system/motion';
 import { EmptyState } from '@/components/shared/empty-state';
+import { useFocusTrap } from '@/hooks/use-focus-trap';
 
 interface QuickAction {
   label: string
@@ -32,6 +33,8 @@ export function CommandPalette() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [mode, setMode] = useState<'search' | 'navigate'>('search');
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, open);
 
   const searchResults = useMemo(() => query.trim() ? searchAll(query) : [], [query]);
   const filteredActions = useMemo(() => {
@@ -93,9 +96,6 @@ export function CommandPalette() {
           transition={{ duration: m.duration.fast, ease: m.easing.out }}
           className="jf-glass-subtle fixed inset-0 z-50 flex items-start justify-center pt-[15vh]"
           onClick={handleClose}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Paleta de comandos"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: -8 }}
@@ -103,6 +103,10 @@ export function CommandPalette() {
             exit={{ opacity: 0, scale: 0.97, y: -4 }}
             transition={{ duration: m.duration.normal, ease: m.easing.out }}
             className="jf-glass-modal w-full max-w-[560px] rounded-xl overflow-hidden"
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Paleta de comandos"
             style={{
               boxShadow:
                 'inset 0 1px 0 0 rgba(244, 247, 250, 0.06), 0 0 0 1px rgba(79, 140, 255, 0.06), 0 24px 64px -16px rgba(0, 0, 0, 0.7), 0 32px 80px -16px rgba(0, 0, 0, 0.5)',
