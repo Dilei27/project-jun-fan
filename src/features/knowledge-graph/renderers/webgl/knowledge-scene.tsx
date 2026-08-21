@@ -7,6 +7,7 @@ import type { Mesh, Group } from 'three';
 import { Color, Vector3 } from 'three';
 import { getFullGraph } from '@/core';
 import { getNodeIdentity } from '@/features/knowledge-graph/lib/node-identity';
+import { horizonScene } from '@/design-system/scene-theme';
 
 type Position = [number, number, number];
 
@@ -20,9 +21,9 @@ function SceneNode({ node, position, selected, onSelect }: { node: ReturnType<ty
   const scale = identity.baseRadius / 38;
   useFrame(({ clock }) => {
     if (!mesh.current) return;
-    const energy = selected ? 1.22 : 1 + Math.sin(clock.elapsedTime * 0.8 + hash(node.id)) * 0.035;
+    const energy = selected ? 1.22 : 1 + Math.sin(clock.elapsedTime * 0.8 + hash(node.id)) * horizonScene.motion.nodePulse;
     mesh.current.scale.setScalar(scale * energy);
-    mesh.current.rotation.z += identity.pulse === 'slow-rotate' ? 0.003 : 0.0006;
+    mesh.current.rotation.z += identity.pulse === 'slow-rotate' ? horizonScene.motion.coreRotation : horizonScene.motion.nodeRotation;
   });
 
   const geometry = identity.shape === 'hexagon' ? <cylinderGeometry args={[0.5, 0.5, 0.16, 6]} />
@@ -43,13 +44,13 @@ function KnowledgeCore({ position }: { position: Position }) {
   const core = useRef<Group | null>(null);
   useFrame(({ clock }) => {
     if (!core.current) return;
-    core.current.rotation.y += 0.003;
+    core.current.rotation.y += horizonScene.motion.coreRotation;
     core.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 0.7) * 0.035);
   });
   return <group ref={core} position={position}>
-    <mesh><icosahedronGeometry args={[0.78, 2]} /><meshStandardMaterial color="#4F8CFF" emissive="#4F8CFF" emissiveIntensity={0.8} transparent opacity={0.45} wireframe /></mesh>
-    <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[1.02, 0.018, 8, 48]} /><meshBasicMaterial color="#2DD4BF" transparent opacity={0.5} /></mesh>
-    <mesh rotation={[0.65, 0.7, 0]}><torusGeometry args={[1.24, 0.012, 8, 48]} /><meshBasicMaterial color="#4F8CFF" transparent opacity={0.3} /></mesh>
+    <mesh><icosahedronGeometry args={[0.78, 2]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={0.8} transparent opacity={0.45} wireframe /></mesh>
+    <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[1.02, 0.018, 8, 48]} /><meshBasicMaterial color={horizonScene.core.accent} transparent opacity={0.5} /></mesh>
+    <mesh rotation={[0.65, 0.7, 0]}><torusGeometry args={[1.24, 0.012, 8, 48]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.3} /></mesh>
   </group>;
 }
 
@@ -80,15 +81,15 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
     return { ...graph, positions, coreId };
   }, []);
   return <>
-    <ambientLight intensity={0.25} />
-    <directionalLight position={[4, 5, 6]} intensity={1.1} color="#D6E6FF" />
-    <pointLight position={[0, 0, 4]} intensity={1.8} color="#4F8CFF" distance={14} />
+    <ambientLight intensity={horizonScene.lighting.ambient} />
+    <directionalLight position={[4, 5, 6]} intensity={horizonScene.lighting.keyIntensity} color={horizonScene.lighting.key} />
+    <pointLight position={[0, 0, 4]} intensity={horizonScene.lighting.coreIntensity} color={horizonScene.core.energy} distance={14} />
     {edges.map(edge => {
       const from = positions.get(edge.source); const to = positions.get(edge.target);
       if (!from || !to) return null;
       const onPath = pathEdgeKeys.has(`${edge.source}->${edge.target}`);
       const active = onPath || selectedIds.has(edge.source) || selectedIds.has(edge.target);
-      return <line key={`${edge.source}-${edge.target}`}><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? '#2DD4BF' : active ? '#4F8CFF' : '#6D7B90'} transparent opacity={onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.34 : 0.15} /></line>;
+      return <line key={`${edge.source}-${edge.target}`}><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.34 : 0.15} /></line>;
     })}
     {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} onSelect={() => onSelect(node.id)} />)}
   </>;
@@ -123,7 +124,7 @@ export function KnowledgeScene({ className = '', onNodeSelect, onUnavailable, mo
   }, []);
   return <div ref={hostRef} className={className} aria-label="Visualização espacial do conhecimento">
     <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: [0, 0, 13], fov: 46 }} dpr={reducedMotion ? [1, 1] : dpr} gl={{ antialias: quality !== 'low', alpha: true }} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
-      <fog attach="fog" args={['#080C12', 8, 22]} />
+      <fog attach="fog" args={[horizonScene.environment.fog, 8, 22]} />
       <KnowledgeUniverse mode={mode} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} />
       {!reducedMotion && <CameraFocus target={focusPosition} />}
       <OrbitControls enabled={!focusId && !reducedMotion} enablePan enableZoom enableRotate minDistance={6} maxDistance={22} maxPolarAngle={Math.PI * 0.65} minPolarAngle={Math.PI * 0.35} />

@@ -3,7 +3,7 @@ import { getProducts, getProjects } from '@/lib/content';
 import { ProductGateway } from '@/components/cards/product-card';
 import { FeaturedProjects } from '@/components/cards/project-card';
 import { AIInsightCards } from '@/components/cards/ai-insight-card';
-import { ArrowRight, Command, FileText, GitBranch } from 'lucide-react';
+import { ArrowRight, GitBranch } from 'lucide-react';
 import { RevealText, FadeIn, HeroStage } from '@/components/shared/reveal';
 import { SectionReveal } from '@/components/shared/section-reveal';
 import { SectionDivider } from '@/components/shared/section-divider';
@@ -19,6 +19,7 @@ import { SetModule } from '@/components/platform/set-module';
 import { PlatformStatus } from '@/components/platform/platform-status';
 import { TranslatedText } from '@/i18n/language-context';
 import { LivingKnowledgeHero } from '@/features/knowledge-graph/living-knowledge-hero';
+import { HomeGraphSignal } from '@/features/knowledge-graph/home-graph-signal';
 
 export default function HomePage() {
   const products = getProducts();
@@ -39,34 +40,29 @@ export default function HomePage() {
       {/* === HERO === */}
       <HeroStage className="relative min-h-[100svh] overflow-hidden rounded-2xl -mt-2 mb-20">
         <LivingKnowledgeHero />
-        <div className="relative z-10 max-w-[1440px] mx-auto px-6 py-20 md:py-28">
-          <div className="max-w-4xl">
+        <div className="relative z-10 max-w-[1440px] mx-auto flex min-h-[100svh] items-end px-6 py-16 md:py-24">
+          <div className="max-w-md">
             <FadeIn delay={0.05} y={6}>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 text-xs font-medium text-accent-qa bg-accent-qa/8 border border-accent-qa/20 rounded-full shadow-[inset_0_1px_0_0_rgba(79,140,255,0.08)]">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 text-xs font-medium text-accent-qa bg-accent-qa/8 border border-accent-qa/20 rounded-full shadow-[inset_0_1px_0_0_rgba(79,140,255,0.08)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-qa jf-pulse-dot" />
-                <TranslatedText k="home.badge" />
+                SYSTEM ONLINE
               </div>
             </FadeIn>
 
             <RevealText
               as="h1"
               delay={0.1}
-              className="text-4xl md:text-6xl font-extrabold text-text-primary mb-4 leading-[1.02] tracking-[-0.025em] text-balance block"
+              className="text-4xl md:text-6xl font-extrabold text-text-primary mb-3 leading-[1.02] tracking-[-0.025em] text-balance block"
             >
               Project Jun Fan
             </RevealText>
 
             <FadeIn delay={0.45} y={10}>
-              <p className="text-lg md:text-xl text-text-secondary max-w-2xl leading-relaxed mb-6 text-balance">
-                <TranslatedText k="home.subtitle" />
-              </p>
-              <p className="text-sm text-text-muted max-w-xl leading-relaxed mb-8">
-                <TranslatedText k="home.description" />
-              </p>
+              <p className="text-base text-text-secondary leading-relaxed">Product Operating System</p>
             </FadeIn>
 
             <FadeIn delay={0.55}>
-              <div className="flex items-center gap-3 mb-10 text-sm text-text-muted">
+              <div className="flex items-center gap-3 mt-3 mb-7 text-sm text-text-muted">
                 <span className="font-medium text-accent-qa/90 tracking-wide">Absorb.</span>
                 <span className="opacity-30">·</span>
                 <span className="font-medium text-accent-teal/80 tracking-wide">Refine.</span>
@@ -81,29 +77,11 @@ export default function HomePage() {
                   href="/knowledge-graph/"
                   className="group inline-flex items-center gap-2 px-6 py-3 bg-accent-qa text-white rounded-lg text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_4px_16px_-4px_rgba(79,140,255,0.35)] hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16),0_8px_24px_-6px_rgba(79,140,255,0.5)] hover:bg-accent-qa/95 hover:-translate-y-0.5"
                 >
-                  <GitBranch size={16} /> <TranslatedText k="home.cta.graph" />{' '}
+                  <GitBranch size={16} /> Explorar conhecimento{' '}
                   <ArrowRight
                     size={16}
                     className="transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5"
                   />
-                </Link>
-                <Link
-                  href="/command-center/"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-elevated/60 backdrop-blur-sm border border-border-subtle/60 text-text-primary rounded-lg text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[inset_0_1px_0_0_rgba(244,247,250,0.04)] hover:bg-surface-soft hover:border-border-strong hover:-translate-y-0.5"
-                >
-                  <Command size={16} /> QA Command Center
-                </Link>
-                <Link
-                  href="/docs/"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-elevated/60 backdrop-blur-sm border border-border-subtle/60 text-text-primary rounded-lg text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[inset_0_1px_0_0_rgba(244,247,250,0.04)] hover:bg-surface-soft hover:border-border-strong hover:-translate-y-0.5"
-                >
-                  <FileText size={16} /> <TranslatedText k="home.cta.docs" />
-                </Link>
-                <Link
-                  href="/profile/"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-elevated/60 backdrop-blur-sm border border-border-subtle/60 text-text-primary rounded-lg text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[inset_0_1px_0_0_rgba(244,247,250,0.04)] hover:bg-surface-soft hover:border-border-strong hover:-translate-y-0.5"
-                >
-                  <FileText size={16} /> Perfil e currículo
                 </Link>
               </div>
             </FadeIn>
@@ -113,7 +91,8 @@ export default function HomePage() {
 
       {/* === MODULE CARDS === */}
       <SectionReveal delay={0.05}>
-        <section className="mb-20">
+        <section className="relative mb-20">
+          <HomeGraphSignal nodeId="architecture-core" label="Arquitetura" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <ModuleCard
               title="Knowledge Graph"
@@ -257,7 +236,8 @@ export default function HomePage() {
 
       {/* === PRODUCTS === */}
       <SectionReveal>
-        <section className="mb-16" id="produtos">
+        <section className="relative mb-16" id="produtos">
+          <HomeGraphSignal nodeId="product-qa-command-center" label="Produtos" />
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-text-primary tracking-[-0.01em]">
               <TranslatedText k="home.products" />
@@ -277,7 +257,8 @@ export default function HomePage() {
 
       {/* === PROJECTS === */}
       <SectionReveal>
-        <section className="mb-16">
+        <section className="relative mb-16" id="projetos">
+          <HomeGraphSignal nodeId="project-automacao-erp-uau" label="Projetos" />
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-text-primary tracking-[-0.01em]">
               <TranslatedText k="home.projects" />
