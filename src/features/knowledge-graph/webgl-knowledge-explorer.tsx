@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Maximize2, Move3D, RotateCcw } from 'lucide-react';
 import { getFullGraph } from '@/core';
 import { findShortestPath } from './lib/path-finder';
@@ -28,10 +28,14 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
     const node = graph.nodes.find(item => cluster?.types.includes(item.type));
     if (node) { setSelectedId(node.id); setSecondaryId(null); }
   };
+  useEffect(() => {
+    const canvas = document.createElement('canvas');
+    if (!canvas.getContext('webgl2')) onUseSvg();
+  }, [onUseSvg]);
 
   return (
     <div className="relative h-full overflow-hidden bg-bg-deep">
-      <KnowledgeScene className="absolute inset-0" onNodeSelect={selectNode} focusId={secondaryId ?? selectedId} selectedIds={[selectedId, secondaryId].filter((id): id is string => Boolean(id))} pathNodeIds={path?.nodeIds ?? []} pathEdgeKeys={Array.from(path?.edgeKeys ?? [])} mode={mode} quality={quality} />
+      <KnowledgeScene className="absolute inset-0" onNodeSelect={selectNode} onUnavailable={onUseSvg} focusId={secondaryId ?? selectedId} selectedIds={[selectedId, secondaryId].filter((id): id is string => Boolean(id))} pathNodeIds={path?.nodeIds ?? []} pathEdgeKeys={Array.from(path?.edgeKeys ?? [])} mode={mode} quality={quality} />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(8,12,18,0.45)_100%)]" />
       <div className="absolute left-6 top-6 z-10 max-w-sm">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-accent-qa">Knowledge Core</p>

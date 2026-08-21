@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Mesh, Group } from 'three';
 import { Color, Vector3 } from 'three';
 import { getFullGraph } from '@/core';
@@ -94,7 +94,11 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
   </>;
 }
 
-export function KnowledgeScene({ className = '', onNodeSelect, mode = 'explore', quality = 'standard', focusId, selectedIds = [], pathNodeIds = [], pathEdgeKeys = [] }: { className?: string; onNodeSelect?: (id: string) => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null; selectedIds?: string[]; pathNodeIds?: string[]; pathEdgeKeys?: string[] }) {
+export function KnowledgeScene({ className = '', onNodeSelect, onUnavailable, mode = 'explore', quality = 'standard', focusId, selectedIds = [], pathNodeIds = [], pathEdgeKeys = [] }: { className?: string; onNodeSelect?: (id: string) => void; onUnavailable?: () => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null; selectedIds?: string[]; pathNodeIds?: string[]; pathEdgeKeys?: string[] }) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isPageVisible, setIsPageVisible] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const graph = useMemo(() => getFullGraph(), []);
   const focusPosition = useMemo(() => {
     if (!focusId) return null;
@@ -105,12 +109,24 @@ export function KnowledgeScene({ className = '', onNodeSelect, mode = 'explore',
     return [Math.cos(angle) * (2.2 + Math.sqrt(index) * 0.58), Math.sin(angle) * (2.2 + Math.sqrt(index) * 0.58) * 0.6, Math.min(2.8, Math.max(-2.8, (degree - 2) * -0.16 + Math.sin(index * 1.7)))] as Position;
   }, [focusId, graph]);
   const dpr: [number, number] = quality === 'low' ? [1, 1] : quality === 'ultra' ? [1, 2] : [1, 1.75];
-  return <div className={className} aria-label="Visualização espacial do conhecimento">
-    <Canvas camera={{ position: [0, 0, 13], fov: 46 }} dpr={dpr} gl={{ antialias: quality !== 'low', alpha: true }}>
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateMotion = () => setReducedMotion(media.matches);
+    const updateVisibility = () => setIsPageVisible(!document.hidden);
+    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), { threshold: 0.05 });
+    if (hostRef.current) observer.observe(hostRef.current);
+    updateMotion();
+    updateVisibility();
+    media.addEventListener('change', updateMotion);
+    document.addEventListener('visibilitychange', updateVisibility);
+    return () => { observer.disconnect(); media.removeEventListener('change', updateMotion); document.removeEventListener('visibilitychange', updateVisibility); };
+  }, []);
+  return <div ref={hostRef} className={className} aria-label="Visualização espacial do conhecimento">
+    <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: [0, 0, 13], fov: 46 }} dpr={reducedMotion ? [1, 1] : dpr} gl={{ antialias: quality !== 'low', alpha: true }} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
       <fog attach="fog" args={['#080C12', 8, 22]} />
       <KnowledgeUniverse mode={mode} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} />
-      <CameraFocus target={focusPosition} />
-      <OrbitControls enabled={!focusId} enablePan enableZoom enableRotate minDistance={6} maxDistance={22} maxPolarAngle={Math.PI * 0.65} minPolarAngle={Math.PI * 0.35} />
+      {!reducedMotion && <CameraFocus target={focusPosition} />}
+      <OrbitControls enabled={!focusId && !reducedMotion} enablePan enableZoom enableRotate minDistance={6} maxDistance={22} maxPolarAngle={Math.PI * 0.65} minPolarAngle={Math.PI * 0.35} />
     </Canvas>
   </div>;
 }
