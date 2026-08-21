@@ -42,9 +42,9 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
   return <group ref={mesh} position={position} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }} onPointerOver={(event: ThreeEvent<PointerEvent>) => { event.stopPropagation(); onHover(true); }} onPointerOut={() => onHover(false)}>
     <mesh>
       {geometry}
-      <meshStandardMaterial color={new Color(activeColor)} emissive={new Color(activeColor)} emissiveIntensity={mode === 'architect' ? 0.1 : selected ? 1.35 : hovered ? 0.48 : anticipating && major ? 0.14 : 0.012} transparent opacity={mode === 'architect' ? 0.42 : identity.shape === 'ring' ? 0.42 : variant === 'home' ? anticipating && major ? 0.56 : 0.38 : 0.5} roughness={0.5} metalness={0.42} wireframe={mode === 'architect' && identity.shape !== 'ring'} />
+      <meshStandardMaterial color={new Color(activeColor)} emissive={new Color(activeColor)} emissiveIntensity={mode === 'architect' ? selected ? 0.72 : hovered ? 0.34 : major ? 0.16 : 0.08 : selected ? 1.35 : hovered ? 0.48 : anticipating && major ? 0.14 : 0.012} transparent opacity={mode === 'architect' ? major ? 0.64 : 0.5 : identity.shape === 'ring' ? 0.42 : variant === 'home' ? anticipating && major ? 0.56 : 0.38 : 0.5} roughness={0.5} metalness={0.42} wireframe={mode === 'architect' && identity.shape !== 'ring'} />
     </mesh>
-    {major && <mesh rotation={[0.8, 0.25, 0]}><torusGeometry args={[0.61, 0.018, 6, 28, Math.PI * 1.15]} /><meshBasicMaterial color={selected || hovered ? horizonScene.core.energy : horizonScene.node.dormant} transparent opacity={selected || hovered ? 0.55 : 0.16} /></mesh>}
+    {major && <mesh rotation={[0.8, 0.25, 0]}><torusGeometry args={[0.61, 0.018, 6, 28, Math.PI * 1.15]} /><meshBasicMaterial color={selected || hovered ? horizonScene.core.energy : mode === 'architect' ? horizonScene.core.base : horizonScene.node.dormant} transparent opacity={selected || hovered ? 0.55 : mode === 'architect' ? 0.32 : 0.16} /></mesh>}
   </group>;
 }
 
@@ -74,10 +74,10 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
     }
   });
   return <group ref={core} position={position} scale={variant === 'home' ? 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
-    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={anticipating ? 0.7 : active ? 0.42 : 0.2} transparent opacity={0.32} roughness={0.18} metalness={0.58} /></mesh>
-    <mesh scale={1.16}><icosahedronGeometry args={[0.62, 1]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.18} wireframe /></mesh>
+    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.38 : anticipating ? 0.7 : active ? 0.42 : 0.2} transparent opacity={mode === 'architect' ? 0.48 : 0.32} roughness={0.18} metalness={0.58} /></mesh>
+    <mesh scale={1.16}><icosahedronGeometry args={[0.62, 1]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={mode === 'architect' ? 0.34 : 0.18} wireframe /></mesh>
     <group ref={computeCore}>
-      <mesh scale={0.54}><octahedronGeometry args={[0.56, 1]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={0.28} transparent opacity={0.7} roughness={0.22} metalness={0.7} /></mesh>
+      <mesh scale={0.54}><octahedronGeometry args={[0.56, 1]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.52 : 0.28} transparent opacity={mode === 'architect' ? 0.86 : 0.7} roughness={0.22} metalness={0.7} /></mesh>
       <mesh scale={0.76}><icosahedronGeometry args={[0.46, 1]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={0.6} wireframe /></mesh>
     </group>
     {INTERNAL_ANCHORS.map((anchor, index) => <group key={`${anchor.join('-')}-${index}`}>
@@ -170,16 +170,18 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
     ? edges.filter(edge => edge.source === focusedNode.id || edge.target === focusedNode.id)
     : [];
   return <>
-    <ambientLight intensity={horizonScene.lighting.ambient} />
-    <directionalLight position={[4, 5, 6]} intensity={horizonScene.lighting.keyIntensity} color={horizonScene.lighting.key} />
-    <pointLight position={[0, 0, 4]} intensity={horizonScene.lighting.coreIntensity} color={horizonScene.core.energy} distance={14} />
+    <ambientLight intensity={mode === 'architect' ? horizonScene.lighting.ambient * 1.3 : horizonScene.lighting.ambient} />
+    <directionalLight position={[-4, 5, 6]} intensity={mode === 'architect' ? horizonScene.lighting.keyIntensity * 1.2 : horizonScene.lighting.keyIntensity} color={horizonScene.lighting.key} />
+    <pointLight position={[0, 0, 4]} intensity={mode === 'architect' ? horizonScene.lighting.coreIntensity * 0.8 : horizonScene.lighting.coreIntensity} color={horizonScene.core.energy} distance={mode === 'architect' ? 18 : 14} />
     {edges.map(edge => {
       const from = positions.get(edge.source); const to = positions.get(edge.target);
       if (!from || !to) return null;
       const onPath = pathEdgeKeys.has(`${edge.source}->${edge.target}`);
       const active = onPath || selectedIds.has(edge.source) || selectedIds.has(edge.target) || hoveredId === edge.source || hoveredId === edge.target;
       const pathIndex = pathNodeIds.has(edge.source) && pathNodeIds.has(edge.target) ? Math.min([...pathNodeIds].indexOf(edge.source), [...pathNodeIds].indexOf(edge.target)) : -1;
-      return <group key={`${edge.source}-${edge.target}`}><line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.34 : 0.15} /></line>{onPath && pathIndex >= 0 && <PathPulse from={from} to={to} delay={pathIndex * 0.22} enabled={motionEnabled} />}</group>;
+      const depthVisibility = Math.max(0.72, Math.min(1.2, 1 + (from[2] + to[2]) / 14));
+      const baseOpacity = onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.44 : 0.15;
+      return <group key={`${edge.source}-${edge.target}`}><line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={baseOpacity * depthVisibility} /></line>{onPath && pathIndex >= 0 && <PathPulse from={from} to={to} delay={pathIndex * 0.22} enabled={motionEnabled} />}</group>;
     })}
     {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} variant={variant} anticipating={anticipating} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} mode={mode} motionEnabled={motionEnabled} anticipating={anticipating} />)}
     {focusedNode && <SpatialAnnotation node={focusedNode} position={positions.get(focusedNode.id)!} relationCount={focusedRelations.length} primary />}
