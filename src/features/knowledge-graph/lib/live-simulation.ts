@@ -181,8 +181,8 @@ export function createLiveSimulation(
     // Perpetual organic drift — the graph never sleeps
     for (const node of simNodes) {
       if (node.fx != null) continue;
-      node.vx += Math.cos(tickCount * 0.02 + node.phase) * CFG.floatForce;
-      node.vy += Math.sin(tickCount * 0.017 + node.phase * 1.3) * CFG.floatForce;
+      node.vx += Math.cos(tickCount * 0.025 + node.phase) * CFG.floatForce;
+      node.vy += Math.sin(tickCount * 0.021 + node.phase * 1.3) * CFG.floatForce;
     }
 
     // Mouse repulsion — nodes flee the cursor like the QA Neural Graph

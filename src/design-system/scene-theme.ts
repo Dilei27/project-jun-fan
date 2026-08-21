@@ -31,8 +31,8 @@ export const horizonScene = {
     coreIntensity: 1.8,
   },
   motion: {
-    coreRotation: 0.003,
-    nodeRotation: 0.0006,
+    coreRotation: 0.0037,
+    nodeRotation: 0.00075,
     nodePulse: 0.035,
   },
 } as const;

@@ -23,12 +23,12 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
   useFrame(({ clock, pointer }) => {
     if (!mesh.current) return;
     if (!motionEnabled) return;
-    const energy = selected ? 1.22 : hovered ? 1.12 : 1 + Math.sin(clock.elapsedTime * 0.8 + hash(node.id)) * horizonScene.motion.nodePulse;
+    const energy = selected ? 1.22 : hovered ? 1.12 : 1 + Math.sin(clock.elapsedTime * 0.98 + hash(node.id)) * horizonScene.motion.nodePulse;
     mesh.current.scale.setScalar(scale * energy);
     mesh.current.rotation.z += identity.pulse === 'slow-rotate' ? horizonScene.motion.coreRotation : horizonScene.motion.nodeRotation;
     const phase = hash(node.id) * 0.01;
     const magnetic = Math.max(0, 1 - Math.hypot(position[0] - pointer.x * 8, position[1] - pointer.y * 5) / 8);
-    mesh.current.position.set(position[0] + Math.sin(clock.elapsedTime * 0.36 + phase) * 0.035 + pointer.x * magnetic * 0.05, position[1] + Math.cos(clock.elapsedTime * 0.29 + phase) * 0.028 + pointer.y * magnetic * 0.04, position[2] + Math.sin(clock.elapsedTime * 0.23 + phase) * 0.06);
+    mesh.current.position.set(position[0] + Math.sin(clock.elapsedTime * 0.44 + phase) * 0.035 + pointer.x * magnetic * 0.05, position[1] + Math.cos(clock.elapsedTime * 0.35 + phase) * 0.028 + pointer.y * magnetic * 0.04, position[2] + Math.sin(clock.elapsedTime * 0.28 + phase) * 0.06);
   });
 
   const geometry = identity.shape === 'hexagon' ? <cylinderGeometry args={[0.5, 0.5, 0.16, 6]} />
@@ -57,10 +57,10 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
     core.current.rotation.y += horizonScene.motion.coreRotation;
     core.current.rotation.x += pointer.y * 0.0008;
     core.current.rotation.z += pointer.x * 0.0008;
-    core.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 0.7) * 0.035);
+    core.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 0.86) * 0.035);
     if (computeCore.current) {
-      computeCore.current.rotation.x -= 0.0014;
-      computeCore.current.rotation.y += 0.001;
+      computeCore.current.rotation.x -= 0.0017;
+      computeCore.current.rotation.y += 0.0012;
     }
     if (transfer.current) {
       const cycle = clock.elapsedTime % 6;
