@@ -15,6 +15,7 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: (query?: string
   const graph = useMemo(() => getFullGraph(), []);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [secondaryId, setSecondaryId] = useState<string | null>(null);
+  const [overviewVersion, setOverviewVersion] = useState(0);
   const [mode, setMode] = useState<'explore' | 'architect'>('explore');
   const [quality, setQuality] = useState<'low' | 'standard' | 'ultra'>(() => typeof window !== 'undefined' && window.innerWidth < 768 ? 'low' : 'standard');
   const selected = graph.nodes.find(node => node.id === selectedId) ?? null;
@@ -28,10 +29,11 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: (query?: string
       .filter((node): node is NonNullable<typeof node> => Boolean(node))
     : [], [graph.edges, graph.nodes, selectedId]);
   const selectNode = (id: string) => {
+    if (selectedId === id && !secondaryId) { releaseFocus(); return; }
     if (!selectedId || secondaryId) { setSelectedId(id); setSecondaryId(null); return; }
     if (selectedId !== id) setSecondaryId(id);
   };
-  const releaseFocus = () => { setSelectedId(null); setSecondaryId(null); };
+  const releaseFocus = () => { setSelectedId(null); setSecondaryId(null); setOverviewVersion(value => value + 1); };
   const travelTo = (id: string) => { setSelectedId(id); setSecondaryId(null); };
   const focusReplayCluster = (clusterId: string) => {
     const cluster = CLUSTERS.find(item => item.id === clusterId);
@@ -52,7 +54,7 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: (query?: string
 
   return (
     <div className="relative h-full overflow-hidden bg-bg-deep">
-      <KnowledgeScene className="absolute inset-0" onNodeSelect={selectNode} onEmptySpace={releaseFocus} onUnavailable={() => onUseSvg(selected?.label)} focusId={secondaryId ?? selectedId} selectedIds={[selectedId, secondaryId].filter((id): id is string => Boolean(id))} pathNodeIds={path?.nodeIds ?? []} pathEdgeKeys={Array.from(path?.edgeKeys ?? [])} mode={mode} quality={quality} />
+      <KnowledgeScene className="absolute inset-0" onNodeSelect={selectNode} onEmptySpace={releaseFocus} onUnavailable={() => onUseSvg(selected?.label)} focusId={secondaryId ?? selectedId} selectedIds={[selectedId, secondaryId].filter((id): id is string => Boolean(id))} pathNodeIds={path?.nodeIds ?? []} pathEdgeKeys={Array.from(path?.edgeKeys ?? [])} mode={mode} quality={quality} overviewVersion={overviewVersion} />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(8,12,18,0.45)_100%)]" />
       <div className="absolute left-6 top-6 z-10 max-w-sm">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-accent-qa">Knowledge Core</p>
@@ -78,6 +80,7 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: (query?: string
           <h2 className="mt-1 text-base font-semibold text-text-primary">{selected.label}</h2>
           <p className="mt-2 text-sm leading-relaxed text-text-secondary">{selected.description}</p>
           <p className="mt-3 text-xs text-text-muted">{secondaryId ? path ? `Caminho ativo com ${path.nodeIds.length - 1} relação(ões).` : 'Não há caminho conhecido entre essas entidades.' : 'Selecione uma segunda entidade para revelar o caminho mínimo.'}</p>
+          <button type="button" onClick={releaseFocus} className="mt-3 text-xs uppercase tracking-[0.12em] text-text-muted hover:text-text-primary">← Overview</button>
           {relatedNodes.length > 0 && <div className="mt-3 border-t border-border-subtle/40 pt-3">
             <p className="text-[10px] uppercase tracking-[0.14em] text-text-muted">Relações diretas</p>
             <div className="mt-2 flex flex-wrap gap-1.5">
