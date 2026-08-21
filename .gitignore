@@ -41,5 +41,8 @@ archive/backend-draft/**/.venv/
 archive/backend-draft/staticfiles/
 archive/backend-draft/.venv/
 
-# Project evolution zips
+# Local release artifacts and working specifications
+*.zip
 evolucoes/
+PRD*.md
+agents/playbooks/execute-prd*.md
