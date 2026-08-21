@@ -1,3 +1,5 @@
+import type { ResourceLinks } from './content';
+
 export interface Project {
   id: string;
   title: string;
@@ -8,5 +10,5 @@ export interface Project {
   impact: string;
   status: string;
   decisions: string[];
-  links: { docs: string; repo: string };
+  links: ResourceLinks;
 }

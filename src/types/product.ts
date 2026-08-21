@@ -1,3 +1,5 @@
+import type { ResourceLinks } from './content';
+
 export interface Product {
   id: string;
   name: string;
@@ -10,5 +12,5 @@ export interface Product {
   architectureFlow: string;
   metrics: Record<string, number>;
   roadmap: string[];
-  links: { docs: string; repo: string };
+  links: ResourceLinks;
 }

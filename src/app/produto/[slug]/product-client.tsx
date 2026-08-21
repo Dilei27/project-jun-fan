@@ -174,6 +174,32 @@ export function ProductClient({ product }: { product: Product }) {
           }}
           className="flex flex-wrap gap-4"
         >
+          {product.links.docs && (
+            <Link
+              href={product.links.docs}
+              className="group inline-flex items-center gap-1.5 px-4 py-2 bg-surface-elevated/60 backdrop-blur-sm border border-border-subtle/60 rounded-lg text-sm text-text-primary shadow-[inset_0_1px_0_0_rgba(244,247,250,0.04)] hover:bg-surface-soft hover:border-border-strong transition-all duration-200 hover:-translate-y-0.5"
+            >
+              Documentação
+              <ExternalLink
+                size={14}
+                className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </Link>
+          )}
+          {product.links.repo && (
+            <a
+              href={product.links.repo}
+              target="_blank"
+              rel="noreferrer"
+              className="group inline-flex items-center gap-1.5 px-4 py-2 bg-surface-elevated/60 backdrop-blur-sm border border-border-subtle/60 rounded-lg text-sm text-text-primary shadow-[inset_0_1px_0_0_rgba(244,247,250,0.04)] hover:bg-surface-soft hover:border-border-strong transition-all duration-200 hover:-translate-y-0.5"
+            >
+              Repositório
+              <ExternalLink
+                size={14}
+                className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </a>
+          )}
           <Link
             href={`/produto/${product.id}/dashboard/`}
             className="group inline-flex items-center gap-1.5 px-4 py-2 bg-surface-elevated/60 backdrop-blur-sm border border-border-subtle/60 rounded-lg text-sm text-text-primary shadow-[inset_0_1px_0_0_rgba(244,247,250,0.04)] hover:bg-surface-soft hover:border-border-strong transition-all duration-200 hover:-translate-y-0.5"

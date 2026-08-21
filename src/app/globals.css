@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../design-system/theme.css";
 
 @theme inline {
   --color-bg-base: #0C1118;

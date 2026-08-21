@@ -7,6 +7,11 @@ export interface Decision {
   impact: string;
 }
 
+export interface ResourceLinks {
+  docs?: string;
+  repo?: string;
+}
+
 export interface SkillCategory {
   area: string;
   skills: string[];

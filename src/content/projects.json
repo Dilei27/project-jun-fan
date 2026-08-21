@@ -8,8 +8,8 @@
     "stack": ["Robot Framework", "Sikuli", "Python", "Click Custom", "Jenkins"],
     "impact": "960 minutos reduzidos para 192 minutos automatizados. Padronização e base para UI elements.",
     "status": "concluido",
-    "decisions": ["Arquitetura de automação híbrida", "Fallback visual para componentes instáveis"],
-    "links": {"docs": "#", "repo": "#"}
+    "decisions": ["automacao-hibrida", "fallback-visual"],
+    "links": {}
   },
   {
     "id": "whatsapp-ai",
@@ -20,8 +20,8 @@
     "stack": ["Python", "FastAPI", "Evolution API", "OpenAI", "SQLite", "Docker"],
     "impact": "Fluxo ponta a ponta validado: mensagem, filtros, IA, memória, resposta e encaminhamento de assuntos sensíveis.",
     "status": "em_andamento",
-    "decisions": ["Persona persistida separada de RAG", "Segurança antes da geração", "Escalonamento humano para risco"],
-    "links": {"docs": "#", "repo": "#"}
+    "decisions": ["persona-separada-rag", "seguranca-antes-geracao", "escalonamento-humano"],
+    "links": {}
   },
   {
     "id": "vigilante-ai",
@@ -32,7 +32,7 @@
     "stack": ["Python", "Flask", "YOLOv8", "Motion", "Docker", "WhatsApp API"],
     "impact": "Fluxo local validado com detecção humana, envio de alerta com imagem e controle remoto por comandos no WhatsApp.",
     "status": "em_andamento",
-    "decisions": ["Classificação on-device vs cloud", "Política de retenção de evidências"],
-    "links": {"docs": "/docs/vigilante-ai-preview/", "repo": "#"}
+    "decisions": ["classificacao-on-device", "retencao-evidencias"],
+    "links": {"docs": "/docs/vigilante-ai-preview/"}
   }
 ]

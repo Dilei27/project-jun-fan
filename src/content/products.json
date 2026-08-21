@@ -11,7 +11,7 @@
     "architectureFlow": "Entrada -> Hub -> Produtos -> Projetos -> Decisões -> Docs -> AI",
     "metrics": {"projetos": 12, "automacoes": 15, "frameworks": 5},
     "roadmap": ["Dashboard interno", "Grafo de expertise", "Integração com AI Dock real"],
-    "links": {"docs": "#", "repo": "#"}
+    "links": {}
   },
   {
     "id": "whatsapp-ai",
@@ -25,7 +25,7 @@
     "architectureFlow": "WhatsApp -> Evolution API -> Filtros -> Persona e memória -> OpenAI -> Resposta ou escalonamento",
     "metrics": {"fluxo_validado": 1, "camadas_de_seguranca": 6, "memoria_persistente": 1},
     "roadmap": ["Painel de conversas e aprovações", "Perfis de relacionamento por contato", "Base de conhecimento RAG"],
-    "links": {"docs": "#", "repo": "#"}
+    "links": {}
   },
   {
     "id": "vigilante-ai",
@@ -39,7 +39,7 @@
     "architectureFlow": "Movimento -> Snapshot -> IA local -> Regra de alarme -> WhatsApp -> Registro do evento",
     "metrics": {"mvp_validado": 1, "cameras_mvp": 1, "confianca_teste": 93},
     "roadmap": ["Câmeras IP/RTSP reais", "Sirene física compartilhada", "Retenção automática de gravações"],
-    "links": {"docs": "/docs/vigilante-ai-preview/", "repo": "#"}
+    "links": {"docs": "/docs/vigilante-ai-preview/"}
   },
   {
     "id": "desktop-discovery-engine",
@@ -53,6 +53,6 @@
     "architectureFlow": "Capture -> Discover -> Enrich -> Structure -> Review",
     "metrics": {"pipeline_stages": 7, "artifact_types": 8, "validated_apps": 5},
     "roadmap": ["Core estável para Windows", "Integrações consumidoras de conhecimento", "Evolução sem acoplar regras de aplicação"],
-    "links": {"docs": "#", "repo": "#"}
+    "links": {}
   }
 ]

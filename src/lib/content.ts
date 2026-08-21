@@ -1,4 +1,4 @@
-import type { Product, Project, TimelineEntry, Decision, Doc, SkillCategory } from '@/types';
+import type { Product, Project, TimelineEntry, Decision, Doc, ResourceLinks, SkillCategory } from '@/types';
 import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter';
 import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository';
 
@@ -27,7 +27,7 @@ export function getProducts(): Product[] {
         architectureFlow: (m.architectureFlow as string) ?? '',
         metrics: (m.metrics as Record<string, number>) ?? {},
         roadmap: (m.roadmap as string[]) ?? [],
-        links: (m.links as { docs: string; repo: string }) ?? { docs: '#', repo: '#' },
+        links: (m.links as ResourceLinks) ?? {},
       } as Product;
     });
 }
@@ -52,7 +52,7 @@ export function getProjects(): Project[] {
         impact: (m.impact as string) ?? '',
         status: n.status as Project['status'],
         decisions: n.relatedDecisions.map(d => d.replace('decision-', '')),
-        links: (m.links as { docs: string; repo: string }) ?? { docs: '#', repo: '#' },
+        links: (m.links as ResourceLinks) ?? {},
       } as Project;
     });
 }

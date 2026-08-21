@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { AtSign, Code2, Mail } from 'lucide-react';
 import { footerLinks } from '@/config/navigation';
 import { motion as m } from '@/design-system/motion';
+import { PROFILE } from '@/features/engineering-profile/data/profile';
 import { useLanguage } from '@/i18n/language-context';
 import type { TranslationKey } from '@/i18n/translations';
 
@@ -15,6 +17,12 @@ const footerLabelKeys: Record<string, TranslationKey> = {
   '/busca/': 'nav.search',
   '/framework/': 'nav.framework',
 };
+
+const publicLinks = [
+  { href: PROFILE.contact.github, label: 'GitHub', icon: Code2 },
+  { href: PROFILE.contact.linkedin, label: 'LinkedIn', icon: AtSign },
+  { href: `mailto:${PROFILE.contact.email}`, label: 'Email', icon: Mail },
+];
 
 export function Footer() {
   const { t } = useLanguage();
@@ -60,6 +68,20 @@ export function Footer() {
             </motion.div>
           ))}
         </motion.nav>
+        <nav className="flex items-center justify-center gap-1 mb-4" aria-label="Contato">
+          {publicLinks.map(({ href, label, icon: Icon }) => (
+            <a
+              key={label}
+              href={href}
+              target={href.startsWith('mailto:') ? undefined : '_blank'}
+              rel={href.startsWith('mailto:') ? undefined : 'noreferrer'}
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-text-muted transition-colors hover:text-text-primary"
+            >
+              <Icon aria-hidden size={14} strokeWidth={1.75} />
+              {label}
+            </a>
+          ))}
+        </nav>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-xs text-text-muted">
           <p>Project Jun Fan - {t('footer.tagline')}</p>
           <span aria-hidden className="hidden sm:inline opacity-30">·</span>

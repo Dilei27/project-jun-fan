@@ -30,5 +30,61 @@
     "rationale": "No MVP, não há necessidade de IA real. O AI Dock simula respostas com conteúdo pré-definido. Quando a IA real for necessária, usaremos API serverless (sem Celery, RabbitMQ ou Redis).",
     "tradeoffs": "Respostas mockadas não refletem precisão real; útil apenas para validação de UX.",
     "impact": "MVP sem dependências de infraestrutura de fila. Evolução futura simplificada."
+  },
+  {
+    "id": "automacao-hibrida",
+    "context": "Automação de regressão do ERP UAU combina interface desktop legada e elementos com diferentes níveis de estabilidade.",
+    "decision": "Arquitetura de automação híbrida com Robot Framework, Sikuli e Click Custom.",
+    "rationale": "Combina automação orientada a fluxo com recursos visuais e interações específicas onde não há seletores confiáveis.",
+    "tradeoffs": "Fluxos visuais exigem calibração e cuidado com variações de ambiente.",
+    "impact": "Viabiliza a cobertura dos fluxos críticos sem depender de uma única técnica de automação."
+  },
+  {
+    "id": "fallback-visual",
+    "context": "Componentes instáveis do ERP nem sempre expõem elementos acessíveis para automação direta.",
+    "decision": "Usar fallback visual apenas para componentes sem interface estável de automação.",
+    "rationale": "Mantém os fluxos executáveis sem transformar a automação visual na estratégia padrão.",
+    "tradeoffs": "A manutenção aumenta quando a aparência da interface muda.",
+    "impact": "Reduz bloqueios de regressão e preserva uma rota de evolução para elementos mais estáveis."
+  },
+  {
+    "id": "persona-separada-rag",
+    "context": "O assistente de WhatsApp precisa manter comportamento consistente sem confundir identidade com conteúdo recuperado.",
+    "decision": "Separar persona persistida da futura base de conhecimento RAG.",
+    "rationale": "A persona define tom, limites e comportamento; a base de conhecimento fornece contexto consultável.",
+    "tradeoffs": "Exige duas camadas de configuração e avaliação.",
+    "impact": "Permite evoluir o conhecimento disponível sem alterar a identidade do assistente."
+  },
+  {
+    "id": "seguranca-antes-geracao",
+    "context": "Mensagens recebidas podem conter dados sensíveis ou pedidos que exigem confirmação humana.",
+    "decision": "Aplicar allowlist e filtros de risco antes de gerar qualquer resposta automatizada.",
+    "rationale": "A validação anterior à geração reduz respostas fora de contexto e ações sem autorização.",
+    "tradeoffs": "Mais regras podem encaminhar conversas seguras para revisão humana.",
+    "impact": "Estabelece uma barreira de segurança para o fluxo automatizado."
+  },
+  {
+    "id": "escalonamento-humano",
+    "context": "Compromissos, exceções e conversas sensíveis não devem ser resolvidos automaticamente.",
+    "decision": "Escalonar casos de risco para atendimento humano com o contexto da conversa.",
+    "rationale": "Preserva controle sobre decisões que dependem de julgamento ou autorização.",
+    "tradeoffs": "Parte do atendimento continua exigindo intervenção manual.",
+    "impact": "Evita que a automação assuma compromissos indevidos em nome do negócio."
+  },
+  {
+    "id": "classificacao-on-device",
+    "context": "O Vigilante AI precisa filtrar eventos relevantes sem enviar continuamente imagens para serviços externos.",
+    "decision": "Classificar presença de pessoa localmente antes de disparar alertas.",
+    "rationale": "O processamento local reduz ruído, preserva privacidade e permite alertas mais úteis.",
+    "tradeoffs": "A capacidade e a qualidade do modelo ficam limitadas ao hardware disponível.",
+    "impact": "O alerta via WhatsApp é enviado somente após uma verificação local de relevância."
+  },
+  {
+    "id": "retencao-evidencias",
+    "context": "Eventos de vigilância podem gerar imagens que precisam de ciclo de vida controlado.",
+    "decision": "Definir retenção automática de evidências como evolução do MVP.",
+    "rationale": "Evita acúmulo indefinido de dados e prepara o produto para uma política explícita de privacidade.",
+    "tradeoffs": "A retenção configurável exige armazenamento e regras de exclusão confiáveis.",
+    "impact": "A evolução do produto poderá equilibrar rastreabilidade de eventos e minimização de dados."
   }
 ]

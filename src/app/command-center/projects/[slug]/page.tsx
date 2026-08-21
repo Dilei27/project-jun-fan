@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getProject, getProjects } from '@/lib/content';
+import { getDecisions, getProject, getProjects } from '@/lib/content';
 import { ProjectDetail } from '@/features/command-center/components/project-detail';
 import { ProjectSlugClient } from './project-slug-client';
 
@@ -11,9 +11,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) notFound();
+  const decisionsById = new Map(getDecisions().map(decision => [decision.id, decision]));
+  const decisions = project.decisions.flatMap(id => {
+    const decision = decisionsById.get(id);
+    return decision ? [decision] : [];
+  });
   return (
     <ProjectSlugClient>
-      <ProjectDetail project={project} />
+      <ProjectDetail project={project} decisions={decisions} />
     </ProjectSlugClient>
   );
 }

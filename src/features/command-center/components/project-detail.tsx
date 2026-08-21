@@ -1,15 +1,17 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { motion as m } from '@/design-system/motion';
-import type { Project } from '@/types';
+import type { Decision, Project } from '@/types';
 import { useLanguage } from '@/i18n/language-context';
 
 const cardShadow =
   'inset 0 1px 0 0 rgba(244, 247, 250, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.3)';
 
-export function ProjectDetail({ project }: { project: Project }) {
+export function ProjectDetail({ project, decisions }: { project: Project; decisions: Decision[] }) {
   const { t, td } = useLanguage();
   const statusLabel = project.status === 'concluido' ? t('status.done') : t('status.inProgress');
   const statusVariant =
@@ -103,7 +105,38 @@ export function ProjectDetail({ project }: { project: Project }) {
         </p>
       </motion.div>
 
-      {project.decisions.length > 0 && (
+      {(project.links.docs || project.links.repo) && (
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 12 },
+            visible: { opacity: 1, y: 0, transition: { duration: m.duration.normal, ease: m.easing.out } },
+          }}
+          className="flex flex-wrap gap-3 mb-8"
+        >
+          {project.links.docs && (
+            <Link
+              href={project.links.docs}
+              className="group inline-flex items-center gap-1.5 px-4 py-2 bg-surface-elevated/60 backdrop-blur-sm border border-border-subtle/60 rounded-lg text-sm text-text-primary shadow-[inset_0_1px_0_0_rgba(244,247,250,0.04)] hover:bg-surface-soft hover:border-border-strong transition-all duration-200 hover:-translate-y-0.5"
+            >
+              Documentação
+              <ExternalLink size={14} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          )}
+          {project.links.repo && (
+            <a
+              href={project.links.repo}
+              target="_blank"
+              rel="noreferrer"
+              className="group inline-flex items-center gap-1.5 px-4 py-2 bg-surface-elevated/60 backdrop-blur-sm border border-border-subtle/60 rounded-lg text-sm text-text-primary shadow-[inset_0_1px_0_0_rgba(244,247,250,0.04)] hover:bg-surface-soft hover:border-border-strong transition-all duration-200 hover:-translate-y-0.5"
+            >
+              Repositório
+              <ExternalLink size={14} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+          )}
+        </motion.div>
+      )}
+
+      {decisions.length > 0 && (
         <motion.div
           variants={{
             hidden: { opacity: 0, y: 12 },
@@ -122,18 +155,23 @@ export function ProjectDetail({ project }: { project: Project }) {
             }}
             className="space-y-2"
           >
-            {project.decisions.map(d => (
+            {decisions.map(decision => (
               <motion.div
-                key={d}
+                key={decision.id}
                 variants={{
                   hidden: { opacity: 0, x: -8 },
                   visible: { opacity: 1, x: 0, transition: { duration: m.duration.fast, ease: m.easing.out } },
                 }}
-                className="flex items-center gap-2 p-3 bg-surface-default/80 border border-border-subtle/60 rounded-lg text-sm text-text-secondary jf-lift"
+                className="bg-surface-default/80 border border-border-subtle/60 rounded-lg text-sm text-text-secondary jf-lift"
                 style={{ boxShadow: cardShadow }}
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-accent-qa shrink-0" />
-                {d}
+                <Link
+                  href={`/decisoes/#${decision.id}`}
+                  className="flex items-center gap-2 p-3 text-text-secondary hover:text-text-primary"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-qa shrink-0" />
+                  {decision.decision}
+                </Link>
               </motion.div>
             ))}
           </motion.div>
