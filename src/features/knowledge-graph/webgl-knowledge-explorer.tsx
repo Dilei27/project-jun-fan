@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { Maximize2, Move3D, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Maximize2, Move3D, RotateCcw } from 'lucide-react';
 import { getFullGraph } from '@/core';
 import { findShortestPath } from './lib/path-finder';
 import { CLUSTERS } from './lib/cluster';
@@ -60,6 +60,7 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
         <p className="mt-2 text-sm text-text-secondary">Arraste para orbitar, use a roda para aproximar e selecione entidades reais para revelar contexto.</p>
       </div>
       <div className="absolute right-6 top-6 z-10 flex gap-2">
+        <Link href="/" className="inline-flex items-center gap-1.5 rounded-md border border-border-subtle/60 bg-surface-elevated/80 px-2.5 py-1.5 text-xs text-text-secondary hover:text-text-primary"><ArrowLeft size={13} /> Core</Link>
         <button type="button" onClick={releaseFocus} className="inline-flex items-center gap-1.5 rounded-md border border-border-subtle/60 bg-surface-elevated/80 px-2.5 py-1.5 text-xs text-text-secondary hover:text-text-primary"><RotateCcw size={13} /> Ajustar visão</button>
         <button type="button" onClick={onUseSvg} className="inline-flex items-center gap-1.5 rounded-md border border-border-subtle/60 bg-surface-elevated/80 px-2.5 py-1.5 text-xs text-text-secondary hover:text-text-primary"><Maximize2 size={13} /> Modo SVG</button>
       </div>
