@@ -11,6 +11,7 @@ export const horizonScene = {
     shell: tokens.colors.border.subtle,
     energy: tokens.colors.accent.qa,
     accent: tokens.colors.accent.whatsapp,
+    hot: tokens.colors.text.primary,
   },
   node: {
     dormant: tokens.colors.text.muted,

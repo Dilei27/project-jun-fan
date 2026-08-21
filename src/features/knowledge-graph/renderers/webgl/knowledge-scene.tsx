@@ -47,17 +47,42 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
 
 function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, variant }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; variant: 'home' | 'explorer' }) {
   const core = useRef<Group | null>(null);
+  const computeCore = useRef<Group | null>(null);
+  const transfer = useRef<Mesh | null>(null);
   useFrame(({ clock, pointer }) => {
     if (!core.current || !motionEnabled) return;
     core.current.rotation.y += horizonScene.motion.coreRotation;
     core.current.rotation.x += pointer.y * 0.0008;
     core.current.rotation.z += pointer.x * 0.0008;
     core.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 0.7) * 0.035);
+    if (computeCore.current) {
+      computeCore.current.rotation.x -= 0.0014;
+      computeCore.current.rotation.y += 0.001;
+    }
+    if (transfer.current) {
+      const cycle = clock.elapsedTime % 6;
+      const activeTransfer = cycle < 0.7;
+      transfer.current.visible = activeTransfer;
+      if (activeTransfer) {
+        const anchor = INTERNAL_ANCHORS[Math.floor(clock.elapsedTime / 6) % INTERNAL_ANCHORS.length];
+        const progress = cycle / 0.7;
+        transfer.current.position.set(anchor[0] * progress, anchor[1] * progress, anchor[2] * progress);
+      }
+    }
   });
   return <group ref={core} position={position} scale={variant === 'home' ? 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
-    <mesh><dodecahedronGeometry args={[0.52, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={active ? 1.05 : 0.62} roughness={0.25} metalness={0.72} /></mesh>
-    <mesh scale={0.72}><icosahedronGeometry args={[0.68, 2]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.76} wireframe /></mesh>
-    <mesh scale={1.25}><icosahedronGeometry args={[0.62, 1]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.16} wireframe /></mesh>
+    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={active ? 0.42 : 0.2} transparent opacity={0.32} roughness={0.18} metalness={0.58} /></mesh>
+    <mesh scale={1.16}><icosahedronGeometry args={[0.62, 1]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.18} wireframe /></mesh>
+    <group ref={computeCore}>
+      <mesh scale={0.54}><octahedronGeometry args={[0.56, 1]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={0.28} transparent opacity={0.7} roughness={0.22} metalness={0.7} /></mesh>
+      <mesh scale={0.76}><icosahedronGeometry args={[0.46, 1]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={0.6} wireframe /></mesh>
+    </group>
+    {INTERNAL_ANCHORS.map((anchor, index) => <group key={`${anchor.join('-')}-${index}`}>
+      <line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([0, 0, 0, ...anchor]), 3]} /></bufferGeometry><lineBasicMaterial color={horizonScene.core.energy} transparent opacity={0.2} /></line>
+      <mesh position={anchor}><sphereGeometry args={[0.035, 8, 8]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.55} /></mesh>
+    </group>)}
+    <mesh><sphereGeometry args={[0.105, 12, 12]} /><meshBasicMaterial color={horizonScene.core.hot} /></mesh>
+    <mesh ref={transfer}><sphereGeometry args={[0.045, 10, 10]} /><meshBasicMaterial color={horizonScene.core.hot} /></mesh>
     <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[1.02, 0.018, 8, 48, Math.PI * 1.45]} /><meshBasicMaterial color={horizonScene.core.accent} transparent opacity={mode === 'architect' ? 0.16 : 0.34} /></mesh>
     <mesh rotation={[0.65, 0.7, 0]}><torusGeometry args={[1.28, 0.012, 8, 48, Math.PI * 1.2]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.2} /></mesh>
     <mesh rotation={[-0.5, 0.2, 0.7]}><torusGeometry args={[1.55, 0.01, 8, 48, Math.PI * 1.05]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.28} /></mesh>
@@ -65,6 +90,12 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
     {[-0.9, -0.3, 0.3, 0.9].map((offset, index) => <mesh key={offset} rotation={[0.4 + index * 0.18, 0.3, offset]}><boxGeometry args={[0.035, 2.15, 0.035]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.32} /></mesh>)}
   </group>;
 }
+
+const INTERNAL_ANCHORS: Array<[number, number, number]> = [
+  [0.44, 0.12, 0.2], [-0.38, 0.28, -0.18], [0.16, -0.46, 0.22],
+  [-0.18, -0.34, -0.36], [0.34, 0.38, -0.12], [-0.46, -0.08, 0.26],
+  [0.08, 0.46, 0.34], [0.28, -0.18, -0.42],
+];
 
 function CameraFocus({ target, overviewVersion, variant }: { target: Position | null; overviewVersion: number; variant: 'home' | 'explorer' }) {
   const { camera } = useThree();
