@@ -30,6 +30,7 @@ export interface GraphEdge {
   target: string
   type: string
   label: string
+  weight: number
 }
 
 export interface GraphData {
@@ -94,6 +95,7 @@ function ksEdgeToGraphEdge(edge: KnowledgeEdge): GraphEdge {
     target: edge.target,
     type: edge.type,
     label: edge.label,
+    weight: edge.weight,
   }
 }
 

@@ -23,6 +23,7 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
     if (!selectedId || secondaryId) { setSelectedId(id); setSecondaryId(null); return; }
     if (selectedId !== id) setSecondaryId(id);
   };
+  const releaseFocus = () => { setSelectedId(null); setSecondaryId(null); };
   const focusReplayCluster = (clusterId: string) => {
     const cluster = CLUSTERS.find(item => item.id === clusterId);
     const node = graph.nodes.find(item => cluster?.types.includes(item.type));
@@ -32,10 +33,17 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
     const canvas = document.createElement('canvas');
     if (!canvas.getContext('webgl2')) onUseSvg();
   }, [onUseSvg]);
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') releaseFocus();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  });
 
   return (
     <div className="relative h-full overflow-hidden bg-bg-deep">
-      <KnowledgeScene className="absolute inset-0" onNodeSelect={selectNode} onUnavailable={onUseSvg} focusId={secondaryId ?? selectedId} selectedIds={[selectedId, secondaryId].filter((id): id is string => Boolean(id))} pathNodeIds={path?.nodeIds ?? []} pathEdgeKeys={Array.from(path?.edgeKeys ?? [])} mode={mode} quality={quality} />
+      <KnowledgeScene className="absolute inset-0" onNodeSelect={selectNode} onEmptySpace={releaseFocus} onUnavailable={onUseSvg} focusId={secondaryId ?? selectedId} selectedIds={[selectedId, secondaryId].filter((id): id is string => Boolean(id))} pathNodeIds={path?.nodeIds ?? []} pathEdgeKeys={Array.from(path?.edgeKeys ?? [])} mode={mode} quality={quality} />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(8,12,18,0.45)_100%)]" />
       <div className="absolute left-6 top-6 z-10 max-w-sm">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-accent-qa">Knowledge Core</p>
@@ -43,7 +51,7 @@ export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: () => void }) {
         <p className="mt-2 text-sm text-text-secondary">Arraste para orbitar, use a roda para aproximar e selecione entidades reais para revelar contexto.</p>
       </div>
       <div className="absolute right-6 top-6 z-10 flex gap-2">
-        <button type="button" onClick={() => { setSelectedId(null); setSecondaryId(null); }} className="inline-flex items-center gap-1.5 rounded-md border border-border-subtle/60 bg-surface-elevated/80 px-2.5 py-1.5 text-xs text-text-secondary hover:text-text-primary"><RotateCcw size={13} /> Ajustar visão</button>
+        <button type="button" onClick={releaseFocus} className="inline-flex items-center gap-1.5 rounded-md border border-border-subtle/60 bg-surface-elevated/80 px-2.5 py-1.5 text-xs text-text-secondary hover:text-text-primary"><RotateCcw size={13} /> Ajustar visão</button>
         <button type="button" onClick={onUseSvg} className="inline-flex items-center gap-1.5 rounded-md border border-border-subtle/60 bg-surface-elevated/80 px-2.5 py-1.5 text-xs text-text-secondary hover:text-text-primary"><Maximize2 size={13} /> Modo SVG</button>
       </div>
       <div className="absolute left-6 top-32 z-10 flex gap-1 rounded-lg border border-border-subtle/60 bg-surface-elevated/80 p-1 text-xs">

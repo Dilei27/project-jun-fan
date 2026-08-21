@@ -129,22 +129,21 @@ export function RelationshipInspector({ edge, allNodes, allEdges, onClose, onNod
               )}
             </div>
 
-            {/* Weight indicator (mock) */}
-            <div className="flex items-center gap-1.5 text-[9px] text-text-muted/50">
+            {edgeData && <div className="flex items-center gap-1.5 text-[9px] text-text-muted/50">
               <Weight size={8} />
-              <span>Peso:</span>
+              <span>Peso real: {edgeData.weight}</span>
               <span className="flex gap-0.5">
                 {[1, 2, 3, 4, 5].map(w => (
                   <span
                     key={w}
                     className="w-2 h-1 rounded-sm"
                     style={{
-                      background: w <= 3 ? relationColor : 'rgba(244,247,250,0.08)',
+                      background: w <= Math.min(edgeData.weight, 5) ? relationColor : 'rgba(244,247,250,0.08)',
                     }}
                   />
                 ))}
               </span>
-            </div>
+            </div>}
           </div>
         </motion.div>
       )}

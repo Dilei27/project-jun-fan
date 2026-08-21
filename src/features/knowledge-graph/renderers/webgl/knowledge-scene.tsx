@@ -98,7 +98,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
   </>;
 }
 
-export function KnowledgeScene({ className = '', onNodeSelect, onUnavailable, mode = 'explore', quality = 'standard', focusId, selectedIds = [], pathNodeIds = [], pathEdgeKeys = [], graphData, variant = 'explorer' }: { className?: string; onNodeSelect?: (id: string) => void; onUnavailable?: () => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null; selectedIds?: string[]; pathNodeIds?: string[]; pathEdgeKeys?: string[]; graphData?: GraphData; variant?: 'home' | 'explorer' }) {
+export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onUnavailable, mode = 'explore', quality = 'standard', focusId, selectedIds = [], pathNodeIds = [], pathEdgeKeys = [], graphData, variant = 'explorer' }: { className?: string; onNodeSelect?: (id: string) => void; onEmptySpace?: () => void; onUnavailable?: () => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null; selectedIds?: string[]; pathNodeIds?: string[]; pathEdgeKeys?: string[]; graphData?: GraphData; variant?: 'home' | 'explorer' }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [isPageVisible, setIsPageVisible] = useState(true);
@@ -126,7 +126,7 @@ export function KnowledgeScene({ className = '', onNodeSelect, onUnavailable, mo
     return () => { observer.disconnect(); media.removeEventListener('change', updateMotion); document.removeEventListener('visibilitychange', updateVisibility); };
   }, []);
   return <div ref={hostRef} className={className} aria-label="Visualização espacial do conhecimento">
-    <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: [0, 0, 13], fov: 46 }} dpr={reducedMotion ? [1, 1] : dpr} gl={{ antialias: quality !== 'low', alpha: true }} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
+    <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: [0, 0, 13], fov: 46 }} dpr={reducedMotion ? [1, 1] : dpr} gl={{ antialias: quality !== 'low', alpha: true }} onPointerMissed={onEmptySpace} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
       <fog attach="fog" args={[horizonScene.environment.fog, 8, 22]} />
       <KnowledgeUniverse graph={graph} variant={variant} mode={mode} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} />
       {!reducedMotion && <CameraFocus target={focusPosition} />}
