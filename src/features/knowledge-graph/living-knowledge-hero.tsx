@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { getFullGraph } from '@/core';
 import { getHomeCoreGraph } from './home-core-data';
 import { usePlatform } from '@/components/platform/platform-context';
+import { AmbientInstruments } from './ambient-instruments';
 
 const KnowledgeScene = dynamic(() => import('./renderers/webgl/knowledge-scene').then(module => module.KnowledgeScene), { ssr: false });
 
@@ -29,6 +30,7 @@ export function LivingKnowledgeHero() {
   }, []);
   return <>
     {!unavailable && <KnowledgeScene className="absolute inset-0 translate-y-14 opacity-90 sm:translate-y-0" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" anticipating={anticipating} />}
+    <AmbientInstruments anticipating={anticipating} />
     {unavailable && <div className="absolute inset-0 flex items-center justify-center bg-bg-deep">
       <div className="text-center text-sm text-text-secondary">Knowledge Core indisponível neste dispositivo. <Link href="/knowledge-graph/" className="text-accent-qa hover:underline">Abrir Explorer em SVG</Link></div>
     </div>}
