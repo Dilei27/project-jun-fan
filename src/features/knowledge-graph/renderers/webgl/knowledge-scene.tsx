@@ -52,6 +52,11 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
   const core = useRef<Group | null>(null);
   const computeCore = useRef<Group | null>(null);
   const transfer = useRef<Mesh | null>(null);
+  const instrumentA = useRef<Group | null>(null);
+  const instrumentB = useRef<Group | null>(null);
+  const instrumentC = useRef<Group | null>(null);
+  const reticle = useRef<Group | null>(null);
+  const arcTrace = useRef<Mesh | null>(null);
   useFrame(({ clock, pointer }) => {
     if (!core.current || !motionEnabled) return;
     core.current.rotation.y += horizonScene.motion.coreRotation;
@@ -62,6 +67,10 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
       computeCore.current.rotation.x -= 0.0017;
       computeCore.current.rotation.y += 0.0012;
     }
+    if (instrumentA.current) instrumentA.current.rotation.z += anticipating ? 0.00012 : 0.00035;
+    if (instrumentB.current) instrumentB.current.rotation.z -= anticipating ? 0.00008 : 0.00022;
+    if (instrumentC.current) instrumentC.current.rotation.y += 0.00012;
+    if (reticle.current) reticle.current.rotation.z -= 0.0005;
     if (transfer.current) {
       const cycle = clock.elapsedTime % 6;
       const activeTransfer = cycle < 0.7;
@@ -70,6 +79,15 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
         const anchor = INTERNAL_ANCHORS[Math.floor(clock.elapsedTime / 6) % INTERNAL_ANCHORS.length];
         const progress = cycle / 0.7;
         transfer.current.position.set(anchor[0] * progress, anchor[1] * progress, anchor[2] * progress);
+      }
+    }
+    if (arcTrace.current) {
+      const cycle = clock.elapsedTime % 9;
+      const activeTrace = cycle < 0.65;
+      arcTrace.current.visible = activeTrace;
+      if (activeTrace) {
+        const angle = -0.7 + (cycle / 0.65) * 1.4;
+        arcTrace.current.position.set(Math.cos(angle) * 2.16, Math.sin(angle) * 2.16, 0.08);
       }
     }
   });
@@ -86,11 +104,32 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
     </group>)}
     <mesh><sphereGeometry args={[0.105, 12, 12]} /><meshBasicMaterial color={horizonScene.core.hot} /></mesh>
     <mesh ref={transfer}><sphereGeometry args={[0.045, 10, 10]} /><meshBasicMaterial color={horizonScene.core.hot} /></mesh>
+    <group ref={reticle}>
+      {RETICLE_BRACKETS.map(([x, y, rotation], index) => <mesh key={index} position={[x, y, 0.22]} rotation={[0, 0, rotation]}><boxGeometry args={[0.18, 0.018, 0.012]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={0.55} /></mesh>)}
+    </group>
     <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[1.02, 0.018, 8, 48, Math.PI * 1.45]} /><meshBasicMaterial color={horizonScene.core.accent} transparent opacity={mode === 'architect' ? 0.16 : 0.34} /></mesh>
     <mesh rotation={[0.65, 0.7, 0]}><torusGeometry args={[1.28, 0.012, 8, 48, Math.PI * 1.2]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.2} /></mesh>
     <mesh rotation={[-0.5, 0.2, 0.7]}><torusGeometry args={[1.55, 0.01, 8, 48, Math.PI * 1.05]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.28} /></mesh>
     <mesh rotation={[0.3, -0.6, -0.2]}><torusGeometry args={[1.8, 0.007, 8, 48, Math.PI * 0.9]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.2} /></mesh>
     {[-0.9, -0.3, 0.3, 0.9].map((offset, index) => <mesh key={offset} rotation={[0.4 + index * 0.18, 0.3, offset]}><boxGeometry args={[0.035, 2.15, 0.035]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.32} /></mesh>)}
+    <group ref={instrumentA} rotation={[0.1, 0.08, 0]}>
+      <mesh><torusGeometry args={[2.12, 0.008, 6, 48, Math.PI * 0.38]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.28} /></mesh>
+      <mesh rotation={[0, 0, 1.6]}><torusGeometry args={[2.12, 0.008, 6, 48, Math.PI * 0.26]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.36} /></mesh>
+      {CALIBRATION_MARKS.slice(0, 8).map(([x, y, rotation], index) => <mesh key={index} position={[x, y, 0.04]} rotation={[0, 0, rotation]}><boxGeometry args={[index % 3 === 0 ? 0.14 : 0.08, 0.014, 0.01]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.55} /></mesh>)}
+    </group>
+    <group ref={instrumentB} rotation={[0.45, 0.35, 0.9]}>
+      <mesh><torusGeometry args={[2.45, 0.006, 6, 56, Math.PI * 0.32]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.34} /></mesh>
+      <mesh rotation={[0, 0, 2.1]}><torusGeometry args={[2.45, 0.006, 6, 56, Math.PI * 0.18]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.24} /></mesh>
+      {CALIBRATION_MARKS.slice(8).map(([x, y, rotation], index) => <mesh key={index} position={[x * 1.16, y * 1.16, -0.06]} rotation={[0, 0, rotation]}><boxGeometry args={[index % 4 === 0 ? 0.15 : 0.075, 0.012, 0.01]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.46} /></mesh>)}
+    </group>
+    <group ref={instrumentC} rotation={[-0.3, 0.55, -0.4]}>
+      <mesh><torusGeometry args={[2.78, 0.005, 6, 56, Math.PI * 0.22]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.28} /></mesh>
+      <mesh rotation={[0, 0, 2.7]}><torusGeometry args={[2.78, 0.005, 6, 56, Math.PI * 0.16]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.2} /></mesh>
+    </group>
+    <mesh position={[0, 0, 0.18]}><boxGeometry args={[4.4, 0.012, 0.01]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.28} /></mesh>
+    <mesh position={[0, 0.2, 0.18]}><boxGeometry args={[0.012, 1.1, 0.01]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.22} /></mesh>
+    {PORTS.map(([x, y], index) => <mesh key={index} position={[x, y, 0.12]}><sphereGeometry args={[0.055, 8, 8]} /><meshBasicMaterial color={active || anticipating ? horizonScene.core.energy : horizonScene.core.base} transparent opacity={active || anticipating ? 0.82 : 0.42} /></mesh>)}
+    <mesh ref={arcTrace} position={[2.16, 0, 0.08]}><sphereGeometry args={[0.045, 10, 10]} /><meshBasicMaterial color={horizonScene.core.hot} /></mesh>
   </group>;
 }
 
@@ -98,6 +137,19 @@ const INTERNAL_ANCHORS: Array<[number, number, number]> = [
   [0.44, 0.12, 0.2], [-0.38, 0.28, -0.18], [0.16, -0.46, 0.22],
   [-0.18, -0.34, -0.36], [0.34, 0.38, -0.12], [-0.46, -0.08, 0.26],
   [0.08, 0.46, 0.34], [0.28, -0.18, -0.42],
+];
+
+const RETICLE_BRACKETS: Array<[number, number, number]> = [
+  [0.22, 0.22, 0], [-0.22, 0.22, Math.PI / 2], [-0.22, -0.22, Math.PI], [0.22, -0.22, -Math.PI / 2],
+];
+
+const CALIBRATION_MARKS: Array<[number, number, number]> = Array.from({ length: 16 }, (_, index) => {
+  const angle = (index / 16) * Math.PI * 2;
+  return [Math.cos(angle) * 2.12, Math.sin(angle) * 2.12, angle + Math.PI / 2];
+});
+
+const PORTS: Array<[number, number]> = [
+  [2.05, 0], [0.7, 1.92], [-1.45, 1.45], [-2.05, -0.15], [-0.62, -1.96], [1.5, -1.4],
 ];
 
 function CameraFocus({ target, overviewVersion, variant }: { target: Position | null; overviewVersion: number; variant: 'home' | 'explorer' }) {
