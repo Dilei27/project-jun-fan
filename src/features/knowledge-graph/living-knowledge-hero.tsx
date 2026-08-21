@@ -22,6 +22,17 @@ export function LivingKnowledgeHero() {
   };
   return <>
     <KnowledgeScene className="absolute inset-0 opacity-90" onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" />
+    <nav className="sr-only" aria-label="Entidades do Knowledge Core">
+      <ul>
+        {homeGraph.nodes.map(node => (
+          <li key={node.id}>
+            <button type="button" onClick={() => handleSelect(node.id)} aria-pressed={selectedNodeId === node.id}>
+              Explorar {node.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </nav>
     {selected && (
       <aside className="absolute bottom-8 right-6 z-10 w-[min(20rem,calc(100vw-3rem))] rounded-xl border border-border-subtle/60 bg-surface-elevated/85 p-4 shadow-[var(--shadow-high)] backdrop-blur-xl">
         <p className="text-[10px] uppercase tracking-[0.14em] text-accent-qa">{selected.type}</p>
