@@ -307,7 +307,7 @@ export const PROFILE: ProfileData = {
 
   contact: {
     github: 'https://github.com/Dilei27',
-    linkedin: 'https://linkedin.com/in/odirlei-alves',
+    linkedin: 'https://www.linkedin.com/in/odirlei-alves-a9b14923/',
     email: 'odirlei.alves@email.com',
     resumes: {
       pt: '/curriculo-odirlei-alves-pt.pdf',
