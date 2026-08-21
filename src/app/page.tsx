@@ -97,6 +97,12 @@ export default function HomePage() {
                 >
                   <FileText size={16} /> <TranslatedText k="home.cta.docs" />
                 </Link>
+                <Link
+                  href="/profile/"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-elevated/60 backdrop-blur-sm border border-border-subtle/60 text-text-primary rounded-lg text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[inset_0_1px_0_0_rgba(244,247,250,0.04)] hover:bg-surface-soft hover:border-border-strong hover:-translate-y-0.5"
+                >
+                  <FileText size={16} /> Perfil e currículo
+                </Link>
               </div>
             </FadeIn>
           </div>
