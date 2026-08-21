@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getProducts, getProjects } from '@/lib/content';
-import { ProductGateway } from '@/components/cards/product-card';
+import { getProjects } from '@/lib/content';
 import { FeaturedProjects } from '@/components/cards/project-card';
 import { AIInsightCards } from '@/components/cards/ai-insight-card';
 import { BootLoader } from '@/features/command-center/components/boot-loader';
@@ -17,7 +16,6 @@ import { DashboardLoading } from '@/features/command-center/components/dashboard
 import { DashboardError } from '@/features/command-center/components/dashboard-error';
 import { SkillsCloud } from '@/features/command-center/components/skills-cloud';
 import { ArchitectureFlow } from '@/features/command-center/components/architecture-flow';
-import { StatusStrip } from '@/components/shared/status-strip';
 import { SectionReveal } from '@/components/shared/section-reveal';
 import { SectionDivider } from '@/components/shared/section-divider';
 import { CrossNav } from '@/components/platform/cross-nav';
@@ -31,7 +29,6 @@ export default function CommandCenterPage() {
   const [loading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const products = getProducts();
   const projects = getProjects();
   if (error) {
     return (
@@ -101,25 +98,6 @@ export default function CommandCenterPage() {
 
           <SectionReveal>
             <section className="mb-12">
-              <h2 className="sr-only">Status dos Produtos</h2>
-              <StatusStrip products={products} />
-            </section>
-          </SectionReveal>
-
-          <SectionReveal>
-            <section className="mb-12" id="produtos">
-              <h2 className="text-base font-semibold text-text-primary mb-5 tracking-[-0.01em] flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-qa/60" />
-                Produtos
-              </h2>
-              <ProductGateway products={products} />
-            </section>
-          </SectionReveal>
-
-          <SectionDivider className="mb-12 max-w-3xl mx-auto" />
-
-          <SectionReveal>
-            <section className="mb-12">
               <h2 className="text-base font-semibold text-text-primary mb-5 tracking-[-0.01em] flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#22D3EE' }} />
                 Stack Técnica
@@ -146,7 +124,7 @@ export default function CommandCenterPage() {
             <section className="mb-12">
               <h2 className="text-base font-semibold text-text-primary mb-5 tracking-[-0.01em] flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#22C55E' }} />
-                Projetos em Destaque
+                Projetos
               </h2>
               <FeaturedProjects projects={projects} />
             </section>

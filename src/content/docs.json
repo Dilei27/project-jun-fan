@@ -25,12 +25,13 @@
   },
   {
     "id": "produtos",
-    "title": "Produtos",
-    "description": "Visão geral dos produtos do ecossistema.",
+    "title": "Projetos",
+    "description": "Visão geral dos quatro projetos públicos do ecossistema.",
     "sections": [
       {"heading": "QA Command Center", "content": "Hub central que funciona como cockpit do ecossistema. Centraliza trajetória, projetos, decisões técnicas, demos, métricas e documentação com identidade visual própria. É o ponto de entrada para todos os produtos."},
       {"heading": "WhatsApp AI Assistant", "content": "Assistente comercial conectado ao WhatsApp para pequenos negócios automatizarem atendimento. Usa LangChain e GPT-5.5-mini para qualificar clientes, agendar horários e gerar resumos."},
       {"heading": "Vigilante AI", "content": "Sistema de monitoramento inteligente com classificação de eventos por IA. Detecta movimento, classifica pessoa/animal/veículo/sombra e reduz alertas inúteis."}
+      ,{"heading": "Desktop Discovery Engine", "content": "Ferramenta Windows que transforma interações manuais em conhecimento estruturado para automação desktop, com evidências, locators e contexto técnico para revisão futura."}
     ]
   },
   {

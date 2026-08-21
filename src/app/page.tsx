@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import { getProducts, getProjects } from '@/lib/content';
+import { getProjects } from '@/lib/content';
 import { getFullGraph } from '@/core';
-import { ProductGateway } from '@/components/cards/product-card';
 import { FeaturedProjects } from '@/components/cards/project-card';
 import { AIInsightCards } from '@/components/cards/ai-insight-card';
 import { FadeIn, HeroStage } from '@/components/shared/reveal';
@@ -23,7 +22,6 @@ import { HomeGraphSignal } from '@/features/knowledge-graph/home-graph-signal';
 import { EnterSystemLink } from '@/features/knowledge-graph/enter-system-link';
 
 export default function HomePage() {
-  const products = getProducts();
   const projects = getProjects();
   const graph = getFullGraph();
 
@@ -117,10 +115,10 @@ export default function HomePage() {
         <StatRow
           className="mb-20"
           stats={[
-            { value: products.length, suffix: '', label: 'home.stats.products' },
             { value: projects.length, suffix: '', label: 'home.stats.projects' },
             { value: graph.nodes.length, suffix: '', label: 'Entidades' },
             { value: graph.edges.length, suffix: '', label: 'Relações' },
+            { value: graph.nodes.filter(node => node.type === 'decision').length, suffix: '', label: 'Decisões' },
           ]}
         />
       </SectionReveal>
@@ -210,27 +208,6 @@ export default function HomePage() {
               <MiniKnowledgeGraph />
             </div>
           </div>
-        </section>
-      </SectionReveal>
-
-      <SectionDivider className="mb-16 max-w-3xl mx-auto" />
-
-      {/* === PRODUCTS === */}
-      <SectionReveal>
-        <section className="relative mb-16" id="produtos">
-          <HomeGraphSignal nodeId="product-qa-command-center" label="Produtos" />
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-text-primary tracking-[-0.01em]">
-              <TranslatedText k="home.products" />
-            </h2>
-            <Link
-              href="/command-center/"
-              className="text-sm text-accent-qa hover:underline transition-all duration-200"
-            >
-              <TranslatedText k="home.view.complete" /> →
-            </Link>
-          </div>
-          <ProductGateway products={products} />
         </section>
       </SectionReveal>
 

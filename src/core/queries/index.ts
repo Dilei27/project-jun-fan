@@ -62,7 +62,10 @@ function knowledgeNodeToGraphNode(node: KnowledgeNode): GraphNode {
   let url = ''
   switch (node.type) {
     case 'product':
-      url = `/produto/${node.id.replace('product-', '')}/`
+      {
+        const id = node.id.replace('product-', '')
+        url = id === 'qa-command-center' ? `/produto/${id}/` : `/projeto/${id}/`
+      }
       break
     case 'project':
       url = `/projeto/${node.id.replace('project-', '')}/`

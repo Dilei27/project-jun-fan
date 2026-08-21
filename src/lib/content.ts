@@ -1,6 +1,7 @@
 import type { Product, Project, TimelineEntry, Decision, Doc, ResourceLinks, SkillCategory } from '@/types';
 import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter';
 import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository';
+import { publicProjectIds } from '@/content/public-project-registry';
 
 const _repo = new KnowledgeRepository(new MockAdapter());
 
@@ -36,7 +37,7 @@ export function getProduct(id: string): Product | undefined {
   return getProducts().find(p => p.id === id);
 }
 
-export function getProjects(): Project[] {
+function getProjectRecords(): Project[] {
   return repo()
     .getAllNodes()
     .filter(n => n.type === 'project')
@@ -55,6 +56,30 @@ export function getProjects(): Project[] {
         links: (m.links as ResourceLinks) ?? {},
       } as Project;
     });
+}
+
+export function getProjects(): Project[] {
+  const projectRecords = new Map(getProjectRecords().map(project => [project.id, project]));
+  const products = new Map(getProducts().map(product => [product.id, product]));
+
+  return publicProjectIds.flatMap(id => {
+    const project = projectRecords.get(id);
+    if (project) return [project];
+    const product = products.get(id);
+    if (!product) return [];
+    return [{
+      id: product.id,
+      title: product.name,
+      context: product.shortDescription,
+      problem: product.problem,
+      solution: product.solution,
+      stack: product.stack,
+      impact: product.solution,
+      status: product.status === 'online' ? 'concluido' : 'em_andamento',
+      decisions: [],
+      links: product.links,
+    }];
+  });
 }
 
 export function getProject(id: string): Project | undefined {

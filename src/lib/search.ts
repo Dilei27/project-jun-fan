@@ -39,7 +39,10 @@ function toSearchableText(value: unknown): string {
 
 function getUrl(node: { id: string; type: string }): string {
   switch (node.type) {
-    case 'product': return `/produto/${node.id.replace('product-', '')}/`;
+    case 'product': {
+      const id = node.id.replace('product-', '');
+      return id === 'qa-command-center' ? `/produto/${id}/` : `/projeto/${id}/`;
+    }
     case 'project': return `/projeto/${node.id.replace('project-', '')}/`;
     case 'document': return `/docs/${node.id.replace('document-', '')}/`;
     case 'decision': return `/decisoes/#${node.id.replace('decision-', '')}`;
@@ -69,7 +72,7 @@ export function searchAll(query: string): SearchResult[] {
     const repo = getRepo();
     const index = repo.getIndex();
     const typeLabel: Record<string, string> = {
-      product: 'produto', project: 'projeto', decision: 'decisão técnica', document: 'documentação',
+      product: 'projeto', project: 'projeto', decision: 'decisão técnica', document: 'documentação',
       event: 'marco', skill: 'skill', metric: 'métrica',
     };
 
