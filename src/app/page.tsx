@@ -5,7 +5,7 @@ import { ProductGateway } from '@/components/cards/product-card';
 import { FeaturedProjects } from '@/components/cards/project-card';
 import { AIInsightCards } from '@/components/cards/ai-insight-card';
 import { ArrowRight, GitBranch } from 'lucide-react';
-import { RevealText, FadeIn, HeroStage } from '@/components/shared/reveal';
+import { FadeIn, HeroStage } from '@/components/shared/reveal';
 import { SectionReveal } from '@/components/shared/section-reveal';
 import { SectionDivider } from '@/components/shared/section-divider';
 import { StatRow } from '@/components/shared/stat-row';
@@ -42,13 +42,9 @@ export default function HomePage() {
               </div>
             </FadeIn>
 
-            <RevealText
-              as="h1"
-              delay={0.1}
-              className="text-4xl md:text-6xl font-extrabold text-text-primary mb-3 leading-[1.02] tracking-[-0.025em] text-balance block"
-            >
+            <h1 className="text-4xl md:text-6xl font-extrabold text-text-primary mb-3 leading-[1.02] tracking-[-0.025em] text-balance">
               Project Jun Fan
-            </RevealText>
+            </h1>
 
             <FadeIn delay={0.45} y={10}>
               <p className="text-base text-text-secondary leading-relaxed">Product Operating System</p>

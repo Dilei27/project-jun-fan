@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GitFork, Shield, FileText, BookOpen, Brain, ArrowRight, X } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion as m } from '@/design-system/motion';
 
 const STORAGE_KEY = 'jf-welcome-dismissed';
@@ -55,6 +56,7 @@ const STEPS: Step[] = [
 ];
 
 export function WelcomeExperience() {
+  const pathname = usePathname();
   const [visible, setVisible] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [dismissed, setDismissed] = useState(() => {
@@ -82,7 +84,8 @@ export function WelcomeExperience() {
     }
   };
 
-  if (dismissed) return null;
+  // The Knowledge Core itself is the Home onboarding experience.
+  if (pathname === '/' || dismissed) return null;
 
   const step = STEPS[stepIndex];
 

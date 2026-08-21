@@ -22,7 +22,7 @@ export function LivingKnowledgeHero() {
     if (node) pushHistory({ module: 'home', label: node.label, href: node.url || '/knowledge-graph/' });
   };
   return <>
-    {!unavailable && <KnowledgeScene className="absolute inset-0 opacity-90" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" />}
+    {!unavailable && <KnowledgeScene className="absolute inset-0 translate-y-14 opacity-90 sm:translate-y-0" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" />}
     {unavailable && <div className="absolute inset-0 flex items-center justify-center bg-bg-deep">
       <div className="text-center text-sm text-text-secondary">Knowledge Core indisponível neste dispositivo. <Link href="/knowledge-graph/" className="text-accent-qa hover:underline">Abrir Explorer em SVG</Link></div>
     </div>}

@@ -51,7 +51,7 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect }: { po
     core.current.rotation.z += pointer.x * 0.0008;
     core.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 0.7) * 0.035);
   });
-  return <group ref={core} position={position} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
+  return <group ref={core} position={position} scale={1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
     <mesh><icosahedronGeometry args={[0.78, 2]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.16 : active ? 1.3 : 0.8} transparent opacity={mode === 'architect' ? 0.7 : 0.45} wireframe /></mesh>
     <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[1.02, 0.018, 8, 48, Math.PI * 1.55]} /><meshBasicMaterial color={horizonScene.core.accent} transparent opacity={mode === 'architect' ? 0.22 : 0.38} /></mesh>
     <mesh rotation={[0.65, 0.7, 0]}><torusGeometry args={[1.24, 0.012, 8, 48, Math.PI * 1.3]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.22} /></mesh>
