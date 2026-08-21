@@ -5,6 +5,8 @@
     "description": "Arquitetura, stack e filosofia do ecossistema Jun Fan.",
     "sections": [
       {"heading": "Jun Fan", "content": "O Project Jun Fan é a fundação visual, técnica e conceitual de um ecossistema de produtos de automação, QA e IA aplicada. A plataforma centraliza trajetória profissional, projetos, decisões técnicas, documentação e demos em uma experiência coesa."},
+      {"heading": "Por que Jun Fan?", "content": "Jun Fan (振藩) era o nome chinês de Bruce Lee. A referência não está em uma tradução literal, mas na filosofia associada à sua trajetória: adaptação, disciplina, quebra de limites e evolução contínua. No Project Jun Fan, problemas complexos não são tratados como limites definitivos; são compreendidos, refinados e transformados em parte da próxima iteração."},
+      {"heading": "Filosofia", "content": "Absorb. Refine. Build."},
       {"heading": "Arquitetura", "content": "O sistema segue uma arquitetura modular com seis camadas: Jun Fan Hub, QA Command Center, Product Modules, Documentation Layer, AI Layer e Horizon Design System. Cada camada é independente e reutilizável."},
       {"heading": "Stack", "content": "Next.js + React + TypeScript no front-end, com Tailwind CSS e Framer Motion. Conteúdo estruturado em JSON. Design system Horizon integrado ao Tailwind via @theme."}
     ]

@@ -9,9 +9,11 @@ import { CrossReferences, getModuleReferences } from '@/components/platform/cros
 import { usePlatform } from '@/components/platform/platform-context';
 import type { Doc } from '@/types';
 import { DocsBreadcrumb } from '@/features/docs/docs-breadcrumb';
+import { useLanguage } from '@/i18n/language-context';
 
 export function DocDetailClient({ doc, allDocs }: { doc: Doc; allDocs: Doc[] }) {
   const { setCurrentModule } = usePlatform();
+  const { td } = useLanguage();
   useEffect(() => { setCurrentModule('docs'); }, [setCurrentModule]);
 
   return (
@@ -36,20 +38,39 @@ export function DocDetailClient({ doc, allDocs }: { doc: Doc; allDocs: Doc[] }) 
             }}
             className="space-y-8"
           >
-            {doc.sections.map((section, i) => (
+            {doc.sections.map((section, i) => {
+              const isOverview = doc.id === 'overview';
+              const heading = isOverview ? td(`docs.overview.section.${i}.heading`, section.heading) : section.heading;
+              const content = isOverview ? td(`docs.overview.section.${i}.content`, section.content) : section.content;
+              const isPhilosophy = isOverview && i === 2;
+              return (
               <motion.section
                 key={i}
+                id={isPhilosophy ? 'filosofia' : isOverview && i === 1 ? 'por-que-jun-fan' : undefined}
                 variants={{
                   hidden: { opacity: 0, y: 12 },
                   visible: { opacity: 1, y: 0, transition: { duration: m.duration.normal, ease: m.easing.out } },
                 }}
               >
                 <h2 className="text-lg font-semibold text-text-primary mb-3 tracking-[-0.01em]">
-                  {section.heading}
+                  {heading}{isOverview && i === 1 && <span className="ml-2 text-sm font-normal text-text-muted">振藩</span>}
                 </h2>
-                <p className="text-sm text-text-secondary leading-relaxed">{section.content}</p>
+                {isPhilosophy ? (
+                  <div className="rounded-xl border border-border-subtle/60 bg-surface-default/60 p-4">
+                    <div className="grid gap-4 md:grid-cols-3">
+                      {(['absorb', 'refine', 'build'] as const).map(key => (
+                        <div key={key}>
+                          <h3 className="text-xs font-semibold tracking-[0.14em] text-accent-qa">{td(`docs.overview.philosophy.${key}.title`, key)}</h3>
+                          <p className="mt-2 text-sm leading-relaxed text-text-secondary">{td(`docs.overview.philosophy.${key}.content`, '')}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-5 border-t border-border-subtle/50 pt-4 text-sm italic text-text-primary">{td('docs.overview.philosophy.statement', content)}</p>
+                  </div>
+                ) : <p className="text-sm text-text-secondary leading-relaxed">{content}</p>}
               </motion.section>
-            ))}
+              );
+            })}
           </motion.div>
         </article>
 
