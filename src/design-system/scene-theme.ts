@@ -8,6 +8,7 @@ export const horizonScene = {
   },
   core: {
     base: tokens.colors.text.primary,
+    shell: tokens.colors.border.subtle,
     energy: tokens.colors.accent.qa,
     accent: tokens.colors.accent.whatsapp,
   },

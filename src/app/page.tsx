@@ -42,8 +42,9 @@ export default function HomePage() {
               </div>
             </FadeIn>
 
-            <h1 className="text-4xl md:text-6xl font-extrabold text-text-primary mb-3 leading-[1.02] tracking-[-0.025em] text-balance">
-              Project Jun Fan
+            <h1 className="text-4xl md:text-5xl font-extrabold text-text-primary mb-3 leading-[0.94] tracking-[-0.025em]">
+              <span className="block">Project</span>
+              <span className="block">Jun Fan</span>
             </h1>
 
             <FadeIn delay={0.45} y={10}>
@@ -64,9 +65,9 @@ export default function HomePage() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/knowledge-graph/"
-                  className="group inline-flex items-center gap-2 px-6 py-3 bg-accent-qa text-white rounded-lg text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_4px_16px_-4px_rgba(79,140,255,0.35)] hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16),0_8px_24px_-6px_rgba(79,140,255,0.5)] hover:bg-accent-qa/95 hover:-translate-y-0.5"
+                  className="group inline-flex items-center gap-2 border-b border-accent-qa/60 pb-1 text-sm font-medium tracking-[0.08em] text-text-primary transition-colors hover:border-text-primary"
                 >
-                  <GitBranch size={16} /> Explorar conhecimento{' '}
+                  <GitBranch size={14} /> ENTER SYSTEM{' '}
                   <ArrowRight
                     size={16}
                     className="transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5"

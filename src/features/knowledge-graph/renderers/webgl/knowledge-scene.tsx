@@ -45,7 +45,7 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
   </group>;
 }
 
-function KnowledgeCore({ position, active, mode, motionEnabled, onSelect }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void }) {
+function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, variant }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; variant: 'home' | 'explorer' }) {
   const core = useRef<Group | null>(null);
   useFrame(({ clock, pointer }) => {
     if (!core.current || !motionEnabled) return;
@@ -54,12 +54,15 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect }: { po
     core.current.rotation.z += pointer.x * 0.0008;
     core.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 0.7) * 0.035);
   });
-  return <group ref={core} position={position} scale={1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
-    <mesh><icosahedronGeometry args={[0.78, 2]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.16 : active ? 1.3 : 0.8} transparent opacity={mode === 'architect' ? 0.7 : 0.45} wireframe /></mesh>
-    <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[1.02, 0.018, 8, 48, Math.PI * 1.55]} /><meshBasicMaterial color={horizonScene.core.accent} transparent opacity={mode === 'architect' ? 0.22 : 0.38} /></mesh>
-    <mesh rotation={[0.65, 0.7, 0]}><torusGeometry args={[1.24, 0.012, 8, 48, Math.PI * 1.3]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.22} /></mesh>
-    <mesh rotation={[-0.5, 0.2, 0.7]}><torusGeometry args={[1.42, 0.008, 8, 48, Math.PI * 1.15]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.25} /></mesh>
-    {[-0.7, 0, 0.7].map((offset, index) => <mesh key={offset} rotation={[0.4 + index * 0.25, 0.3, offset]}><boxGeometry args={[0.04, 1.7, 0.04]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.28} /></mesh>)}
+  return <group ref={core} position={position} scale={variant === 'home' ? 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
+    <mesh><dodecahedronGeometry args={[0.52, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={active ? 1.05 : 0.62} roughness={0.25} metalness={0.72} /></mesh>
+    <mesh scale={0.72}><icosahedronGeometry args={[0.68, 2]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.76} wireframe /></mesh>
+    <mesh scale={1.25}><icosahedronGeometry args={[0.62, 1]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.16} wireframe /></mesh>
+    <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[1.02, 0.018, 8, 48, Math.PI * 1.45]} /><meshBasicMaterial color={horizonScene.core.accent} transparent opacity={mode === 'architect' ? 0.16 : 0.34} /></mesh>
+    <mesh rotation={[0.65, 0.7, 0]}><torusGeometry args={[1.28, 0.012, 8, 48, Math.PI * 1.2]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.2} /></mesh>
+    <mesh rotation={[-0.5, 0.2, 0.7]}><torusGeometry args={[1.55, 0.01, 8, 48, Math.PI * 1.05]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.28} /></mesh>
+    <mesh rotation={[0.3, -0.6, -0.2]}><torusGeometry args={[1.8, 0.007, 8, 48, Math.PI * 0.9]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.2} /></mesh>
+    {[-0.9, -0.3, 0.3, 0.9].map((offset, index) => <mesh key={offset} rotation={[0.4 + index * 0.18, 0.3, offset]}><boxGeometry args={[0.035, 2.15, 0.035]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.32} /></mesh>)}
   </group>;
 }
 
@@ -75,7 +78,7 @@ function CameraFocus({ target, overviewVersion, variant }: { target: Position | 
     if (!target && !returnActive.current) return;
     const desired = target
       ? new Vector3(target[0] * 1.12, target[1] * 1.12, target[2] + 6.4)
-      : new Vector3(0, 0, variant === 'home' ? 10.5 : 13);
+      : new Vector3(0, 0, variant === 'home' ? 5.8 : 13);
     camera.position.lerp(desired, 0.045);
     camera.lookAt(target?.[0] ?? 0, target?.[1] ?? 0, target?.[2] ?? 0);
     if (!target && camera.position.distanceTo(desired) < 0.08) returnActive.current = false;
@@ -121,7 +124,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
       }
       const rank = index - (index > graph.nodes.findIndex(item => item.id === coreId) ? 1 : 0);
       const angle = rank * 2.399963;
-      const radius = variant === 'home' ? 2.8 + Math.sqrt(Math.max(rank, 0)) * 0.72 : 2.2 + Math.sqrt(index) * 0.58;
+      const radius = variant === 'home' ? 15 + Math.sqrt(Math.max(rank, 0)) * 1.5 : 2.2 + Math.sqrt(index) * 0.58;
       const topologyDepth = Math.min(2.8, Math.max(-2.8, ((degree.get(node.id) ?? 0) - 2) * -0.16 + Math.sin(index * 1.7)));
       positions.set(node.id, [Math.cos(angle) * radius, Math.sin(angle) * radius * 0.6, topologyDepth]);
     });
@@ -144,7 +147,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
       const pathIndex = pathNodeIds.has(edge.source) && pathNodeIds.has(edge.target) ? Math.min([...pathNodeIds].indexOf(edge.source), [...pathNodeIds].indexOf(edge.target)) : -1;
       return <group key={`${edge.source}-${edge.target}`}><line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.34 : 0.15} /></line>{onPath && pathIndex >= 0 && <PathPulse from={from} to={to} delay={pathIndex * 0.22} enabled={motionEnabled} />}</group>;
     })}
-    {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} mode={mode} motionEnabled={motionEnabled} />)}
+    {nodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} variant={variant} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} mode={mode} motionEnabled={motionEnabled} />)}
     {focusedNode && <SpatialAnnotation node={focusedNode} position={positions.get(focusedNode.id)!} relationCount={focusedRelations.length} primary />}
     {focusedRelations.slice(0, 3).map(edge => {
       const relatedId = edge.source === focusedNode?.id ? edge.target : edge.source;
@@ -170,7 +173,7 @@ export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onU
     const rank = variant === 'home' ? index - (index > homeCoreIndex ? 1 : 0) : index;
     const angle = rank * 2.399963;
     const degree = graph.edges.filter(edge => edge.source === focusId || edge.target === focusId).length;
-    const radius = variant === 'home' ? 2.8 + Math.sqrt(Math.max(rank, 0)) * 0.72 : 2.2 + Math.sqrt(index) * 0.58;
+    const radius = variant === 'home' ? 15 + Math.sqrt(Math.max(rank, 0)) * 1.5 : 2.2 + Math.sqrt(index) * 0.58;
     return [Math.cos(angle) * radius, Math.sin(angle) * radius * 0.6, Math.min(2.8, Math.max(-2.8, (degree - 2) * -0.16 + Math.sin(index * 1.7)))] as Position;
   }, [focusId, graph, variant]);
   const dpr: [number, number] = quality === 'low' ? [1, 1] : quality === 'ultra' ? [1, 2] : [1, 1.75];
@@ -187,7 +190,7 @@ export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onU
     return () => { observer.disconnect(); media.removeEventListener('change', updateMotion); document.removeEventListener('visibilitychange', updateVisibility); };
   }, []);
   return <div ref={hostRef} className={className} aria-label="Visualização espacial do conhecimento">
-    <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: variant === 'home' ? [0, 0, 10.5] : [0, 0, 13], fov: 46 }} dpr={reducedMotion ? [1, 1] : dpr} gl={{ antialias: quality !== 'low', alpha: true }} onPointerMissed={onEmptySpace} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
+    <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: variant === 'home' ? [0, 0, 5.8] : [0, 0, 13], fov: 46 }} dpr={reducedMotion ? [1, 1] : dpr} gl={{ antialias: quality !== 'low', alpha: true }} onPointerMissed={onEmptySpace} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
       <fog attach="fog" args={[horizonScene.environment.fog, 8, 22]} />
       <KnowledgeUniverse graph={graph} variant={variant} mode={mode} motionEnabled={!reducedMotion} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} />
       {!reducedMotion && <CameraFocus target={focusPosition} overviewVersion={overviewVersion} variant={variant} />}

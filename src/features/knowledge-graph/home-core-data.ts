@@ -1,28 +1,23 @@
-import { getFullGraph, type GraphData, type GraphNode } from '@/core';
+import { getFullGraph, type GraphData } from '@/core';
 
-const HOME_TYPES = ['mission', 'architecture', 'product', 'project', 'agent', 'decision', 'document', 'metric'];
+const PRIMARY_IDS = [
+  'product-qa-command-center',
+  'product-desktop-discovery-engine',
+  'product-vigilante-ai',
+  'project-automacao-erp-uau',
+  'project-whatsapp-ai',
+] as const;
 
 export function getHomeCoreGraph(): GraphData {
   const graph = getFullGraph();
-  const degree = new Map<string, number>();
+  const selectedIds = new Set<string>(PRIMARY_IDS);
+  // Keep only a few real direct relations so the Home reads as a machine, not the full graph.
   for (const edge of graph.edges) {
-    degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1);
-    degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1);
+    if (selectedIds.has(edge.source) && selectedIds.size < 8) selectedIds.add(edge.target);
+    if (selectedIds.has(edge.target) && selectedIds.size < 8) selectedIds.add(edge.source);
   }
-
-  const selected: GraphNode[] = [];
-  for (const type of HOME_TYPES) {
-    const nodes = graph.nodes
-      .filter(item => item.type === type)
-      .sort((a, b) => (degree.get(b.id) ?? 0) - (degree.get(a.id) ?? 0))[0];
-    if (type === 'product' || type === 'project') {
-      selected.push(...graph.nodes.filter(item => item.type === type));
-    } else if (nodes) selected.push(nodes);
-  }
-
-  const selectedIds = new Set(selected.map(node => node.id));
   return {
-    nodes: selected,
+    nodes: graph.nodes.filter(node => selectedIds.has(node.id)),
     edges: graph.edges.filter(edge => selectedIds.has(edge.source) && selectedIds.has(edge.target)),
   };
 }
