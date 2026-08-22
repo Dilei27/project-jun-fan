@@ -39,14 +39,41 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
           : <sphereGeometry args={[0.46, 20, 20]} />;
 
   const major = node.type === 'product' || node.type === 'project';
-  const activeColor = selected || hovered ? node.color : horizonScene.node.dormant;
+  const activeColor = selected
+    ? horizonScene.node.selected
+    : hovered
+      ? horizonScene.edge.active
+      : major
+        ? horizonScene.node.structural
+        : horizonScene.node.dormant;
+  const distance = Math.hypot(position[0], position[1]);
+  const depthVisibility = Math.max(0.72, Math.min(1, 1.08 - distance / (variant === 'home' ? 22 : 9)));
+  const architect = mode === 'architect';
+  const materialOpacity = (selected || hovered
+    ? 0.82
+    : architect
+      ? major ? 0.7 : 0.56
+      : major ? 0.54 : identity.shape === 'ring' ? 0.5 : 0.44) * depthVisibility;
+  const emissiveIntensity = selected ? 0.92 : hovered ? 0.34 : architect ? major ? 0.24 : 0.08 : major ? 0.075 : 0.025;
   return <group ref={mesh} position={position} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }} onPointerOver={(event: ThreeEvent<PointerEvent>) => { if (pointerResponsive && event.nativeEvent.pointerType === 'mouse') { event.stopPropagation(); onHover(true); } }} onPointerOut={() => onHover(false)}>
     <mesh>
       {geometry}
-      <meshStandardMaterial color={new Color(activeColor)} emissive={new Color(activeColor)} emissiveIntensity={mode === 'architect' ? selected ? 0.72 : hovered ? 0.34 : major ? 0.16 : 0.08 : selected ? 1.35 : hovered ? 0.48 : anticipating && major ? 0.14 : 0.012} transparent opacity={mode === 'architect' ? major ? 0.64 : 0.5 : identity.shape === 'ring' ? 0.42 : variant === 'home' ? anticipating && major ? 0.56 : 0.38 : 0.5} roughness={0.5} metalness={0.42} wireframe={mode === 'architect' && identity.shape !== 'ring'} />
+      <meshStandardMaterial color={new Color(activeColor)} emissive={new Color(activeColor)} emissiveIntensity={emissiveIntensity + (anticipating && major ? 0.08 : 0)} transparent opacity={materialOpacity} roughness={0.42} metalness={0.58} wireframe={architect && identity.shape !== 'ring'} />
     </mesh>
-    {major && <mesh rotation={[0.8, 0.25, 0]}><torusGeometry args={[0.61, 0.018, 6, 28, Math.PI * 1.15]} /><meshBasicMaterial color={selected || hovered ? horizonScene.core.energy : mode === 'architect' ? horizonScene.core.base : horizonScene.node.dormant} transparent opacity={selected || hovered ? 0.55 : mode === 'architect' ? 0.32 : 0.16} /></mesh>}
+    {major && <mesh rotation={[0.8, 0.25, 0]}><torusGeometry args={[0.61, 0.018, 6, 28, Math.PI * 1.15]} /><meshBasicMaterial color={selected ? horizonScene.node.selected : hovered ? horizonScene.edge.active : architect ? horizonScene.core.base : horizonScene.node.dormant} transparent opacity={(selected || hovered ? 0.7 : architect ? 0.44 : 0.24) * depthVisibility} /></mesh>}
+    {identity.shape === 'ring' && <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.34, 0.012, 8, 24]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={(architect ? 0.28 : 0.16) * depthVisibility} /></mesh>}
   </group>;
+}
+
+function CoreHalo({ mobile, variant }: { mobile: boolean; variant: 'home' | 'explorer' }) {
+  const radius = variant === 'home' && !mobile ? 0.38 : mobile ? 2.4 : 3.5;
+  return <>
+    <pointLight position={[0, 0, 1.5]} intensity={mobile ? 0.5 : 0.8} distance={mobile ? 8 : 12} color={horizonScene.core.energy} />
+    <mesh position={[0, 0, -1.8]}>
+      <sphereGeometry args={[radius, 24, 24]} />
+      <meshBasicMaterial color={horizonScene.core.energy} transparent opacity={mobile ? 0.018 : 0.035} depthWrite={false} blending={AdditiveBlending} />
+    </mesh>
+  </>;
 }
 
 function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, variant, driveState, mobile }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; variant: 'home' | 'explorer'; driveState: KnowledgeDriveState; mobile: boolean }) {
@@ -104,15 +131,16 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
     }
   });
   return <group ref={core} position={position} scale={variant === 'home' ? mobile ? 1.1 : 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
-    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.38 : driveState === 'ready' ? 0.7 : driveState === 'compress' ? 0.28 : driveState === 'drive' ? 1.5 : driveState === 'transition' ? 0.85 : active ? 0.42 : 0.2} transparent opacity={mode === 'architect' ? 0.48 : 0.32} roughness={0.18} metalness={0.58} /></mesh>
-    <mesh scale={1.16}><icosahedronGeometry args={[0.62, 1]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={mode === 'architect' ? 0.34 : 0.18} wireframe /></mesh>
+    <CoreHalo mobile={mobile} variant={variant} />
+    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.5 : driveState === 'ready' ? 0.78 : driveState === 'compress' ? 0.32 : driveState === 'drive' ? 1.5 : driveState === 'transition' ? 0.9 : active ? 0.5 : 0.28} transparent opacity={mode === 'architect' ? 0.56 : 0.38} roughness={0.18} metalness={0.68} /></mesh>
+    <mesh scale={1.16}><icosahedronGeometry args={[0.62, 1]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={mode === 'architect' ? 0.42 : 0.24} wireframe /></mesh>
     <group ref={computeCore}>
-      <mesh scale={0.54}><octahedronGeometry args={[0.56, 1]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.52 : driveState === 'drive' ? 1.35 : driveState === 'ready' ? 0.46 : 0.28} transparent opacity={mode === 'architect' ? 0.86 : 0.7} roughness={0.22} metalness={0.7} /></mesh>
-      <mesh scale={0.76}><icosahedronGeometry args={[0.46, 1]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={driveState === 'drive' ? 0.94 : driveState === 'ready' ? 0.72 : 0.6} wireframe /></mesh>
+      <mesh scale={0.54}><octahedronGeometry args={[0.56, 1]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.68 : driveState === 'drive' ? 1.45 : driveState === 'ready' ? 0.54 : 0.36} transparent opacity={mode === 'architect' ? 0.9 : 0.76} roughness={0.22} metalness={0.7} /></mesh>
+      <mesh scale={0.76}><icosahedronGeometry args={[0.46, 1]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={driveState === 'drive' ? 1 : driveState === 'ready' ? 0.8 : 0.68} wireframe /></mesh>
     </group>
     {INTERNAL_ANCHORS.map((anchor, index) => <group key={`${anchor.join('-')}-${index}`}>
-      <line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([0, 0, 0, ...anchor]), 3]} /></bufferGeometry><lineBasicMaterial color={horizonScene.core.energy} transparent opacity={0.2} /></line>
-      <mesh position={anchor}><sphereGeometry args={[0.035, 8, 8]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0.55} /></mesh>
+      <line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([0, 0, 0, ...anchor]), 3]} /></bufferGeometry><lineBasicMaterial color={horizonScene.core.energy} transparent opacity={0.28} /></line>
+      <mesh position={anchor}><sphereGeometry args={[0.035, 8, 8]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={0.72} /></mesh>
     </group>)}
     <mesh ref={nucleus}><sphereGeometry args={[0.105, 12, 12]} /><meshBasicMaterial color={horizonScene.core.hot} /></mesh>
     <mesh ref={transfer}><sphereGeometry args={[0.045, 10, 10]} /><meshBasicMaterial color={horizonScene.core.hot} /></mesh>
@@ -360,7 +388,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
       const pathIndex = pathNodeIds.has(edge.source) && pathNodeIds.has(edge.target) ? Math.min([...pathNodeIds].indexOf(edge.source), [...pathNodeIds].indexOf(edge.target)) : -1;
       const depthVisibility = Math.max(0.72, Math.min(1.2, 1 + (from[2] + to[2]) / 14));
       const driveBoost = variant === 'home' && (driveState === 'drive' || driveState === 'transition') ? 0.5 : 0;
-      const baseOpacity = onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.44 : 0.15;
+      const baseOpacity = onPath ? 0.96 : active ? 0.76 : mode === 'architect' ? 0.56 : 0.24;
       return <group key={`${edge.source}-${edge.target}`}><line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={Math.min(1, (baseOpacity + driveBoost) * depthVisibility)} /></line>{onPath && pathIndex >= 0 && <PathPulse from={from} to={to} delay={pathIndex * 0.22} enabled={motionEnabled} />}</group>;
     })}
     {variant === 'home' && motionEnabled && <DriveField state={driveState} mobile={mobile} />}
@@ -415,7 +443,7 @@ export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onU
   }, []);
   return <div ref={hostRef} className={className} aria-label="Visualização espacial do conhecimento">
     <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: variant === 'home' ? [0, 0, mobile ? 8.2 : 5.8] : [0, 0, 13], fov: 46 }} dpr={reducedMotion || mobile ? [1, 1] : dpr} gl={{ antialias: !mobile && quality !== 'low', alpha: true }} onPointerMissed={onEmptySpace} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
-      <fog attach="fog" args={[horizonScene.environment.fog, 8, 22]} />
+      <fog attach="fog" args={[mode === 'architect' ? '#101A29' : horizonScene.environment.fog, 8, 22]} />
       <KnowledgeUniverse graph={graph} variant={variant} mode={mode} motionEnabled={!reducedMotion} driveState={driveState} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} mobile={mobile} />
       {!reducedMotion && <CameraFocus target={focusPosition} overviewVersion={overviewVersion} variant={variant} mobile={mobile} driveState={driveState} reducedMotion={reducedMotion} />}
       <OrbitControls enabled={variant === 'explorer' && !focusId && !reducedMotion} enablePan enableZoom enableRotate touches={{ ONE: TOUCH.PAN, TWO: TOUCH.DOLLY_ROTATE }} minDistance={6} maxDistance={22} maxPolarAngle={Math.PI * 0.65} minPolarAngle={Math.PI * 0.35} />
