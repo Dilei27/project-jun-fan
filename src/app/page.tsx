@@ -22,6 +22,18 @@ import { HomeGraphSignal } from '@/features/knowledge-graph/home-graph-signal';
 import { EnterSystemLink } from '@/features/knowledge-graph/enter-system-link';
 import { AmbientLightField } from '@/components/atmosphere/atmosphere-background';
 
+function MobileCoreStage() {
+  return (
+    <div
+      className="relative mx-auto mt-8 h-[clamp(360px,70vw,520px)] min-h-[360px] w-full max-w-[520px] shrink-0 overflow-hidden"
+      data-jf-hero-core-stage
+      aria-label="Knowledge Core"
+    >
+      <LivingKnowledgeHero />
+    </div>
+  );
+}
+
 function MobileHero() {
   return (
     <div className="relative flex flex-col px-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-[calc(1.75rem+env(safe-area-inset-bottom)+1rem)] md:hidden" data-jf-mobile-hero>
@@ -58,9 +70,7 @@ function MobileHero() {
           </FadeIn>
         </div>
       </div>
-      <div className="relative mx-auto mt-8 h-[72vw] w-[72vw] min-h-[260px] min-w-[260px] max-h-[340px] max-w-[340px] shrink-0" data-jf-hero-core>
-        <LivingKnowledgeHero />
-      </div>
+      <MobileCoreStage />
     </div>
   );
 }

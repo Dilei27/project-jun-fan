@@ -39,7 +39,7 @@ export function LivingKnowledgeHero() {
     return () => { window.clearTimeout(transitionTimer); window.removeEventListener('jf-knowledge-drive', handler); };
   }, []);
   return <div className="relative h-full w-full" data-jf-knowledge-core>
-    <AmbientLightField className="md:hidden" />
+    <AmbientLightField className="md:hidden max-md:inset-0" />
     {!unavailable && <KnowledgeScene className="absolute inset-0 opacity-90 md:inset-0" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" driveState={driveState} />}
     <div aria-hidden className={`pointer-events-none absolute inset-0 bg-bg-deep transition-opacity duration-300 ${driveState === 'ready' ? 'opacity-10' : driveState === 'compress' ? 'opacity-30' : driveState === 'drive' ? 'opacity-15' : driveState === 'transition' ? 'opacity-40' : 'opacity-0'}`} />
     <div aria-hidden className={`pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(210,244,255,0.24),rgba(79,140,255,0.10)_34%,transparent_70%)] transition-opacity duration-200 ${driveState === 'drive' || driveState === 'compress' ? 'opacity-100' : 'opacity-0'}`} />
