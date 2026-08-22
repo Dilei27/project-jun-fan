@@ -37,3 +37,67 @@ export const horizonScene = {
     nodePulse: 0.035,
   },
 } as const;
+
+// Stark Energy Art Direction — Knowledge Graph ONLY
+// Dark machine. Controlled energy. Readable architecture.
+export const starkGraph = {
+  environment: {
+    fogArchitect: '#0B1522',
+    fogExplore: '#0D1117',
+  },
+  core: {
+    // Layered energy reactor
+    base: '#315E91',
+    shellOuter: '#1C2D46',
+    shellMid: '#315E91',
+    shellInner: '#3E78B8',
+    energy: '#39BFEF',
+    hot: '#BCEFFF',
+    nucleus: '#E8FAFF',
+    accent: '#4C8FE0',
+  },
+  node: {
+    // Material hierarchy
+    dormant: '#162338',
+    dormantRim: '#243B5A',
+    structural: '#315E91',
+    structuralRim: '#4C8FE0',
+    secondary: '#1C2D46',
+    secondaryRim: '#315E91',
+    ringEdge: '#3E78B8',
+    ringInner: '#39BFEF',
+    triangleFace: '#162338',
+    triangleEdge: '#3E78B8',
+    triangleRim: '#4C8FE0',
+    active: '#39BFEF',
+    selected: '#4FD8FF',
+    path: '#E8FAFF',
+  },
+  edge: {
+    dormant: '#1C2D46',
+    dormantVisible: '#243B5A',
+    structural: '#315E91',
+    active: '#39BFEF',
+    path: '#BCEFFF',
+    pathCore: '#E8FAFF',
+  },
+  lighting: {
+    ambient: 0.22,
+    ambientArchitect: 0.28,
+    key: '#A8C8F0',
+    keyIntensity: 1.45,
+    keyIntensityArchitect: 1.75,
+    coreIntensity: 2.8,
+    coreIntensityArchitect: 3.2,
+    rimIntensity: 0.85,
+  },
+  halo: {
+    color: '#39BFEF',
+    opacity: 0.018,
+    radius: 4.8,
+  },
+  particle: {
+    color: '#39BFEF',
+    opacity: 0.35,
+  },
+} as const;
