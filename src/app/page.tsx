@@ -87,7 +87,7 @@ export default function HomePage() {
         {/* Mobile: explicit document flow — STATUS → IDENTITY → CTA → CORE */}
         <MobileHero />
         {/* Desktop: original approved layered composition */}
-        <div className="relative hidden h-full md:block">
+        <div className="relative hidden h-full md:block md:h-[calc(100svh-3.5rem)] md:min-h-[620px]">
           <AmbientLightField />
           <LivingKnowledgeHero />
           <div className="relative z-10 mx-auto flex h-full max-w-[1440px] items-end px-6 py-20">
