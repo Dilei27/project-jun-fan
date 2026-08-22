@@ -22,6 +22,49 @@ import { HomeGraphSignal } from '@/features/knowledge-graph/home-graph-signal';
 import { EnterSystemLink } from '@/features/knowledge-graph/enter-system-link';
 import { AmbientLightField } from '@/components/atmosphere/atmosphere-background';
 
+function MobileHero() {
+  return (
+    <div className="relative flex flex-col px-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-[calc(1.75rem+env(safe-area-inset-bottom)+1rem)] md:hidden" data-jf-mobile-hero>
+      <div className="flex justify-center" data-jf-hero-status>
+        <FadeIn delay={0.05} y={6}>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-accent-qa bg-accent-qa/8 border border-accent-qa/20 rounded-full shadow-[inset_0_1px_0_0_rgba(79,140,255,0.08)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-qa jf-pulse-dot" />
+            SYSTEM ONLINE
+          </div>
+        </FadeIn>
+      </div>
+      <div className="mx-auto mt-4 w-full max-w-md text-center" data-jf-hero-identity>
+        <h1 className="text-[2rem] font-extrabold text-text-primary mb-2 leading-[0.94] tracking-[-0.025em]">
+          <span className="inline">Project&nbsp;</span>
+          <span className="inline">Jun Fan</span>
+        </h1>
+        <FadeIn delay={0.45} y={10}>
+          <p className="text-base text-text-secondary leading-relaxed">Product Operating System</p>
+        </FadeIn>
+        <FadeIn delay={0.55}>
+          <div className="mt-3 mb-5 flex items-center justify-center gap-3 text-sm text-text-muted">
+            <span className="font-medium text-accent-qa/90 tracking-wide">Absorb.</span>
+            <span className="opacity-30">·</span>
+            <span className="font-medium text-accent-teal/80 tracking-wide">Refine.</span>
+            <span className="opacity-30">·</span>
+            <span className="font-medium text-accent-qa/90 tracking-wide">Build.</span>
+          </div>
+        </FadeIn>
+        <div data-jf-hero-cta>
+          <FadeIn delay={0.65} y={6}>
+            <div className="flex flex-wrap justify-center gap-3">
+              <EnterSystemLink />
+            </div>
+          </FadeIn>
+        </div>
+      </div>
+      <div className="relative mx-auto mt-8 h-[72vw] w-[72vw] min-h-[260px] min-w-[260px] max-h-[340px] max-w-[340px] shrink-0" data-jf-hero-core>
+        <LivingKnowledgeHero />
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const projects = getProjects();
   const graph = getFullGraph();
@@ -31,43 +74,8 @@ export default function HomePage() {
 
       {/* === HERO === */}
       <HeroStage className="relative left-1/2 mb-14 w-screen -translate-x-1/2 overflow-hidden bg-bg-deep md:mb-20 md:h-[calc(100svh-3.5rem)] md:min-h-[620px]">
-        {/* Mobile: vertical flow — STATUS → IDENTITY → ACTION → CORE */}
-        <div className="relative flex flex-col px-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-[calc(1.75rem+env(safe-area-inset-bottom)+1rem)] md:hidden">
-          <div className="flex justify-center">
-            <FadeIn delay={0.05} y={6}>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-accent-qa bg-accent-qa/8 border border-accent-qa/20 rounded-full shadow-[inset_0_1px_0_0_rgba(79,140,255,0.08)]">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-qa jf-pulse-dot" />
-                SYSTEM ONLINE
-              </div>
-            </FadeIn>
-          </div>
-          <div className="mx-auto mt-4 w-full max-w-md text-center">
-            <h1 className="text-[2rem] font-extrabold text-text-primary mb-2 leading-[0.94] tracking-[-0.025em]">
-              <span className="inline">Project&nbsp;</span>
-              <span className="inline">Jun Fan</span>
-            </h1>
-            <FadeIn delay={0.45} y={10}>
-              <p className="text-base text-text-secondary leading-relaxed">Product Operating System</p>
-            </FadeIn>
-            <FadeIn delay={0.55}>
-              <div className="mt-3 mb-5 flex items-center justify-center gap-3 text-sm text-text-muted">
-                <span className="font-medium text-accent-qa/90 tracking-wide">Absorb.</span>
-                <span className="opacity-30">·</span>
-                <span className="font-medium text-accent-teal/80 tracking-wide">Refine.</span>
-                <span className="opacity-30">·</span>
-                <span className="font-medium text-accent-qa/90 tracking-wide">Build.</span>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.65} y={6}>
-              <div className="flex flex-wrap justify-center gap-3">
-                <EnterSystemLink />
-              </div>
-            </FadeIn>
-          </div>
-          <div className="relative mx-auto mt-8 h-[72vw] w-[72vw] min-h-[260px] min-w-[260px] max-h-[340px] max-w-[340px] shrink-0">
-            <LivingKnowledgeHero />
-          </div>
-        </div>
+        {/* Mobile: explicit document flow — STATUS → IDENTITY → CTA → CORE */}
+        <MobileHero />
         {/* Desktop: original approved layered composition */}
         <div className="relative hidden h-full md:block">
           <AmbientLightField />
