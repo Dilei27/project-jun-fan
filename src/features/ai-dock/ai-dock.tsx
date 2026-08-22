@@ -89,7 +89,7 @@ export function AIDock() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.97 }}
             transition={{ duration: m.duration.normal, ease: m.easing.out }}
-            className="jf-glass-modal fixed bottom-20 right-6 z-60 w-[360px] rounded-xl overflow-hidden origin-bottom-right"
+            className="jf-glass-modal fixed bottom-20 right-6 z-60 w-[360px] rounded-xl overflow-hidden origin-bottom-right max-md:bottom-[calc(4.5rem+env(safe-area-inset-bottom))] max-md:right-4 max-md:w-[calc(100vw-2rem)]"
             ref={dialogRef}
             style={{
               boxShadow:
@@ -241,7 +241,7 @@ export function AIDock() {
         }}
         whileTap={m.tap.soft}
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-6 z-60 w-12 h-12 bg-accent-qa text-white rounded-full flex items-center justify-center cursor-pointer group"
+        className="fixed bottom-6 right-6 z-60 w-12 h-12 bg-accent-qa text-white rounded-full flex items-center justify-center cursor-pointer group max-md:bottom-[calc(2.25rem+env(safe-area-inset-bottom))] max-md:right-4 max-md:h-11 max-md:w-11"
         style={{
           boxShadow:
             'inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 0 0 1px rgba(79, 140, 255, 0.2), 0 8px 24px -6px rgba(79, 140, 255, 0.4), 0 16px 32px -8px rgba(0, 0, 0, 0.4)',

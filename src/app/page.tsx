@@ -31,8 +31,8 @@ export default function HomePage() {
 
       {/* === HERO === */}
       <HeroStage className="relative left-1/2 mb-14 w-screen -translate-x-1/2 overflow-hidden bg-bg-deep md:mb-20 md:h-[calc(100svh-3.5rem)] md:min-h-[620px]">
-        {/* Mobile: vertical flow — STATUS → CORE → IDENTITY → PHILOSOPHY → ACTION */}
-        <div className="relative flex min-h-[calc(100svh-3.5rem)] flex-col px-5 pt-[calc(3.5rem+env(safe-area-inset-top)+0.75rem)] pb-[calc(1.25rem+env(safe-area-inset-bottom))] md:hidden">
+        {/* Mobile: vertical flow — STATUS → IDENTITY → ACTION → CORE */}
+        <div className="relative flex flex-col px-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-[calc(1.75rem+env(safe-area-inset-bottom)+1rem)] md:hidden">
           <div className="flex justify-center">
             <FadeIn delay={0.05} y={6}>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-accent-qa bg-accent-qa/8 border border-accent-qa/20 rounded-full shadow-[inset_0_1px_0_0_rgba(79,140,255,0.08)]">
@@ -41,11 +41,8 @@ export default function HomePage() {
               </div>
             </FadeIn>
           </div>
-          <div className="relative flex min-h-[58svh] flex-1 items-center justify-center">
-            <LivingKnowledgeHero />
-          </div>
-          <div className="mx-auto w-full max-w-md text-center">
-            <h1 className="text-[2.25rem] font-extrabold text-text-primary mb-2 leading-[0.94] tracking-[-0.025em]">
+          <div className="mx-auto mt-4 w-full max-w-md text-center">
+            <h1 className="text-[2rem] font-extrabold text-text-primary mb-2 leading-[0.94] tracking-[-0.025em]">
               <span className="inline">Project&nbsp;</span>
               <span className="inline">Jun Fan</span>
             </h1>
@@ -66,6 +63,9 @@ export default function HomePage() {
                 <EnterSystemLink />
               </div>
             </FadeIn>
+          </div>
+          <div className="relative mx-auto mt-8 h-[72vw] w-[72vw] min-h-[260px] min-w-[260px] max-h-[340px] max-w-[340px] shrink-0">
+            <LivingKnowledgeHero />
           </div>
         </div>
         {/* Desktop: original approved layered composition */}

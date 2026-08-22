@@ -17,7 +17,7 @@ export function SenseiFab() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-20 z-45 w-11 h-11 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-shadow duration-200"
+        className="fixed bottom-6 right-20 z-45 w-11 h-11 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-shadow duration-200 max-md:bottom-[calc(2.25rem+env(safe-area-inset-bottom))] max-md:right-[4.5rem] max-md:h-10 max-md:w-10"
         style={{
           background: 'linear-gradient(135deg, rgba(79, 140, 255, 0.2), rgba(192, 132, 252, 0.2))',
           border: '1px solid rgba(244, 247, 250, 0.1)',
@@ -43,7 +43,7 @@ export function SenseiFab() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-20 right-20 z-45 w-72 rounded-xl p-5"
+            className="fixed bottom-20 right-20 z-45 w-72 rounded-xl p-5 max-md:bottom-[calc(4.5rem+env(safe-area-inset-bottom))] max-md:right-4 max-md:w-[calc(100vw-2rem)]"
             style={{
               background: 'rgba(10, 14, 22, 0.95)',
               backdropFilter: 'blur(24px)',

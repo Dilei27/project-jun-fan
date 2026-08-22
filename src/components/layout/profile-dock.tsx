@@ -12,7 +12,7 @@ export function ProfileDock() {
   const [resumeLanguage, setResumeLanguage] = useState<'pt' | 'en'>('pt');
 
   return (
-    <div className="fixed bottom-6 left-6 z-50">
+    <div className="fixed bottom-6 left-6 z-50 max-md:bottom-[calc(2.25rem+env(safe-area-inset-bottom))] max-md:left-4">
       <AnimatePresence>
         {open && (
           <motion.div

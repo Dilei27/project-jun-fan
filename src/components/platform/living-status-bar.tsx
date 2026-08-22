@@ -49,7 +49,7 @@ export function LivingStatusBar() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-40 h-7 flex items-center justify-between px-3"
+      className="fixed bottom-0 left-0 right-0 z-40 h-[calc(1.75rem+env(safe-area-inset-bottom))] flex items-center justify-between px-3 pb-[env(safe-area-inset-bottom)]"
       style={{
         background: 'rgba(7, 10, 18, 0.88)',
         borderTop: '1px solid rgba(244, 247, 250, 0.04)',
