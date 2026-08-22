@@ -68,11 +68,11 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
   const isTriangle = identity.shape === 'shield';
   const isSecondary = !major && !structural;
 
-  // Base opacity hierarchy
+  // Base opacity hierarchy — increased base visibility for readable silhouettes
   let materialOpacity: number;
-  if (selected || hovered) materialOpacity = 0.82;
-  else if (architect) materialOpacity = structural ? (explorer ? 0.82 : 0.7) : (explorer ? 0.62 : 0.56);
-  else materialOpacity = structural ? (explorer ? 0.68 : 0.54) : isRing ? (explorer ? 0.58 : 0.5) : (explorer ? 0.54 : 0.44);
+  if (selected || hovered) materialOpacity = 0.88;
+  else if (architect) materialOpacity = structural ? (explorer ? 0.88 : 0.7) : (explorer ? 0.72 : 0.56);
+  else materialOpacity = structural ? (explorer ? 0.82 : 0.54) : isRing ? (explorer ? 0.72 : 0.5) : (explorer ? 0.68 : 0.44);
   materialOpacity *= depthVisibility;
 
   // Emissive intensity hierarchy
@@ -108,11 +108,11 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
       <meshBasicMaterial color={new Color(rimColor)} transparent opacity={(selected || hovered ? 0.28 : architect ? 0.18 : 0.1) * depthVisibility} depthWrite={false} blending={AdditiveBlending} />
     </mesh>}
     {/* Major node orbital accent */}
-    {major && <mesh rotation={[0.8, 0.25, 0]}><torusGeometry args={[0.61, 0.018, 6, 28, Math.PI * 1.15]} /><meshBasicMaterial color={new Color(selected ? (explorer ? s.selected : h.node.selected) : hovered ? (explorer ? s.active : h.edge.active) : architect ? (explorer ? starkGraph.core.base : h.core.base) : (explorer ? s.dormant : h.node.dormant))} transparent opacity={(selected || hovered ? 0.7 : architect ? (explorer ? 0.56 : 0.44) : (explorer ? 0.3 : 0.24)) * depthVisibility} /></mesh>}
+    {major && <mesh rotation={[0.8, 0.25, 0]}><torusGeometry args={[0.61, 0.018, 6, 28, Math.PI * 1.15]} /><meshBasicMaterial color={new Color(selected ? (explorer ? s.selected : h.node.selected) : hovered ? (explorer ? s.active : h.edge.active) : architect ? (explorer ? starkGraph.core.base : h.core.base) : (explorer ? s.dormant : h.node.dormant))} transparent opacity={(selected || hovered ? 0.7 : architect ? (explorer ? 0.56 : 0.44) : (explorer ? 0.42 : 0.24)) * depthVisibility} /></mesh>}
     {/* Ring nodes — hollow instrumentation */}
     {isRing && <>
-      <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.34, 0.012, 8, 24]} /><meshBasicMaterial color={new Color(explorer ? s.ringEdge : h.core.energy)} transparent opacity={(architect ? (explorer ? 0.38 : 0.28) : (explorer ? 0.21 : 0.16)) * depthVisibility} /></mesh>
-      {explorer && <mesh rotation={[Math.PI / 2, 0, 0]} scale={1.08}><torusGeometry args={[0.34, 0.008, 8, 24]} /><meshBasicMaterial color={new Color(s.ringInner)} transparent opacity={connectedToCore ? 0.18 : 0.08} depthWrite={false} blending={AdditiveBlending} /></mesh>}
+      <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.34, 0.012, 8, 24]} /><meshBasicMaterial color={new Color(explorer ? s.ringEdge : h.core.energy)} transparent opacity={(architect ? (explorer ? 0.48 : 0.28) : (explorer ? 0.32 : 0.16)) * depthVisibility} /></mesh>
+      {explorer && <mesh rotation={[Math.PI / 2, 0, 0]} scale={1.08}><torusGeometry args={[0.34, 0.008, 8, 24]} /><meshBasicMaterial color={new Color(s.ringInner)} transparent opacity={connectedToCore ? 0.26 : 0.14} depthWrite={false} blending={AdditiveBlending} /></mesh>}
     </>}
     {/* Triangle nodes — architectural markers */}
     {explorer && isTriangle && <mesh rotation={[0, 0, Math.PI]} scale={0.92}>
