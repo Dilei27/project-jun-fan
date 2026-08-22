@@ -9,6 +9,7 @@ import { getFullGraph } from '@/core';
 import type { GraphData } from '@/core';
 import { getNodeIdentity } from '@/features/knowledge-graph/lib/node-identity';
 import { horizonScene } from '@/design-system/scene-theme';
+import { getKnowledgeDriveDuration, type KnowledgeDriveState } from '../../knowledge-drive';
 
 type Position = [number, number, number];
 
@@ -48,7 +49,7 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
   </group>;
 }
 
-function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, variant, anticipating, mobile }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; variant: 'home' | 'explorer'; anticipating: boolean; mobile: boolean }) {
+function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, variant, driveState, mobile }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; variant: 'home' | 'explorer'; driveState: KnowledgeDriveState; mobile: boolean }) {
   const core = useRef<Group | null>(null);
   const computeCore = useRef<Group | null>(null);
   const transfer = useRef<Mesh | null>(null);
@@ -64,13 +65,15 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
       core.current.rotation.x += pointer.y * 0.0008;
       core.current.rotation.z += pointer.x * 0.0008;
     }
-    core.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 0.86) * 0.035);
+    const preparing = driveState === 'ready';
+    const driving = driveState === 'drive' || driveState === 'transition';
+    core.current.scale.setScalar((preparing ? 0.98 : driving ? 0.95 : 1) + Math.sin(clock.elapsedTime * 0.86) * (preparing ? 0.018 : 0.035));
     if (computeCore.current) {
       computeCore.current.rotation.x -= 0.0017;
       computeCore.current.rotation.y += 0.0012;
     }
-    if (instrumentA.current) instrumentA.current.rotation.z += anticipating ? 0.00012 : 0.00035;
-    if (instrumentB.current) instrumentB.current.rotation.z -= anticipating ? 0.00008 : 0.00022;
+    if (instrumentA.current) instrumentA.current.rotation.z += preparing ? 0.00006 : driving ? 0.0012 : 0.00035;
+    if (instrumentB.current) instrumentB.current.rotation.z -= preparing ? 0.00004 : driving ? 0.0009 : 0.00022;
     if (instrumentC.current) instrumentC.current.rotation.y += 0.00012;
     if (reticle.current) reticle.current.rotation.z -= 0.0005;
     if (transfer.current) {
@@ -94,11 +97,11 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
     }
   });
   return <group ref={core} position={position} scale={variant === 'home' ? mobile ? 1.1 : 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
-    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.38 : anticipating ? 0.7 : active ? 0.42 : 0.2} transparent opacity={mode === 'architect' ? 0.48 : 0.32} roughness={0.18} metalness={0.58} /></mesh>
+    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.38 : driveState === 'ready' ? 0.7 : driveState === 'drive' ? 1.5 : driveState === 'transition' ? 0.85 : active ? 0.42 : 0.2} transparent opacity={mode === 'architect' ? 0.48 : 0.32} roughness={0.18} metalness={0.58} /></mesh>
     <mesh scale={1.16}><icosahedronGeometry args={[0.62, 1]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={mode === 'architect' ? 0.34 : 0.18} wireframe /></mesh>
     <group ref={computeCore}>
-      <mesh scale={0.54}><octahedronGeometry args={[0.56, 1]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.52 : 0.28} transparent opacity={mode === 'architect' ? 0.86 : 0.7} roughness={0.22} metalness={0.7} /></mesh>
-      <mesh scale={0.76}><icosahedronGeometry args={[0.46, 1]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={0.6} wireframe /></mesh>
+      <mesh scale={0.54}><octahedronGeometry args={[0.56, 1]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.52 : driveState === 'drive' ? 1.35 : driveState === 'ready' ? 0.46 : 0.28} transparent opacity={mode === 'architect' ? 0.86 : 0.7} roughness={0.22} metalness={0.7} /></mesh>
+      <mesh scale={0.76}><icosahedronGeometry args={[0.46, 1]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={driveState === 'drive' ? 0.94 : driveState === 'ready' ? 0.72 : 0.6} wireframe /></mesh>
     </group>
     {INTERNAL_ANCHORS.map((anchor, index) => <group key={`${anchor.join('-')}-${index}`}>
       <line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([0, 0, 0, ...anchor]), 3]} /></bufferGeometry><lineBasicMaterial color={horizonScene.core.energy} transparent opacity={0.2} /></line>
@@ -130,8 +133,38 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
     </group>
     <mesh position={[0, 0, 0.18]}><boxGeometry args={[4.4, 0.012, 0.01]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.28} /></mesh>
     <mesh position={[0, 0.2, 0.18]}><boxGeometry args={[0.012, 1.1, 0.01]} /><meshBasicMaterial color={horizonScene.core.base} transparent opacity={0.22} /></mesh>
-    {PORTS.map(([x, y], index) => <mesh key={index} position={[x, y, 0.12]}><sphereGeometry args={[0.055, 8, 8]} /><meshBasicMaterial color={active || anticipating ? horizonScene.core.energy : horizonScene.core.base} transparent opacity={active || anticipating ? 0.82 : 0.42} /></mesh>)}
+    {PORTS.map(([x, y], index) => <mesh key={index} position={[x, y, 0.12]}><sphereGeometry args={[0.055, 8, 8]} /><meshBasicMaterial color={active || driveState !== 'idle' ? horizonScene.core.energy : horizonScene.core.base} transparent opacity={active || driveState !== 'idle' ? driveState === 'drive' ? 1 : 0.82 : 0.42} /></mesh>)}
     <mesh ref={arcTrace} position={[2.16, 0, 0.08]}><sphereGeometry args={[0.045, 10, 10]} /><meshBasicMaterial color={horizonScene.core.hot} /></mesh>
+  </group>;
+}
+
+function DriveField({ state, mobile }: { state: KnowledgeDriveState; mobile: boolean }) {
+  const field = useRef<Group>(null);
+  const started = useRef({ state, at: 0 });
+  const releaseDuration = useMemo(() => getKnowledgeDriveDuration(480) / 1000, []);
+  useFrame(({ clock }) => {
+    if (!field.current) return;
+    if (started.current.state !== state) started.current = { state, at: clock.elapsedTime };
+    const elapsed = clock.elapsedTime - started.current.at;
+    const release = state === 'drive' ? Math.min(elapsed / releaseDuration, 1) : state === 'transition' ? 1 : 0;
+    const prepared = state === 'ready' ? Math.min(elapsed / 0.3, 1) : 0;
+    field.current.visible = state === 'ready' || state === 'drive' || state === 'transition';
+    field.current.scale.set(1 + release * (mobile ? 0.42 : 0.85), 1 + release * (mobile ? 0.42 : 0.85), 0.35 + prepared * 0.2 + release * (mobile ? 0.85 : 1.7));
+  });
+  return <group ref={field} position={[0, 0, -1.8]} rotation={[Math.PI / 2, 0, 0]} visible={false}>
+    <mesh><coneGeometry args={[1.55, 4.8, 24, 1, true]} /><meshBasicMaterial color="#BCEEFF" transparent opacity={mobile ? 0.08 : 0.13} depthWrite={false} /></mesh>
+    <mesh scale={[0.62, 0.72, 1]}><coneGeometry args={[1.15, 4.5, 20, 1, true]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={mobile ? 0.12 : 0.18} depthWrite={false} /></mesh>
+    <mesh scale={[0.24, 0.38, 1.05]}><coneGeometry args={[0.8, 4.2, 16, 1, true]} /><meshBasicMaterial color="#E8F7FF" transparent opacity={0.34} depthWrite={false} /></mesh>
+  </group>;
+}
+
+function DriveStreaks({ targets, state, mobile }: { targets: Position[]; state: KnowledgeDriveState; mobile: boolean }) {
+  if (state !== 'drive') return null;
+  return <group>
+    {targets.slice(0, mobile ? 1 : 3).map((target, index) => <line key={index}>
+      <bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([0, 0, 0, ...target]), 3]} /></bufferGeometry>
+      <lineBasicMaterial color={index === 0 ? '#E8F7FF' : horizonScene.core.energy} transparent opacity={mobile ? 0.24 : 0.36} />
+    </line>)}
   </group>;
 }
 
@@ -154,19 +187,26 @@ const PORTS: Array<[number, number]> = [
   [2.05, 0], [0.7, 1.92], [-1.45, 1.45], [-2.05, -0.15], [-0.62, -1.96], [1.5, -1.4],
 ];
 
-function CameraFocus({ target, overviewVersion, variant, mobile }: { target: Position | null; overviewVersion: number; variant: 'home' | 'explorer'; mobile: boolean }) {
+function CameraFocus({ target, overviewVersion, variant, mobile, driveState, reducedMotion }: { target: Position | null; overviewVersion: number; variant: 'home' | 'explorer'; mobile: boolean; driveState: KnowledgeDriveState; reducedMotion: boolean }) {
   const { camera } = useThree();
   const overviewRef = useRef(overviewVersion);
   const returnActive = useRef(false);
-  useFrame(() => {
+  const driveRef = useRef({ state: driveState, at: 0 });
+  const releaseDuration = useMemo(() => getKnowledgeDriveDuration(480) / 1000, []);
+  useFrame(({ clock }) => {
+    if (driveRef.current.state !== driveState) driveRef.current = { state: driveState, at: clock.elapsedTime };
     if (overviewRef.current !== overviewVersion) {
       overviewRef.current = overviewVersion;
       returnActive.current = true;
     }
-    if (!target && !returnActive.current) return;
+    const driving = variant === 'home' && !reducedMotion && (driveState === 'drive' || driveState === 'transition');
+    if (!target && !returnActive.current && !driving) return;
+    const progress = driving ? Math.min((clock.elapsedTime - driveRef.current.at) / releaseDuration, 1) : 0;
+    const easedDrive = 1 - (1 - progress) ** 3;
+    const homeDistance = mobile ? 8.2 : 5.8;
     const desired = target
       ? new Vector3(target[0] * 1.12, target[1] * 1.12, target[2] + 6.4)
-      : new Vector3(0, 0, variant === 'home' ? mobile ? 8.2 : 5.8 : 13);
+      : new Vector3(0, 0, variant === 'home' ? homeDistance + (mobile ? 4.2 : 9.4) * easedDrive : 13);
     camera.position.lerp(desired, 0.045);
     camera.lookAt(target?.[0] ?? 0, target?.[1] ?? 0, target?.[2] ?? 0);
     if (!target && camera.position.distanceTo(desired) < 0.08) returnActive.current = false;
@@ -197,7 +237,7 @@ function PathPulse({ from, to, delay, enabled }: { from: Position; to: Position;
   return <mesh ref={pulse} position={from}><sphereGeometry args={[0.07, 10, 10]} /><meshBasicMaterial color={horizonScene.edge.path} /></mesh>;
 }
 
-function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNodeIds, graph, variant, motionEnabled, anticipating, mobile }: { onSelect: (id: string) => void; mode: 'explore' | 'architect'; selectedIds: Set<string>; pathEdgeKeys: Set<string>; pathNodeIds: Set<string>; graph: GraphData; variant: 'home' | 'explorer'; motionEnabled: boolean; anticipating: boolean; mobile: boolean }) {
+function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNodeIds, graph, variant, motionEnabled, driveState, mobile }: { onSelect: (id: string) => void; mode: 'explore' | 'architect'; selectedIds: Set<string>; pathEdgeKeys: Set<string>; pathNodeIds: Set<string>; graph: GraphData; variant: 'home' | 'explorer'; motionEnabled: boolean; driveState: KnowledgeDriveState; mobile: boolean }) {
   const { nodes, edges, positions, coreId } = useMemo(() => {
     const degree = new Map<string, number>();
     graph.edges.forEach(edge => { degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1); degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1); });
@@ -239,7 +279,9 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
       const baseOpacity = onPath ? 0.92 : active ? 0.7 : mode === 'architect' ? 0.44 : 0.15;
       return <group key={`${edge.source}-${edge.target}`}><line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={baseOpacity * depthVisibility} /></line>{onPath && pathIndex >= 0 && <PathPulse from={from} to={to} delay={pathIndex * 0.22} enabled={motionEnabled} />}</group>;
     })}
-    {visibleNodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} variant={variant} anticipating={anticipating} mobile={mobile} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} mode={mode} motionEnabled={motionEnabled} anticipating={anticipating} pointerResponsive={!mobile} />)}
+    {variant === 'home' && motionEnabled && <DriveField state={driveState} mobile={mobile} />}
+    {variant === 'home' && motionEnabled && <DriveStreaks targets={visibleNodes.filter(node => node.id !== coreId).map(node => positions.get(node.id)).filter((position): position is Position => Boolean(position))} state={driveState} mobile={mobile} />}
+    {visibleNodes.map(node => node.id === coreId ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} variant={variant} driveState={driveState} mobile={mobile} /> : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} mode={mode} motionEnabled={motionEnabled} anticipating={driveState === 'ready'} pointerResponsive={!mobile} />)}
     {focusedNode && <SpatialAnnotation node={focusedNode} position={positions.get(focusedNode.id)!} relationCount={focusedRelations.length} primary />}
     {focusedRelations.slice(0, 3).map(edge => {
       const relatedId = edge.source === focusedNode?.id ? edge.target : edge.source;
@@ -250,7 +292,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
   </>;
 }
 
-export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onUnavailable, mode = 'explore', quality = 'standard', focusId, selectedIds = [], pathNodeIds = [], pathEdgeKeys = [], graphData, variant = 'explorer', overviewVersion = 0, anticipating = false }: { className?: string; onNodeSelect?: (id: string) => void; onEmptySpace?: () => void; onUnavailable?: () => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null; selectedIds?: string[]; pathNodeIds?: string[]; pathEdgeKeys?: string[]; graphData?: GraphData; variant?: 'home' | 'explorer'; overviewVersion?: number; anticipating?: boolean }) {
+export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onUnavailable, mode = 'explore', quality = 'standard', focusId, selectedIds = [], pathNodeIds = [], pathEdgeKeys = [], graphData, variant = 'explorer', overviewVersion = 0, driveState = 'idle' }: { className?: string; onNodeSelect?: (id: string) => void; onEmptySpace?: () => void; onUnavailable?: () => void; mode?: 'explore' | 'architect'; quality?: 'low' | 'standard' | 'ultra'; focusId?: string | null; selectedIds?: string[]; pathNodeIds?: string[]; pathEdgeKeys?: string[]; graphData?: GraphData; variant?: 'home' | 'explorer'; overviewVersion?: number; driveState?: KnowledgeDriveState }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [isPageVisible, setIsPageVisible] = useState(true);
@@ -289,8 +331,8 @@ export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onU
   return <div ref={hostRef} className={className} aria-label="Visualização espacial do conhecimento">
     <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: variant === 'home' ? [0, 0, mobile ? 8.2 : 5.8] : [0, 0, 13], fov: 46 }} dpr={reducedMotion || mobile ? [1, 1] : dpr} gl={{ antialias: !mobile && quality !== 'low', alpha: true }} onPointerMissed={onEmptySpace} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
       <fog attach="fog" args={[horizonScene.environment.fog, 8, 22]} />
-      <KnowledgeUniverse graph={graph} variant={variant} mode={mode} motionEnabled={!reducedMotion} anticipating={anticipating} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} mobile={mobile} />
-      {!reducedMotion && <CameraFocus target={focusPosition} overviewVersion={overviewVersion} variant={variant} mobile={mobile} />}
+      <KnowledgeUniverse graph={graph} variant={variant} mode={mode} motionEnabled={!reducedMotion} driveState={driveState} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} mobile={mobile} />
+      {!reducedMotion && <CameraFocus target={focusPosition} overviewVersion={overviewVersion} variant={variant} mobile={mobile} driveState={driveState} reducedMotion={reducedMotion} />}
       <OrbitControls enabled={variant === 'explorer' && !focusId && !reducedMotion} enablePan enableZoom enableRotate touches={{ ONE: TOUCH.PAN, TWO: TOUCH.DOLLY_ROTATE }} minDistance={6} maxDistance={22} maxPolarAngle={Math.PI * 0.65} minPolarAngle={Math.PI * 0.35} />
     </Canvas>
   </div>;

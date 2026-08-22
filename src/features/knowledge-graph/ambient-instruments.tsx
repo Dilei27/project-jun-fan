@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/i18n/language-context';
 import { usePlatform } from '@/components/platform/platform-context';
+import type { KnowledgeDriveState } from './knowledge-drive';
 
 function Instrument({ side, primary, secondary, active }: { side: 'left' | 'right'; primary: string; secondary: string; active: boolean }) {
   const reduced = useReducedMotion();
@@ -33,13 +34,13 @@ function Instrument({ side, primary, secondary, active }: { side: 'left' | 'righ
   );
 }
 
-export function AmbientInstruments({ anticipating }: { anticipating: boolean }) {
+export function AmbientInstruments({ driveState }: { driveState: KnowledgeDriveState }) {
   const { language } = useLanguage();
   const { status } = usePlatform();
   const date = new Intl.DateTimeFormat(language === 'pt' ? 'pt-BR' : 'en-US', { day: '2-digit', month: 'short' }).format(new Date()).toUpperCase();
 
   return <>
-    <Instrument side="left" primary="SESSION" secondary={anticipating ? 'READY' : `LOCAL ${date}`} active={anticipating} />
-    <Instrument side="right" primary="JF-01 / CORE" secondary={anticipating ? 'READY' : `${status.totalNodes} ENTITIES · ${status.totalEdges} RELATIONS`} active={anticipating} />
+    <Instrument side="left" primary="SESSION" secondary={driveState === 'ready' ? 'READY' : driveState === 'drive' || driveState === 'transition' ? 'LINK ACTIVE' : `LOCAL ${date}`} active={driveState !== 'idle'} />
+    <Instrument side="right" primary="JF-01 / CORE" secondary={driveState === 'ready' ? 'CORE READY' : driveState === 'drive' || driveState === 'transition' ? 'LINK ACTIVE' : `${status.totalNodes} ENTITIES · ${status.totalEdges} RELATIONS`} active={driveState !== 'idle'} />
   </>;
 }

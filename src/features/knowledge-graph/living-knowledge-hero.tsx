@@ -7,12 +7,14 @@ import { getFullGraph } from '@/core';
 import { getHomeCoreGraph } from './home-core-data';
 import { usePlatform } from '@/components/platform/platform-context';
 import { AmbientInstruments } from './ambient-instruments';
+import type { KnowledgeDriveState } from './knowledge-drive';
+import { getKnowledgeDriveDuration, knowledgeDriveTiming } from './knowledge-drive';
 
 const KnowledgeScene = dynamic(() => import('./renderers/webgl/knowledge-scene').then(module => module.KnowledgeScene), { ssr: false });
 
 export function LivingKnowledgeHero() {
   const [unavailable, setUnavailable] = useState(false);
-  const [anticipating, setAnticipating] = useState(false);
+  const [driveState, setDriveState] = useState<KnowledgeDriveState>('idle');
   const { selectedNodeId, setSelectedNodeId, setSelectedKnowledgeNodeLabel, pushHistory } = usePlatform();
   const graph = useMemo(() => getFullGraph(), []);
   const homeGraph = useMemo(() => getHomeCoreGraph(), []);
@@ -24,13 +26,22 @@ export function LivingKnowledgeHero() {
     if (node) pushHistory({ module: 'home', label: node.label, href: node.url || '/knowledge-graph/' });
   };
   useEffect(() => {
-    const handler = (event: Event) => setAnticipating(Boolean((event as CustomEvent<boolean>).detail));
-    window.addEventListener('jf-enter-system', handler);
-    return () => window.removeEventListener('jf-enter-system', handler);
+    let transitionTimer = 0;
+    const handler = (event: Event) => {
+      const state = (event as CustomEvent<KnowledgeDriveState>).detail;
+      window.clearTimeout(transitionTimer);
+      setDriveState(state);
+      if (state === 'ready') return;
+      if (state === 'transition') transitionTimer = window.setTimeout(() => setDriveState('idle'), getKnowledgeDriveDuration(knowledgeDriveTiming.transition));
+    };
+    window.addEventListener('jf-knowledge-drive', handler);
+    return () => { window.clearTimeout(transitionTimer); window.removeEventListener('jf-knowledge-drive', handler); };
   }, []);
   return <>
-    {!unavailable && <KnowledgeScene className="absolute inset-x-0 top-[calc(env(safe-area-inset-top)+0.5rem)] h-[58%] opacity-90 md:inset-0 md:h-auto" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" anticipating={anticipating} />}
-    <AmbientInstruments anticipating={anticipating} />
+    {!unavailable && <KnowledgeScene className="absolute inset-x-0 top-[calc(env(safe-area-inset-top)+0.5rem)] h-[58%] opacity-90 md:inset-0 md:h-auto" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" driveState={driveState} />}
+    <div aria-hidden className={`pointer-events-none absolute inset-0 bg-bg-deep transition-opacity duration-300 ${driveState === 'ready' ? 'opacity-10' : driveState === 'drive' ? 'opacity-20' : driveState === 'transition' ? 'opacity-35' : 'opacity-0'}`} />
+    <div aria-hidden className={`pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(210,244,255,0.16),rgba(79,140,255,0.07)_32%,transparent_68%)] transition-opacity duration-200 ${driveState === 'drive' ? 'opacity-100' : 'opacity-0'}`} />
+    <AmbientInstruments driveState={driveState} />
     {unavailable && <div className="absolute inset-0 flex items-center justify-center bg-bg-deep">
       <div className="text-center text-sm text-text-secondary">Knowledge Core indisponível neste dispositivo. <Link href="/knowledge-graph/" className="text-accent-qa hover:underline">Abrir Explorer em SVG</Link></div>
     </div>}
