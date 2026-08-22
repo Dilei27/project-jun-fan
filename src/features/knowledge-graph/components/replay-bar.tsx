@@ -78,9 +78,9 @@ export function ReplayBar({ onCameraTarget, onReplayActive }: ReplayBarProps) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 8, scale: 0.97 }}
           transition={{ duration: 0.25, ease: m.easing.out }}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 rounded-xl px-4 py-3"
+          className="absolute bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-30 w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl px-4 py-3 md:bottom-6 md:w-auto"
           style={{
-            minWidth: 400,
+            minWidth: 'min(400px, calc(100vw - 2rem))',
             background: 'rgba(10, 14, 22, 0.92)',
             backdropFilter: 'blur(20px)',
             border: '1px solid rgba(244,247,250,0.06)',

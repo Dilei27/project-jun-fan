@@ -29,7 +29,7 @@ export function LivingKnowledgeHero() {
     return () => window.removeEventListener('jf-enter-system', handler);
   }, []);
   return <>
-    {!unavailable && <KnowledgeScene className="absolute inset-0 translate-y-14 opacity-90 sm:translate-y-0" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" anticipating={anticipating} />}
+    {!unavailable && <KnowledgeScene className="absolute inset-x-0 top-[calc(env(safe-area-inset-top)+0.5rem)] h-[58%] opacity-90 md:inset-0 md:h-auto" onUnavailable={() => setUnavailable(true)} onNodeSelect={handleSelect} focusId={selectedNodeId} selectedIds={selectedNodeId ? [selectedNodeId] : []} graphData={homeGraph} variant="home" anticipating={anticipating} />}
     <AmbientInstruments anticipating={anticipating} />
     {unavailable && <div className="absolute inset-0 flex items-center justify-center bg-bg-deep">
       <div className="text-center text-sm text-text-secondary">Knowledge Core indisponível neste dispositivo. <Link href="/knowledge-graph/" className="text-accent-qa hover:underline">Abrir Explorer em SVG</Link></div>
@@ -46,7 +46,7 @@ export function LivingKnowledgeHero() {
       </ul>
     </nav>
     {selected && (
-      <aside className="absolute bottom-8 right-6 z-10 w-[min(20rem,calc(100vw-3rem))] rounded-xl border border-border-subtle/60 bg-surface-elevated/85 p-4 shadow-[var(--shadow-high)] backdrop-blur-xl">
+      <aside className="absolute bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 right-4 z-10 w-auto rounded-xl border border-border-subtle/60 bg-surface-elevated/85 p-4 shadow-[var(--shadow-high)] backdrop-blur-xl md:bottom-8 md:left-auto md:right-6 md:w-[min(20rem,calc(100vw-3rem))]">
         <p className="text-[10px] uppercase tracking-[0.14em] text-accent-qa">{selected.type}</p>
         <h2 className="mt-1 text-base font-semibold text-text-primary">{selected.label}</h2>
         <p className="mt-2 text-sm leading-relaxed text-text-secondary">{selected.description}</p>

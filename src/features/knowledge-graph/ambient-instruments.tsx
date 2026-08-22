@@ -10,7 +10,7 @@ function Instrument({ side, primary, secondary, active }: { side: 'left' | 'righ
   const color = active ? '#E8F4FF' : '#4F8CFF';
 
   return (
-    <div className={`pointer-events-none absolute top-10 hidden w-28 text-center md:block lg:w-32 ${side === 'left' ? 'left-10' : 'right-10'}`}>
+    <div className={`pointer-events-none absolute top-10 hidden w-28 text-center lg:block lg:w-32 ${side === 'left' ? 'left-10' : 'right-10'}`}>
       <motion.svg viewBox="0 0 100 100" className="mx-auto h-28 w-28 overflow-visible lg:h-32 lg:w-32" aria-hidden
         animate={reduced ? undefined : { rotate: side === 'left' ? 360 : -360 }}
         transition={{ duration: side === 'left' ? 28 : 34, repeat: Infinity, ease: 'linear' }}

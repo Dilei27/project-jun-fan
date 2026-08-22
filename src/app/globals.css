@@ -347,10 +347,10 @@
   .jf-ambient-drift {
     animation: ambient-drift 12s ease-in-out infinite;
   }
-  .jf-ambient-light-field {
-    animation: ambient-light-field 18s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    will-change: transform;
-  }
+.jf-ambient-light-field {
+  animation: ambient-light-field 18s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
   .jf-grid-drift {
     animation: grid-drift 24s linear infinite;
   }
@@ -373,6 +373,19 @@
     background: inherit;
     opacity: 0;
     animation: sync-pulse 2.4s ease-in-out infinite;
+  }
+}
+
+@media (max-width: 767px) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  .jf-ambient-light-field {
+    animation-duration: 28s;
+    opacity: 0.62;
+    filter: blur(38px) !important;
   }
 }
 

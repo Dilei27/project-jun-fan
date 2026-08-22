@@ -41,13 +41,13 @@ export function Header() {
       initial={{ y: -16, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: m.duration.normal, ease: m.easing.out }}
-      className="fixed top-0 left-0 right-0 z-50 bg-surface-default/40 backdrop-blur-xl border-b border-border-subtle/40"
+      className="fixed top-0 left-0 right-0 z-50 border-b border-border-subtle/40 bg-surface-default/40 pt-[env(safe-area-inset-top)] backdrop-blur-xl"
       style={{
         boxShadow:
           'inset 0 1px 0 0 rgba(244, 247, 250, 0.04), 0 4px 24px -8px rgba(0, 0, 0, 0.3)',
       }}
     >
-      <div className="max-w-[1440px] mx-auto px-6 h-14 flex items-center justify-between">
+      <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-4 md:px-6">
         <Link
           href="/"
           className="group flex items-center gap-2 text-text-primary font-semibold text-sm tracking-wide transition-opacity duration-200 hover:opacity-80"
@@ -92,7 +92,7 @@ export function Header() {
           </span>
           <motion.button
             whileTap={m.tap.soft}
-            className="md:hidden p-2 text-text-secondary hover:text-text-primary rounded-md transition-colors"
+            className="rounded-md p-2 text-text-secondary transition-colors hover:text-text-primary md:hidden"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={menuOpen}

@@ -27,24 +27,25 @@ export default function HomePage() {
   const graph = getFullGraph();
 
   return (
-    <div className="max-w-[1440px] mx-auto px-6 py-10">
+    <div className="max-w-[1440px] mx-auto px-4 py-6 md:px-6 md:py-10">
 
       {/* === HERO === */}
-      <HeroStage className="relative left-1/2 h-[calc(100svh-3.5rem)] min-h-[620px] w-screen -translate-x-1/2 overflow-hidden bg-bg-deep mb-20">
-        <AmbientLightField />
-        <LivingKnowledgeHero />
-        <div className="relative z-10 mx-auto flex h-full max-w-[1440px] items-end px-6 py-12 md:py-20">
-          <div className="max-w-md">
+      <HeroStage className="relative left-1/2 h-[calc(100svh-3.5rem)] min-h-[560px] w-screen -translate-x-1/2 overflow-hidden bg-bg-deep mb-14 md:min-h-[620px] md:mb-20">
+        <div className="relative h-full md:contents">
+          <AmbientLightField />
+          <LivingKnowledgeHero />
+          <div className="relative z-10 mx-auto flex h-full max-w-[1440px] items-end px-5 pb-[calc(1.75rem+env(safe-area-inset-bottom))] pt-10 md:px-6 md:py-20">
+          <div className="max-w-md text-center md:text-left">
             <FadeIn delay={0.05} y={6}>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 text-xs font-medium text-accent-qa bg-accent-qa/8 border border-accent-qa/20 rounded-full shadow-[inset_0_1px_0_0_rgba(79,140,255,0.08)]">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-3 text-xs font-medium text-accent-qa bg-accent-qa/8 border border-accent-qa/20 rounded-full shadow-[inset_0_1px_0_0_rgba(79,140,255,0.08)] md:mb-5">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-qa jf-pulse-dot" />
                 SYSTEM ONLINE
               </div>
             </FadeIn>
 
-            <h1 className="text-4xl md:text-5xl font-extrabold text-text-primary mb-3 leading-[0.94] tracking-[-0.025em]">
-              <span className="block">Project</span>
-              <span className="block">Jun Fan</span>
+            <h1 className="text-[2.25rem] md:text-5xl font-extrabold text-text-primary mb-3 leading-[0.94] tracking-[-0.025em]">
+              <span className="inline md:block">Project&nbsp;</span>
+              <span className="inline md:block">Jun Fan</span>
             </h1>
 
             <FadeIn delay={0.45} y={10}>
@@ -52,7 +53,7 @@ export default function HomePage() {
             </FadeIn>
 
             <FadeIn delay={0.55}>
-              <div className="flex items-center gap-3 mt-3 mb-7 text-sm text-text-muted">
+              <div className="flex items-center justify-center gap-3 mt-3 mb-5 text-sm text-text-muted md:justify-start md:mb-7">
                 <span className="font-medium text-accent-qa/90 tracking-wide">Absorb.</span>
                 <span className="opacity-30">·</span>
                 <span className="font-medium text-accent-teal/80 tracking-wide">Refine.</span>
@@ -62,10 +63,11 @@ export default function HomePage() {
             </FadeIn>
 
             <FadeIn delay={0.65} y={6}>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap justify-center gap-3 md:justify-start">
                 <EnterSystemLink />
               </div>
             </FadeIn>
+          </div>
           </div>
         </div>
       </HeroStage>

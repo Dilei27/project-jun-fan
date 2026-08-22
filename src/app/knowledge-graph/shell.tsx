@@ -18,7 +18,7 @@ export function KnowledgeGraphShell() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: m.duration.slow, ease: m.easing.out }}
-      className="relative h-[calc(100vh-3.5rem)] min-h-[600px] w-full"
+      className="relative h-[calc(100svh-3.5rem)] min-h-[540px] w-full md:h-[calc(100vh-3.5rem)] md:min-h-[600px]"
     >
       {/* Immersive graph — edge to edge */}
         <div className="absolute inset-0">
@@ -30,7 +30,7 @@ export function KnowledgeGraphShell() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: m.duration.normal, ease: m.easing.out, delay: 0.05 }}
-        className="absolute top-4 right-6 z-30 pointer-events-auto"
+        className="pointer-events-auto absolute right-4 top-[calc(0.75rem+env(safe-area-inset-top))] z-30 hidden md:block md:right-6 md:top-4"
       >
         <div className="kg-hud">
           <CrossNav module="kg" />

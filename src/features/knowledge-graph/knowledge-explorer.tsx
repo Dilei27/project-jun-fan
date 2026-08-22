@@ -470,7 +470,7 @@ export function KnowledgeExplorer({ initialQuery }: { initialQuery?: string } = 
     dragRef.current = { id: node.id, moved: false, startX: e.clientX, startY: e.clientY };
   }, [clientToGraph]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
     if ((e.target as HTMLElement).closest('.kg-node, .kg-hud, .kg-edge')) return;
     isDragging.current = true;
     dragStartRef.current = {
@@ -479,8 +479,8 @@ export function KnowledgeExplorer({ initialQuery }: { initialQuery?: string } = 
     };
   }, []);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    livingHover.handleMouseMove(e.clientX, e.clientY)
+  const handleMouseMove = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
+    if (e.pointerType === 'mouse') livingHover.handleMouseMove(e.clientX, e.clientY)
     const sim = simRef.current;
     if (sim) sim.applyMouse(clientToGraph(e.clientX, e.clientY));
     if (dragRef.current) {
