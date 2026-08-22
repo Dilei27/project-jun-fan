@@ -39,11 +39,13 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
           : <sphereGeometry args={[0.46, 20, 20]} />;
 
   const major = node.type === 'product' || node.type === 'project';
+  const structural = major || node.type === 'architecture';
+  const explorer = variant === 'explorer';
   const activeColor = selected
     ? horizonScene.node.selected
     : hovered
       ? horizonScene.edge.active
-      : major
+      : structural
         ? horizonScene.node.structural
         : horizonScene.node.dormant;
   const distance = Math.hypot(position[0], position[1]);
@@ -52,31 +54,39 @@ function SceneNode({ node, position, selected, hovered, onSelect, onHover, varia
   const materialOpacity = (selected || hovered
     ? 0.82
     : architect
-      ? major ? 0.7 : 0.56
-      : major ? 0.54 : identity.shape === 'ring' ? 0.5 : 0.44) * depthVisibility;
-  const emissiveIntensity = selected ? 0.92 : hovered ? 0.34 : architect ? major ? 0.24 : 0.08 : major ? 0.075 : 0.025;
+      ? structural ? explorer ? 0.82 : 0.7 : 0.56
+      : structural ? explorer ? 0.68 : 0.54 : identity.shape === 'ring' ? explorer ? 0.58 : 0.5 : explorer ? 0.54 : 0.44) * depthVisibility;
+  const emissiveIntensity = selected
+    ? 0.92
+    : hovered
+      ? 0.34
+      : architect
+        ? structural ? explorer ? node.type === 'architecture' ? 0.32 : 0.3 : 0.24 : explorer ? 0.1 : 0.08
+        : structural ? explorer ? 0.1 : 0.075 : explorer ? 0.035 : 0.025;
   return <group ref={mesh} position={position} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }} onPointerOver={(event: ThreeEvent<PointerEvent>) => { if (pointerResponsive && event.nativeEvent.pointerType === 'mouse') { event.stopPropagation(); onHover(true); } }} onPointerOut={() => onHover(false)}>
     <mesh>
       {geometry}
       <meshStandardMaterial color={new Color(activeColor)} emissive={new Color(activeColor)} emissiveIntensity={emissiveIntensity + (anticipating && major ? 0.08 : 0)} transparent opacity={materialOpacity} roughness={0.42} metalness={0.58} wireframe={architect && identity.shape !== 'ring'} />
     </mesh>
-    {major && <mesh rotation={[0.8, 0.25, 0]}><torusGeometry args={[0.61, 0.018, 6, 28, Math.PI * 1.15]} /><meshBasicMaterial color={selected ? horizonScene.node.selected : hovered ? horizonScene.edge.active : architect ? horizonScene.core.base : horizonScene.node.dormant} transparent opacity={(selected || hovered ? 0.7 : architect ? 0.44 : 0.24) * depthVisibility} /></mesh>}
-    {identity.shape === 'ring' && <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.34, 0.012, 8, 24]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={(architect ? 0.28 : 0.16) * depthVisibility} /></mesh>}
+    {major && <mesh rotation={[0.8, 0.25, 0]}><torusGeometry args={[0.61, 0.018, 6, 28, Math.PI * 1.15]} /><meshBasicMaterial color={selected ? horizonScene.node.selected : hovered ? horizonScene.edge.active : architect ? horizonScene.core.base : horizonScene.node.dormant} transparent opacity={(selected || hovered ? 0.7 : architect ? explorer ? 0.56 : 0.44 : explorer ? 0.3 : 0.24) * depthVisibility} /></mesh>}
+    {identity.shape === 'ring' && <mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.34, 0.012, 8, 24]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={(architect ? explorer ? 0.38 : 0.28 : explorer ? 0.21 : 0.16) * depthVisibility} /></mesh>}
   </group>;
 }
 
 function CoreHalo({ mobile, variant }: { mobile: boolean; variant: 'home' | 'explorer' }) {
   const radius = variant === 'home' && !mobile ? 0.38 : mobile ? 2.4 : 3.5;
+  const explorer = variant === 'explorer';
   return <>
-    <pointLight position={[0, 0, 1.5]} intensity={mobile ? 0.5 : 0.8} distance={mobile ? 8 : 12} color={horizonScene.core.energy} />
+    <pointLight position={[0, 0, 1.5]} intensity={explorer ? mobile ? 0.58 : 0.95 : mobile ? 0.5 : 0.8} distance={mobile ? 8 : 12} color={horizonScene.core.energy} />
     <mesh position={[0, 0, -1.8]}>
       <sphereGeometry args={[radius, 24, 24]} />
-      <meshBasicMaterial color={horizonScene.core.energy} transparent opacity={mobile ? 0.018 : 0.035} depthWrite={false} blending={AdditiveBlending} />
+      <meshBasicMaterial color={horizonScene.core.energy} transparent opacity={explorer ? mobile ? 0.022 : 0.045 : mobile ? 0.018 : 0.035} depthWrite={false} blending={AdditiveBlending} />
     </mesh>
   </>;
 }
 
 function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, variant, driveState, mobile }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; variant: 'home' | 'explorer'; driveState: KnowledgeDriveState; mobile: boolean }) {
+  const explorer = variant === 'explorer';
   const core = useRef<Group | null>(null);
   const computeCore = useRef<Group | null>(null);
   const transfer = useRef<Mesh | null>(null);
@@ -132,7 +142,7 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
   });
   return <group ref={core} position={position} scale={variant === 'home' ? mobile ? 1.1 : 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
     <CoreHalo mobile={mobile} variant={variant} />
-    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.5 : driveState === 'ready' ? 0.78 : driveState === 'compress' ? 0.32 : driveState === 'drive' ? 1.5 : driveState === 'transition' ? 0.9 : active ? 0.5 : 0.28} transparent opacity={mode === 'architect' ? 0.56 : 0.38} roughness={0.18} metalness={0.68} /></mesh>
+    <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={horizonScene.core.shell} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? explorer ? 0.56 : 0.5 : driveState === 'ready' ? 0.78 : driveState === 'compress' ? 0.32 : driveState === 'drive' ? 1.5 : driveState === 'transition' ? 0.9 : active ? 0.5 : 0.28} transparent opacity={mode === 'architect' ? explorer ? 0.62 : 0.56 : explorer ? 0.42 : 0.38} roughness={0.18} metalness={0.68} /></mesh>
     <mesh scale={1.16}><icosahedronGeometry args={[0.62, 1]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={mode === 'architect' ? 0.42 : 0.24} wireframe /></mesh>
     <group ref={computeCore}>
       <mesh scale={0.54}><octahedronGeometry args={[0.56, 1]} /><meshStandardMaterial color={horizonScene.core.base} emissive={horizonScene.core.energy} emissiveIntensity={mode === 'architect' ? 0.68 : driveState === 'drive' ? 1.45 : driveState === 'ready' ? 0.54 : 0.36} transparent opacity={mode === 'architect' ? 0.9 : 0.76} roughness={0.22} metalness={0.7} /></mesh>
@@ -371,6 +381,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
   });
   const revealThreshold = variant === 'home' ? (driveState === 'idle' || driveState === 'ready' || driveState === 'compress' ? 0 : revealProgress) : 1;
   const focusedNode = selectedIds.size > 0 ? nodes.find(node => selectedIds.has(node.id)) ?? null : null;
+  const explorer = variant === 'explorer';
   const focusedRelations = focusedNode
     ? edges.filter(edge => edge.source === focusedNode.id || edge.target === focusedNode.id)
     : [];
@@ -388,7 +399,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
       const pathIndex = pathNodeIds.has(edge.source) && pathNodeIds.has(edge.target) ? Math.min([...pathNodeIds].indexOf(edge.source), [...pathNodeIds].indexOf(edge.target)) : -1;
       const depthVisibility = Math.max(0.72, Math.min(1.2, 1 + (from[2] + to[2]) / 14));
       const driveBoost = variant === 'home' && (driveState === 'drive' || driveState === 'transition') ? 0.5 : 0;
-      const baseOpacity = onPath ? 0.96 : active ? 0.76 : mode === 'architect' ? 0.56 : 0.24;
+      const baseOpacity = onPath ? 0.96 : active ? explorer ? 0.82 : 0.76 : mode === 'architect' ? explorer ? 0.7 : 0.56 : explorer ? 0.31 : 0.24;
       return <group key={`${edge.source}-${edge.target}`}><line><bufferGeometry><bufferAttribute attach="attributes-position" args={[new Float32Array([...from, ...to]), 3]} /></bufferGeometry><lineBasicMaterial color={onPath ? horizonScene.edge.path : active ? horizonScene.edge.active : mode === 'architect' ? horizonScene.edge.architect : horizonScene.edge.dormant} transparent opacity={Math.min(1, (baseOpacity + driveBoost) * depthVisibility)} /></line>{onPath && pathIndex >= 0 && <PathPulse from={from} to={to} delay={pathIndex * 0.22} enabled={motionEnabled} />}</group>;
     })}
     {variant === 'home' && motionEnabled && <DriveField state={driveState} mobile={mobile} />}
