@@ -40,7 +40,7 @@ export function AmbientInstruments({ driveState }: { driveState: KnowledgeDriveS
   const date = new Intl.DateTimeFormat(language === 'pt' ? 'pt-BR' : 'en-US', { day: '2-digit', month: 'short' }).format(new Date()).toUpperCase();
 
   return <>
-    <Instrument side="left" primary="SESSION" secondary={driveState === 'ready' ? 'READY' : driveState === 'drive' || driveState === 'transition' ? 'LINK ACTIVE' : `LOCAL ${date}`} active={driveState !== 'idle'} />
-    <Instrument side="right" primary="JF-01 / CORE" secondary={driveState === 'ready' ? 'CORE READY' : driveState === 'drive' || driveState === 'transition' ? 'LINK ACTIVE' : `${status.totalNodes} ENTITIES · ${status.totalEdges} RELATIONS`} active={driveState !== 'idle'} />
+    <Instrument side="left" primary="SESSION" secondary={driveState === 'ready' ? 'READY' : driveState === 'compress' ? 'LOCK' : driveState === 'drive' || driveState === 'transition' ? 'LINK ACTIVE' : `LOCAL ${date}`} active={driveState !== 'idle'} />
+    <Instrument side="right" primary="JF-01 / CORE" secondary={driveState === 'ready' ? 'CORE READY' : driveState === 'compress' ? 'DRIVE' : driveState === 'drive' || driveState === 'transition' ? 'LINK ACTIVE' : `${status.totalNodes} ENTITIES · ${status.totalEdges} RELATIONS`} active={driveState !== 'idle'} />
   </>;
 }

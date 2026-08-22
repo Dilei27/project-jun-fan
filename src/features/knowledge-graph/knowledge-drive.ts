@@ -1,10 +1,11 @@
-export type KnowledgeDriveState = 'idle' | 'ready' | 'drive' | 'transition' | 'compute';
+export type KnowledgeDriveState = 'idle' | 'ready' | 'compress' | 'drive' | 'transition' | 'compute';
 
 export const knowledgeDriveTiming = {
   mobileReady: 220,
   desktopReady: 100,
-  release: 480,
-  transition: 180,
+  compress: 110,
+  release: 560,
+  transition: 300,
   reducedMotion: 180,
 } as const;
 

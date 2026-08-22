@@ -17,13 +17,25 @@ export function EnterSystemLink() {
     locked.current = true;
     const mobile = window.matchMedia('(max-width: 767px)').matches;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    signalKnowledgeDrive('ready');
-    const readyDuration = reducedMotion ? 0 : getKnowledgeDriveDuration(mobile ? knowledgeDriveTiming.mobileReady : knowledgeDriveTiming.desktopReady);
-    window.setTimeout(() => {
+    if (reducedMotion) {
       signalKnowledgeDrive('drive');
-      window.setTimeout(() => signalKnowledgeDrive('transition'), reducedMotion ? knowledgeDriveTiming.reducedMotion : getKnowledgeDriveDuration(knowledgeDriveTiming.release));
+      window.setTimeout(() => router.push('/knowledge-graph/'), knowledgeDriveTiming.reducedMotion);
+      return;
+    }
+    signalKnowledgeDrive('ready');
+    const readyDuration = getKnowledgeDriveDuration(mobile ? knowledgeDriveTiming.mobileReady : knowledgeDriveTiming.desktopReady);
+    const compressDuration = getKnowledgeDriveDuration(knowledgeDriveTiming.compress);
+    const releaseDuration = getKnowledgeDriveDuration(knowledgeDriveTiming.release);
+    window.setTimeout(() => {
+      signalKnowledgeDrive('compress');
+      window.setTimeout(() => {
+        signalKnowledgeDrive('drive');
+        window.setTimeout(() => {
+          signalKnowledgeDrive('transition');
+          router.push('/knowledge-graph/');
+        }, releaseDuration);
+      }, compressDuration);
     }, readyDuration);
-    window.setTimeout(() => router.push('/knowledge-graph/'), reducedMotion ? knowledgeDriveTiming.reducedMotion : readyDuration + getKnowledgeDriveDuration(knowledgeDriveTiming.release + knowledgeDriveTiming.transition));
   };
 
   return (
