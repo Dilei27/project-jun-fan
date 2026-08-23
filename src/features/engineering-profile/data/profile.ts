@@ -1,3 +1,5 @@
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+
 /* ─── Types ─── */
 
 export interface CareerEntry {
@@ -310,8 +312,8 @@ export const PROFILE: ProfileData = {
     linkedin: 'https://www.linkedin.com/in/odirlei-alves-a9b14923/',
     email: 'odirlei.alves@email.com',
     resumes: {
-      pt: '/curriculo-odirlei-alves-pt.pdf',
-      en: '/curriculo-odirlei-alves-en.pdf',
+      pt: `${basePath}/curriculo-odirlei-alves-pt.pdf`,
+      en: `${basePath}/curriculo-odirlei-alves-en.pdf`,
     },
   },
 }
