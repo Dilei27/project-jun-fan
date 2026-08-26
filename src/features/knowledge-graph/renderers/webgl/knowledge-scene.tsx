@@ -152,19 +152,25 @@ function HomeCoreTelemetry({ active, driveState, motionEnabled }: { active: bool
   const outerScan = useRef<Group>(null);
   const innerScan = useRef<Group>(null);
   const orbit = useRef<Group>(null);
-  useFrame(({ clock }) => {
+  useFrame(({ clock, pointer }) => {
     if (!motionEnabled) return;
-    const boosted = active || driveState === 'ready' || driveState === 'compress' || driveState === 'drive';
+    const pointerNearCore = Math.hypot(pointer.x, pointer.y) < 0.3;
+    const boosted = active || pointerNearCore || driveState === 'ready' || driveState === 'compress' || driveState === 'drive';
     const scanSpeed = boosted ? 0.0028 : 0.0011;
     if (outerScan.current) {
       outerScan.current.rotation.z += scanSpeed;
       outerScan.current.rotation.y = Math.sin(clock.elapsedTime * 0.38) * 0.14;
+      outerScan.current.scale.setScalar(boosted ? 1.06 + Math.sin(clock.elapsedTime * 3.2) * 0.025 : 1);
     }
     if (innerScan.current) {
       innerScan.current.rotation.z -= scanSpeed * 1.6;
       innerScan.current.rotation.x = 0.62 + Math.cos(clock.elapsedTime * 0.44) * 0.08;
+      innerScan.current.scale.setScalar(boosted ? 1.04 + Math.cos(clock.elapsedTime * 4.1) * 0.02 : 1);
     }
-    if (orbit.current) orbit.current.rotation.z -= scanSpeed * 2.2;
+    if (orbit.current) {
+      orbit.current.rotation.z -= scanSpeed * 2.2;
+      orbit.current.scale.setScalar(boosted ? 1.08 : 1);
+    }
   });
 
   const scanOpacity = driveState === 'drive' ? 0.92 : active ? 0.72 : 0.5;
