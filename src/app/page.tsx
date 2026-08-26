@@ -92,8 +92,8 @@ export default function HomePage() {
           <div className="pointer-events-auto absolute inset-0">
             <LivingKnowledgeHero />
           </div>
-          <div className="relative z-10 mx-auto flex h-full max-w-[1440px] items-end px-6 pt-20 pb-36">
-          <div className="max-w-md text-left">
+          <div className="pointer-events-none relative z-10 mx-auto flex h-full max-w-[1440px] items-end px-6 pt-20 pb-36">
+          <div className="pointer-events-auto max-w-md text-left">
             <FadeIn delay={0.05} y={6}>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 text-xs font-medium text-accent-qa bg-accent-qa/8 border border-accent-qa/20 rounded-full shadow-[inset_0_1px_0_0_rgba(79,140,255,0.08)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-qa jf-pulse-dot" />
