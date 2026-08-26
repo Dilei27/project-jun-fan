@@ -3,8 +3,8 @@
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { Html, OrbitControls } from '@react-three/drei';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Group, Mesh } from 'three';
-import { Color, TOUCH, Vector3, AdditiveBlending, PerspectiveCamera, MeshBasicMaterial, LineBasicMaterial, type Line } from 'three';
+import type { Group, Mesh, ShaderMaterial } from 'three';
+import { Color, TOUCH, Vector3, AdditiveBlending, BackSide, PerspectiveCamera, MeshBasicMaterial, LineBasicMaterial, type Line } from 'three';
 import { getFullGraph } from '@/core';
 import type { GraphData } from '@/core';
 import { getNodeIdentity } from '@/features/knowledge-graph/lib/node-identity';
@@ -15,6 +15,11 @@ type Position = [number, number, number];
 
 function hash(value: string) {
   return Array.from(value).reduce((total, character) => ((total << 5) - total) + character.charCodeAt(0), 0);
+}
+
+function randomAt(index: number, salt: number) {
+  const value = Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453;
+  return value - Math.floor(value);
 }
 
 function SceneNode({ node, position, selected, hovered, onSelect, onHover, variant, mode, motionEnabled, anticipating, pointerResponsive, connectedToCore }: { node: ReturnType<typeof getFullGraph>['nodes'][number]; position: Position; selected: boolean; hovered: boolean; onSelect: () => void; onHover: (active: boolean) => void; variant: 'home' | 'explorer'; mode: 'explore' | 'architect'; motionEnabled: boolean; anticipating: boolean; pointerResponsive: boolean; connectedToCore: boolean }) {
@@ -143,6 +148,151 @@ function CoreHalo({ mobile, variant }: { mobile: boolean; variant: 'home' | 'exp
   </>;
 }
 
+const ENERGY_VERTEX_SHADER = `
+  varying vec3 vNormal;
+  varying vec3 vWorldPosition;
+  varying vec2 vUv;
+
+  void main() {
+    vUv = uv;
+    vNormal = normalize(normalMatrix * normal);
+    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+    vWorldPosition = worldPosition.xyz;
+    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+  }
+`;
+
+const ENERGY_FRAGMENT_SHADER = `
+  uniform float uTime;
+  uniform float uIntensity;
+  uniform vec3 uCold;
+  uniform vec3 uHot;
+  uniform vec3 uEmber;
+  varying vec3 vNormal;
+  varying vec3 vWorldPosition;
+  varying vec2 vUv;
+
+  float hash21(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+  }
+
+  float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = hash21(i);
+    float b = hash21(i + vec2(1.0, 0.0));
+    float c = hash21(i + vec2(0.0, 1.0));
+    float d = hash21(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+  }
+
+  float fbm(vec2 p) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    for (int i = 0; i < 4; i++) {
+      value += amplitude * noise(p);
+      p = p * 2.03 + vec2(13.1, 7.7);
+      amplitude *= 0.5;
+    }
+    return value;
+  }
+
+  void main() {
+    vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+    float fresnel = pow(1.0 - max(dot(vNormal, viewDir), 0.0), 2.15);
+
+    vec2 flowUv = vec2(vUv.x * 4.2, vUv.y * 5.6 - uTime * 0.11);
+    float broad = fbm(flowUv + vec2(sin(uTime * 0.13), cos(uTime * 0.09)));
+    float detail = fbm(flowUv * 1.9 + vec2(uTime * 0.08, -uTime * 0.15));
+    float turbulence = smoothstep(0.34, 0.83, broad * 0.72 + detail * 0.52);
+    float filaments = pow(max(0.0, sin((vUv.y + broad * 0.13) * 54.0 - uTime * 1.65)), 8.0);
+    float plasma = clamp(turbulence + filaments * 0.38, 0.0, 1.0);
+
+    vec3 color = mix(uCold, uHot, plasma);
+    float emberMask = smoothstep(0.79, 0.98, broad + detail * 0.2) * (0.2 + fresnel * 0.8);
+    color = mix(color, uEmber, emberMask * 0.42);
+
+    float alpha = (0.055 + plasma * 0.18 + fresnel * 0.28) * uIntensity;
+    gl_FragColor = vec4(color, alpha);
+  }
+`;
+
+const CORONA_FRAGMENT_SHADER = `
+  uniform float uTime;
+  uniform float uIntensity;
+  uniform vec3 uCold;
+  uniform vec3 uHot;
+  varying vec3 vNormal;
+  varying vec3 vWorldPosition;
+  varying vec2 vUv;
+
+  void main() {
+    vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+    float rim = pow(1.0 - max(dot(normalize(vNormal), viewDir), 0.0), 2.7);
+    float lick = 0.5 + 0.5 * sin(vUv.y * 68.0 + sin(vUv.x * 31.0 + uTime * 0.8) * 2.0 - uTime * 2.2);
+    lick = pow(lick, 7.0);
+    float pulse = 0.86 + sin(uTime * 1.35) * 0.08;
+    vec3 color = mix(uCold, uHot, clamp(rim + lick * 0.32, 0.0, 1.0));
+    float alpha = (rim * 0.24 + lick * rim * 0.16) * pulse * uIntensity;
+    gl_FragColor = vec4(color, alpha);
+  }
+`;
+
+function EnergyCorona({ mobile, active, driveState, motionEnabled }: { mobile: boolean; active: boolean; driveState: KnowledgeDriveState; motionEnabled: boolean }) {
+  const surfaceMaterial = useRef<ShaderMaterial | null>(null);
+  const coronaMaterial = useRef<ShaderMaterial | null>(null);
+  const surface = useRef<Mesh | null>(null);
+  const corona = useRef<Mesh | null>(null);
+  const uniforms = useMemo(() => ({
+    uTime: { value: 0 },
+    uIntensity: { value: mobile ? 0.72 : 1 },
+    uCold: { value: new Color('#238FD1') },
+    uHot: { value: new Color('#DDFBFF') },
+    uEmber: { value: new Color('#FFB65C') },
+  }), [mobile]);
+  const coronaUniforms = useMemo(() => ({
+    uTime: { value: 0 },
+    uIntensity: { value: mobile ? 0.52 : 0.82 },
+    uCold: { value: new Color('#39BFEF') },
+    uHot: { value: new Color('#E8FAFF') },
+  }), [mobile]);
+
+  useFrame(({ clock }) => {
+    const time = motionEnabled ? clock.elapsedTime : 0;
+    const boost = driveState === 'drive' ? 1.65 : driveState === 'compress' ? 1.3 : active ? 1.16 : 1;
+    if (surfaceMaterial.current) {
+      surfaceMaterial.current.uniforms.uTime.value = time;
+      surfaceMaterial.current.uniforms.uIntensity.value = (mobile ? 0.72 : 1) * boost;
+    }
+    if (coronaMaterial.current) {
+      coronaMaterial.current.uniforms.uTime.value = time;
+      coronaMaterial.current.uniforms.uIntensity.value = (mobile ? 0.52 : 0.82) * boost;
+    }
+    if (surface.current && motionEnabled) {
+      surface.current.rotation.y += 0.00135;
+      surface.current.rotation.z -= 0.00032;
+    }
+    if (corona.current && motionEnabled) {
+      corona.current.rotation.y -= 0.00072;
+      corona.current.rotation.x += 0.00024;
+    }
+  });
+
+  return <group>
+    <mesh ref={surface} scale={1.055}>
+      <icosahedronGeometry args={[0.62, mobile ? 3 : 4]} />
+      <shaderMaterial ref={surfaceMaterial} vertexShader={ENERGY_VERTEX_SHADER} fragmentShader={ENERGY_FRAGMENT_SHADER} uniforms={uniforms} transparent depthWrite={false} blending={AdditiveBlending} />
+    </mesh>
+    <mesh ref={corona} scale={1.13}>
+      <icosahedronGeometry args={[0.62, mobile ? 2 : 3]} />
+      <shaderMaterial ref={coronaMaterial} vertexShader={ENERGY_VERTEX_SHADER} fragmentShader={CORONA_FRAGMENT_SHADER} uniforms={coronaUniforms} transparent depthWrite={false} side={BackSide} blending={AdditiveBlending} />
+    </mesh>
+  </group>;
+}
+
 function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, variant, driveState, mobile, selectedIds, hoveredId }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; variant: 'home' | 'explorer'; driveState: KnowledgeDriveState; mobile: boolean; selectedIds: Set<string>; hoveredId: string | null }) {
   const explorer = variant === 'explorer';
   const core = useRef<Group | null>(null);
@@ -224,6 +374,7 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
   const hotWireOpacity = driveState === 'drive' ? 1 : driveState === 'ready' ? 0.8 : explorer ? 0.72 : 0.68;
   return <group ref={core} position={position} scale={variant === 'home' ? mobile ? 1.1 : 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
     <CoreHalo mobile={mobile} variant={variant} />
+    {variant === 'home' && <EnergyCorona mobile={mobile} active={active} driveState={driveState} motionEnabled={motionEnabled} />}
     {/* Outer shell — dark steel-blue */}
     <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={new Color(cShell)} emissive={new Color(cEnergy)} emissiveIntensity={shellEmissive} transparent opacity={shellOpacity} roughness={0.14} metalness={0.78} /></mesh>
     {/* Wireframe mid structure */}
@@ -441,11 +592,11 @@ function PathPulse({ from, to, delay, enabled }: { from: Position; to: Position;
 function MicroParticles({ count, radius, mobile }: { count: number; radius: number; mobile: boolean }) {
   const points = useRef<Mesh>(null);
   const particleData = useMemo(() => Array.from({ length: count }, (_, i) => ({
-    angle: (i / count) * Math.PI * 2 + Math.random() * 0.5,
-    yOffset: (Math.random() - 0.5) * radius * 0.6,
-    speed: 0.08 + Math.random() * 0.12,
-    dist: radius * 0.3 + Math.random() * radius * 0.7,
-    phase: Math.random() * Math.PI * 2,
+    angle: (i / count) * Math.PI * 2 + randomAt(i, 1) * 0.5,
+    yOffset: (randomAt(i, 2) - 0.5) * radius * 0.6,
+    speed: 0.08 + randomAt(i, 3) * 0.12,
+    dist: radius * 0.3 + randomAt(i, 4) * radius * 0.7,
+    phase: randomAt(i, 5) * Math.PI * 2,
   })), [count, radius]);
   useFrame(({ clock }) => {
     if (!points.current) return;
