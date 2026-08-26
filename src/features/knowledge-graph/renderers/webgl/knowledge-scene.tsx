@@ -152,8 +152,14 @@ function HomeCoreTelemetry({ active, driveState, motionEnabled }: { active: bool
   const outerScan = useRef<Group>(null);
   const innerScan = useRef<Group>(null);
   const orbit = useRef<Group>(null);
+  const pulse = useRef<Mesh>(null);
+  const pulseEcho = useRef<Mesh>(null);
+  const activeRef = useRef(active);
+  const pulseStarted = useRef(0);
   useFrame(({ clock }) => {
     if (!motionEnabled) return;
+    if (active && !activeRef.current) pulseStarted.current = clock.elapsedTime;
+    activeRef.current = active;
     const boosted = active || driveState === 'ready' || driveState === 'compress' || driveState === 'drive';
     const scanSpeed = boosted ? 0.0028 : 0.0011;
     if (outerScan.current) {
@@ -170,6 +176,15 @@ function HomeCoreTelemetry({ active, driveState, motionEnabled }: { active: bool
       orbit.current.rotation.z -= scanSpeed * 2.2;
       orbit.current.scale.setScalar(boosted ? 1.08 : 1);
     }
+    [pulse.current, pulseEcho.current].forEach((ring, index) => {
+      if (!ring) return;
+      const elapsed = active ? (clock.elapsedTime - pulseStarted.current + index * 0.48) % 1.35 : -1;
+      const progress = elapsed / 1.35;
+      ring.visible = progress >= 0;
+      if (progress < 0) return;
+      ring.scale.setScalar(0.9 + progress * 2.1);
+      (ring.material as MeshBasicMaterial).opacity = (1 - progress) * (index === 0 ? 0.82 : 0.48);
+    });
   });
 
   const scanOpacity = driveState === 'drive' ? 0.92 : active ? 0.72 : 0.5;
@@ -189,6 +204,8 @@ function HomeCoreTelemetry({ active, driveState, motionEnabled }: { active: bool
         <mesh scale={2.2}><ringGeometry args={[0.05, 0.075, 16]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={scanOpacity * 0.4} blending={AdditiveBlending} depthWrite={false} /></mesh>
       </group>)}
     </group>
+    <mesh ref={pulse} rotation={[0.92, 0.18, 0]} visible={false}><torusGeometry args={[1.08, 0.018, 8, 64]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={0} blending={AdditiveBlending} depthWrite={false} /></mesh>
+    <mesh ref={pulseEcho} rotation={[-0.46, 0.7, 0.28]} visible={false}><torusGeometry args={[1.08, 0.011, 8, 64]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={0} blending={AdditiveBlending} depthWrite={false} /></mesh>
   </group>;
 }
 
