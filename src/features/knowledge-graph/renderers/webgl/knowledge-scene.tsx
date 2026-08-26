@@ -152,10 +152,9 @@ function HomeCoreTelemetry({ active, driveState, motionEnabled }: { active: bool
   const outerScan = useRef<Group>(null);
   const innerScan = useRef<Group>(null);
   const orbit = useRef<Group>(null);
-  useFrame(({ clock, pointer }) => {
+  useFrame(({ clock }) => {
     if (!motionEnabled) return;
-    const pointerNearCore = Math.hypot(pointer.x, pointer.y) < 0.3;
-    const boosted = active || pointerNearCore || driveState === 'ready' || driveState === 'compress' || driveState === 'drive';
+    const boosted = active || driveState === 'ready' || driveState === 'compress' || driveState === 'drive';
     const scanSpeed = boosted ? 0.0028 : 0.0011;
     if (outerScan.current) {
       outerScan.current.rotation.z += scanSpeed;
@@ -193,7 +192,7 @@ function HomeCoreTelemetry({ active, driveState, motionEnabled }: { active: bool
   </group>;
 }
 
-function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, onHover, variant, driveState, mobile, selectedIds, hoveredId }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; onHover: (active: boolean) => void; variant: 'home' | 'explorer'; driveState: KnowledgeDriveState; mobile: boolean; selectedIds: Set<string>; hoveredId: string | null }) {
+function KnowledgeCore({ position, active, homeCoreHovered, mode, motionEnabled, onSelect, onHover, variant, driveState, mobile, selectedIds, hoveredId }: { position: Position; active: boolean; homeCoreHovered: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; onHover: (active: boolean) => void; variant: 'home' | 'explorer'; driveState: KnowledgeDriveState; mobile: boolean; selectedIds: Set<string>; hoveredId: string | null }) {
   const explorer = variant === 'explorer';
   const core = useRef<Group | null>(null);
   const computeCore = useRef<Group | null>(null);
@@ -274,7 +273,7 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, onHove
   const hotWireOpacity = driveState === 'drive' ? 1 : driveState === 'ready' ? 0.8 : explorer ? 0.72 : 0.68;
   return <group ref={core} position={position} scale={variant === 'home' ? mobile ? 1.1 : 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }} onPointerOver={(event: ThreeEvent<PointerEvent>) => { if (variant === 'home' && !mobile && event.nativeEvent.pointerType === 'mouse') { event.stopPropagation(); onHover(true); } }} onPointerOut={() => { if (variant === 'home') onHover(false); }}>
     <CoreHalo mobile={mobile} variant={variant} />
-    {variant === 'home' && <HomeCoreTelemetry active={active} driveState={driveState} motionEnabled={motionEnabled} />}
+    {variant === 'home' && <HomeCoreTelemetry active={active || homeCoreHovered} driveState={driveState} motionEnabled={motionEnabled} />}
     {/* Outer shell — dark steel-blue */}
     <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={new Color(cShell)} emissive={new Color(cEnergy)} emissiveIntensity={shellEmissive} transparent opacity={shellOpacity} roughness={0.14} metalness={0.78} /></mesh>
     {/* Wireframe mid structure */}
@@ -536,7 +535,7 @@ function EnergyPulse({ from, to, trigger }: { from: Position; to: Position; trig
   return <mesh ref={pulse} position={from}><sphereGeometry args={[0.055, 10, 10]} /><meshBasicMaterial color={starkGraph.edge.active} transparent opacity={0} depthWrite={false} blending={AdditiveBlending} /></mesh>;
 }
 
-function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNodeIds, graph, variant, motionEnabled, driveState, mobile }: { onSelect: (id: string) => void; mode: 'explore' | 'architect'; selectedIds: Set<string>; pathEdgeKeys: Set<string>; pathNodeIds: Set<string>; graph: GraphData; variant: 'home' | 'explorer'; motionEnabled: boolean; driveState: KnowledgeDriveState; mobile: boolean }) {
+function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNodeIds, graph, variant, motionEnabled, driveState, mobile, homeCoreHovered }: { onSelect: (id: string) => void; mode: 'explore' | 'architect'; selectedIds: Set<string>; pathEdgeKeys: Set<string>; pathNodeIds: Set<string>; graph: GraphData; variant: 'home' | 'explorer'; motionEnabled: boolean; driveState: KnowledgeDriveState; mobile: boolean; homeCoreHovered: boolean }) {
   const { nodes, edges, positions, coreId } = useMemo(() => {
     const degree = new Map<string, number>();
     graph.edges.forEach(edge => { degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1); degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1); });
@@ -659,7 +658,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
     {/* Energy transmission pulse */}
     {explorer && <EnergyPulse from={[0, 0, 0]} to={energyPulseTarget} trigger={energyPulseTrigger} />}
     {visibleNodes.map(node => node.id === coreId
-      ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} onHover={active => setHoveredId(active ? node.id : null)} variant={variant} driveState={driveState} mobile={mobile} selectedIds={selectedIds} hoveredId={hoveredId} />
+      ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} homeCoreHovered={homeCoreHovered} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} onHover={active => setHoveredId(active ? node.id : null)} variant={variant} driveState={driveState} mobile={mobile} selectedIds={selectedIds} hoveredId={hoveredId} />
       : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} mode={mode} motionEnabled={motionEnabled} anticipating={driveState === 'ready'} pointerResponsive={!mobile} connectedToCore={connectedToCore.has(node.id)} />)}
     {focusedNode && <SpatialAnnotation node={focusedNode} position={positions.get(focusedNode.id)!} relationCount={focusedRelations.length} primary />}
     {focusedRelations.slice(0, 3).map(edge => {
@@ -677,6 +676,7 @@ export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onU
   const [isPageVisible, setIsPageVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [mobile, setMobile] = useState(false);
+  const [homeCoreHovered, setHomeCoreHovered] = useState(false);
   const graph = useMemo(() => graphData ?? getFullGraph(), [graphData]);
   const focusPosition = useMemo(() => {
     if (!focusId) return null;
@@ -707,10 +707,16 @@ export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onU
     document.addEventListener('visibilitychange', updateVisibility);
     return () => { observer.disconnect(); media.removeEventListener('change', updateMotion); mediaMobile.removeEventListener('change', updateMobile); document.removeEventListener('visibilitychange', updateVisibility); };
   }, []);
-  return <div ref={hostRef} className={className} aria-label="Visualização espacial do conhecimento">
+  return <div ref={hostRef} className={className} aria-label="Visualização espacial do conhecimento" onPointerMove={event => {
+    if (variant !== 'home' || mobile || event.pointerType !== 'mouse') return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - bounds.left - bounds.width / 2) / (bounds.width / 2);
+    const y = (event.clientY - bounds.top - bounds.height / 2) / (bounds.height / 2);
+    setHomeCoreHovered(Math.hypot(x, y) < 0.42);
+  }} onPointerLeave={() => setHomeCoreHovered(false)}>
     <Canvas frameloop={isVisible && isPageVisible ? 'always' : 'never'} camera={{ position: variant === 'home' ? [0, 0, mobile ? 8.2 : 5.8] : [0, 0, 13], fov: 46 }} dpr={reducedMotion || mobile ? [1, 1] : dpr} gl={{ antialias: !mobile && quality !== 'low', alpha: true }} onPointerMissed={onEmptySpace} onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onUnavailable?.(); }, { once: true })}>
       <fog attach="fog" args={[mode === 'architect' ? (variant === 'explorer' ? starkGraph.environment.fogArchitect : '#101A29') : (variant === 'explorer' ? starkGraph.environment.fogExplore : horizonScene.environment.fog), 8, 22]} />
-      <KnowledgeUniverse graph={graph} variant={variant} mode={mode} motionEnabled={!reducedMotion} driveState={driveState} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} mobile={mobile} />
+      <KnowledgeUniverse graph={graph} variant={variant} mode={mode} motionEnabled={!reducedMotion} driveState={driveState} onSelect={onNodeSelect ?? (() => {})} selectedIds={new Set(selectedIds)} pathNodeIds={new Set(pathNodeIds)} pathEdgeKeys={new Set(pathEdgeKeys)} mobile={mobile} homeCoreHovered={homeCoreHovered} />
       {!reducedMotion && <CameraFocus target={focusPosition} overviewVersion={overviewVersion} variant={variant} mobile={mobile} driveState={driveState} reducedMotion={reducedMotion} />}
       <OrbitControls enabled={variant === 'explorer' && !focusId && !reducedMotion} enablePan enableZoom enableRotate touches={{ ONE: TOUCH.PAN, TWO: TOUCH.DOLLY_ROTATE }} minDistance={6} maxDistance={22} maxPolarAngle={Math.PI * 0.65} minPolarAngle={Math.PI * 0.35} />
     </Canvas>
