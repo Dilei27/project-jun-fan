@@ -148,7 +148,46 @@ function CoreHalo({ mobile, variant }: { mobile: boolean; variant: 'home' | 'exp
   </>;
 }
 
-function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, variant, driveState, mobile, selectedIds, hoveredId }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; variant: 'home' | 'explorer'; driveState: KnowledgeDriveState; mobile: boolean; selectedIds: Set<string>; hoveredId: string | null }) {
+function HomeCoreTelemetry({ active, driveState, motionEnabled }: { active: boolean; driveState: KnowledgeDriveState; motionEnabled: boolean }) {
+  const outerScan = useRef<Group>(null);
+  const innerScan = useRef<Group>(null);
+  const orbit = useRef<Group>(null);
+  useFrame(({ clock }) => {
+    if (!motionEnabled) return;
+    const boosted = active || driveState === 'ready' || driveState === 'compress' || driveState === 'drive';
+    const scanSpeed = boosted ? 0.0028 : 0.0011;
+    if (outerScan.current) {
+      outerScan.current.rotation.z += scanSpeed;
+      outerScan.current.rotation.y = Math.sin(clock.elapsedTime * 0.38) * 0.14;
+    }
+    if (innerScan.current) {
+      innerScan.current.rotation.z -= scanSpeed * 1.6;
+      innerScan.current.rotation.x = 0.62 + Math.cos(clock.elapsedTime * 0.44) * 0.08;
+    }
+    if (orbit.current) orbit.current.rotation.z -= scanSpeed * 2.2;
+  });
+
+  const scanOpacity = driveState === 'drive' ? 0.92 : active ? 0.72 : 0.5;
+  return <group>
+    <group ref={outerScan} rotation={[0.22, 0.18, 0]}>
+      <mesh><torusGeometry args={[3.1, 0.009, 6, 72, Math.PI * 0.34]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={scanOpacity} blending={AdditiveBlending} depthWrite={false} /></mesh>
+      <mesh rotation={[0, 0, 1.42]}><torusGeometry args={[3.1, 0.009, 6, 72, Math.PI * 0.18]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={scanOpacity * 0.78} blending={AdditiveBlending} depthWrite={false} /></mesh>
+      <mesh rotation={[0, 0, 3.28]}><torusGeometry args={[3.1, 0.006, 6, 72, Math.PI * 0.12]} /><meshBasicMaterial color={horizonScene.core.accent} transparent opacity={scanOpacity * 0.68} blending={AdditiveBlending} depthWrite={false} /></mesh>
+    </group>
+    <group ref={innerScan} rotation={[0.62, -0.4, 0.3]}>
+      <mesh><torusGeometry args={[2.56, 0.011, 6, 64, Math.PI * 0.26]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={scanOpacity * 0.86} blending={AdditiveBlending} depthWrite={false} /></mesh>
+      <mesh rotation={[0, 0, 2.22]}><torusGeometry args={[2.56, 0.007, 6, 64, Math.PI * 0.16]} /><meshBasicMaterial color={horizonScene.core.hot} transparent opacity={scanOpacity * 0.62} blending={AdditiveBlending} depthWrite={false} /></mesh>
+    </group>
+    <group ref={orbit} rotation={[0.12, -0.34, 0]}>
+      {[[2.82, 0.08], [-1.42, 2.42], [-1.4, -2.4]].map(([x, y], index) => <group key={index} position={[x, y, 0.2]}>
+        <mesh><sphereGeometry args={[0.052, 10, 10]} /><meshBasicMaterial color={index === 1 ? horizonScene.core.hot : horizonScene.core.energy} transparent opacity={scanOpacity} blending={AdditiveBlending} depthWrite={false} /></mesh>
+        <mesh scale={2.2}><ringGeometry args={[0.05, 0.075, 16]} /><meshBasicMaterial color={horizonScene.core.energy} transparent opacity={scanOpacity * 0.4} blending={AdditiveBlending} depthWrite={false} /></mesh>
+      </group>)}
+    </group>
+  </group>;
+}
+
+function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, onHover, variant, driveState, mobile, selectedIds, hoveredId }: { position: Position; active: boolean; mode: 'explore' | 'architect'; motionEnabled: boolean; onSelect: () => void; onHover: (active: boolean) => void; variant: 'home' | 'explorer'; driveState: KnowledgeDriveState; mobile: boolean; selectedIds: Set<string>; hoveredId: string | null }) {
   const explorer = variant === 'explorer';
   const core = useRef<Group | null>(null);
   const computeCore = useRef<Group | null>(null);
@@ -227,8 +266,9 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, varian
     : driveState === 'drive' ? 1.45 : driveState === 'ready' ? 0.54 : explorer ? 0.42 : 0.36;
   const innerOpacity = mode === 'architect' ? 0.9 : explorer ? 0.8 : 0.76;
   const hotWireOpacity = driveState === 'drive' ? 1 : driveState === 'ready' ? 0.8 : explorer ? 0.72 : 0.68;
-  return <group ref={core} position={position} scale={variant === 'home' ? mobile ? 1.1 : 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }}>
+  return <group ref={core} position={position} scale={variant === 'home' ? mobile ? 1.1 : 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }} onPointerOver={(event: ThreeEvent<PointerEvent>) => { if (!mobile && event.nativeEvent.pointerType === 'mouse') { event.stopPropagation(); onHover(true); } }} onPointerOut={() => onHover(false)}>
     <CoreHalo mobile={mobile} variant={variant} />
+    {variant === 'home' && <HomeCoreTelemetry active={active} driveState={driveState} motionEnabled={motionEnabled} />}
     {/* Outer shell — dark steel-blue */}
     <mesh><dodecahedronGeometry args={[0.62, 0]} /><meshStandardMaterial color={new Color(cShell)} emissive={new Color(cEnergy)} emissiveIntensity={shellEmissive} transparent opacity={shellOpacity} roughness={0.14} metalness={0.78} /></mesh>
     {/* Wireframe mid structure */}
@@ -613,7 +653,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
     {/* Energy transmission pulse */}
     {explorer && <EnergyPulse from={[0, 0, 0]} to={energyPulseTarget} trigger={energyPulseTrigger} />}
     {visibleNodes.map(node => node.id === coreId
-      ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} variant={variant} driveState={driveState} mobile={mobile} selectedIds={selectedIds} hoveredId={hoveredId} />
+      ? <KnowledgeCore key={node.id} position={positions.get(node.id)!} active={selectedIds.size > 0 || Boolean(hoveredId)} mode={mode} motionEnabled={motionEnabled} onSelect={() => onSelect(node.id)} onHover={active => setHoveredId(active ? node.id : null)} variant={variant} driveState={driveState} mobile={mobile} selectedIds={selectedIds} hoveredId={hoveredId} />
       : <SceneNode key={node.id} node={node} position={positions.get(node.id)!} selected={selectedIds.has(node.id) || pathNodeIds.has(node.id)} hovered={hoveredId === node.id} onHover={active => setHoveredId(active ? node.id : null)} onSelect={() => onSelect(node.id)} variant={variant} mode={mode} motionEnabled={motionEnabled} anticipating={driveState === 'ready'} pointerResponsive={!mobile} connectedToCore={connectedToCore.has(node.id)} />)}
     {focusedNode && <SpatialAnnotation node={focusedNode} position={positions.get(focusedNode.id)!} relationCount={focusedRelations.length} primary />}
     {focusedRelations.slice(0, 3).map(edge => {
