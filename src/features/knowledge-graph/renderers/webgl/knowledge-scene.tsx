@@ -272,7 +272,7 @@ function KnowledgeCore({ position, active, mode, motionEnabled, onSelect, onHove
     : driveState === 'drive' ? 1.45 : driveState === 'ready' ? 0.54 : explorer ? 0.42 : 0.36;
   const innerOpacity = mode === 'architect' ? 0.9 : explorer ? 0.8 : 0.76;
   const hotWireOpacity = driveState === 'drive' ? 1 : driveState === 'ready' ? 0.8 : explorer ? 0.72 : 0.68;
-  return <group ref={core} position={position} scale={variant === 'home' ? mobile ? 1.1 : 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }} onPointerOver={(event: ThreeEvent<PointerEvent>) => { if (!mobile && event.nativeEvent.pointerType === 'mouse') { event.stopPropagation(); onHover(true); } }} onPointerOut={() => onHover(false)}>
+  return <group ref={core} position={position} scale={variant === 'home' ? mobile ? 1.1 : 10 : 1.45} onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); onSelect(); }} onPointerOver={(event: ThreeEvent<PointerEvent>) => { if (variant === 'home' && !mobile && event.nativeEvent.pointerType === 'mouse') { event.stopPropagation(); onHover(true); } }} onPointerOut={() => { if (variant === 'home') onHover(false); }}>
     <CoreHalo mobile={mobile} variant={variant} />
     {variant === 'home' && <HomeCoreTelemetry active={active} driveState={driveState} motionEnabled={motionEnabled} />}
     {/* Outer shell — dark steel-blue */}
