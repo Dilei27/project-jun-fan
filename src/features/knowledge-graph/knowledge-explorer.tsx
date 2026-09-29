@@ -46,6 +46,8 @@ const FILTER_TYPES = [
   'decision', 'doc', 'timeline', 'metric', 'technology', 'lab', 'skill',
 ] as const;
 
+const INITIAL_FOCUS_ID = 'product-qa-command-center';
+
 type StoryPhase = 'idle' | 'clusters' | 'connections' | 'done';
 
 function getNodeLabel(node: GraphNode, identity: ReturnType<typeof getNodeIdentity>, r: number): string {
@@ -102,6 +104,7 @@ export function KnowledgeExplorer({ initialQuery }: { initialQuery?: string } = 
   /* ─── Exploration Engine ─── */
   const exploration = useExploration(data.nodes, data.edges);
   const { state: engineState } = exploration;
+  const initialFocusApplied = useRef(false);
   const selectedNode = useMemo(
     () => engineState.currentId ? data.nodes.find(n => n.id === engineState.currentId) ?? null : null,
     [engineState.currentId, data.nodes],
@@ -111,6 +114,19 @@ export function KnowledgeExplorer({ initialQuery }: { initialQuery?: string } = 
   useLayoutEffect(() => {
     exploration.setFilter('types', activeFilters as unknown as string[])
   }, [activeFilters, exploration]);
+
+  useEffect(() => {
+    if (!initialFocusApplied.current && data.nodes.some(node => node.id === INITIAL_FOCUS_ID)) {
+      exploration.selectNode(INITIAL_FOCUS_ID);
+      // Selection provides orientation; it must not turn the first frame
+      // into a product-only cluster view.
+      exploration.focusCluster(null);
+      // Keep the semantic focus while presenting the full public ecosystem.
+      // The first frame must not collapse into QA's one-hop neighborhood.
+      exploration.expandAll(3);
+      initialFocusApplied.current = true;
+    }
+  }, [data.nodes, exploration]);
 
   /* ─── Live simulation (Obsidian-style physics) ─── */
   const [positions, setPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
@@ -947,8 +963,11 @@ export function KnowledgeExplorer({ initialQuery }: { initialQuery?: string } = 
             const isSecondary = selectedSecondary?.id === node.id;
             const isOnPath = pathData?.nodeIds.includes(node.id) ?? false;
             const isHovered = hoveredNode?.id === node.id;
-            const isDimmedBySelection = (selectedNode && !isSelected && !oneHopData.neighbors.has(node.id) && !isOnPath) ||
-              (selectedSecondary && !isSecondary && !oneHopData.neighbors.has(node.id) && !isOnPath);
+            const isEcosystemAnchor = node.type === 'product' || node.type === 'project';
+            const isDimmedBySelection = !isEcosystemAnchor && (
+              (selectedNode && !isSelected && !oneHopData.neighbors.has(node.id) && !isOnPath) ||
+              (selectedSecondary && !isSecondary && !oneHopData.neighbors.has(node.id) && !isOnPath)
+            );
             const isDimmedByHover = !selectedNode && !selectedSecondary && !!hoveredNode && !isHovered && !hoverConnections.neighbors.has(node.id);
             const isDimmed = isDimmedBySelection || isDimmedByHover;
             const isNeighbor = !isHovered && !isDimmed && !!hoveredNode && hoverConnections.neighbors.has(node.id);

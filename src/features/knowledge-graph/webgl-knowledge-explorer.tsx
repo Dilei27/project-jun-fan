@@ -13,7 +13,7 @@ const KnowledgeScene = dynamic(() => import('./renderers/webgl/knowledge-scene')
 
 export function WebGLKnowledgeExplorer({ onUseSvg }: { onUseSvg: (query?: string) => void }) {
   const graph = useMemo(() => getFullGraph(), []);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>('product-qa-command-center');
   const [secondaryId, setSecondaryId] = useState<string | null>(null);
   const [overviewVersion, setOverviewVersion] = useState(0);
   const [mode, setMode] = useState<'explore' | 'architect'>('explore');

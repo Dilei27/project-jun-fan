@@ -8,6 +8,7 @@ import { motion as m } from '@/design-system/motion';
 import { PROFILE } from '@/features/engineering-profile/data/profile';
 import { useLanguage } from '@/i18n/language-context';
 import type { TranslationKey } from '@/i18n/translations';
+import { currentVersionLabel } from '@/config/version';
 
 const footerLabelKeys: Record<string, TranslationKey> = {
   '/command-center/': 'nav.commandCenter',
@@ -86,7 +87,7 @@ export function Footer() {
           <p>Project Jun Fan - {t('footer.tagline')}</p>
           <span aria-hidden className="hidden sm:inline opacity-30">·</span>
           <span className="inline-flex items-center gap-1 tabular-nums">
-            <span>v2.0.0</span>
+            <span>version {currentVersionLabel}</span>
             <span aria-hidden className="opacity-30">·</span>
             <span>{t('footer.phase')}</span>
           </span>

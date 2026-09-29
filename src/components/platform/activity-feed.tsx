@@ -45,21 +45,21 @@ export function ActivityFeed({ compact = false }: { compact?: boolean }) {
       const productCount = nodeStats.byType['product'] ?? 0;
 
       return [
-        { type: 'sync', label: 'Knowledge synchronized', time: '2 min atrás' },
-        { type: 'graph', label: `Graph updated — ${edgeStats.total} connections across ${nodeStats.totalNodes} nodes`, time: '15 min atrás' },
-        { type: 'decision', label: `${decisionCount} architecture decisions indexed`, time: '1h atrás' },
-        { type: 'metrics', label: `QA metrics refreshed — ${productCount} products`, time: '2h atrás' },
-        { type: 'docs', label: `Documentation indexed — ${docCount} docs`, time: '3h atrás' },
-        { type: 'pipeline', label: 'Pipeline completed — suite regressão', time: '4h atrás' },
+        { type: 'sync', label: 'Knowledge snapshot loaded', time: 'static snapshot' },
+        { type: 'graph', label: `Graph snapshot — ${edgeStats.total} connections across ${nodeStats.totalNodes} nodes`, time: 'static snapshot' },
+        { type: 'decision', label: `${decisionCount} architecture decisions indexed`, time: 'static snapshot' },
+        { type: 'metrics', label: `QA metrics snapshot — ${productCount} products`, time: 'static snapshot' },
+        { type: 'docs', label: `Documentation snapshot — ${docCount} docs`, time: 'static snapshot' },
+        { type: 'pipeline', label: 'Pipeline example — suite regressão', time: 'static snapshot' },
       ];
     } catch {
       return [
-        { type: 'sync', label: 'Knowledge synchronized', time: '2 min atrás' },
-        { type: 'graph', label: 'Graph updated — 3 new connections', time: '15 min atrás' },
-        { type: 'decision', label: 'Architecture decision created — ADR-004', time: '1h atrás' },
-        { type: 'metrics', label: 'QA metrics refreshed', time: '2h atrás' },
-        { type: 'docs', label: 'Documentation indexed — 2 new docs', time: '3h atrás' },
-        { type: 'pipeline', label: 'Pipeline completed — suite regressão', time: '4h atrás' },
+        { type: 'sync', label: 'Knowledge snapshot loaded', time: 'static snapshot' },
+        { type: 'graph', label: 'Graph snapshot — 3 example connections', time: 'static snapshot' },
+        { type: 'decision', label: 'Architecture decision example — ADR-004', time: 'static snapshot' },
+        { type: 'metrics', label: 'QA metrics snapshot', time: 'static snapshot' },
+        { type: 'docs', label: 'Documentation snapshot — 2 docs', time: 'static snapshot' },
+        { type: 'pipeline', label: 'Pipeline example — suite regressão', time: 'static snapshot' },
       ];
     }
   });
@@ -74,7 +74,7 @@ export function ActivityFeed({ compact = false }: { compact?: boolean }) {
       <div className="flex items-center gap-2 mb-3">
         <Activity size={13} className="text-text-muted" />
         <h3 className="text-xs font-semibold text-text-primary">Activity Feed</h3>
-        {!compact && <span className="text-[9px] text-text-muted/50 ml-auto">Live</span>}
+        <span className="text-[9px] text-text-muted/50 ml-auto">Static snapshot</span>
       </div>
 
       <div className="space-y-2">

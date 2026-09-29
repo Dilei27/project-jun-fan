@@ -9,6 +9,7 @@ import {
 import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter';
 import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository';
 import { getNodeStatistics, getEdgeStatistics, getModuleStatistics } from '@/core/knowledge/services/statistics-service';
+import { currentVersionLabel } from '@/config/version';
 
 function useEngineStats() {
   return useMemo(() => {
@@ -30,7 +31,7 @@ function useEngineStats() {
       decisions: decisionCount,
       modules: moduleStats.totalModules,
       health: Math.max(healthyPercent, 75),
-      version: 'v2.0.0',
+      version: currentVersionLabel,
     };
   }, []);
 }
@@ -40,8 +41,8 @@ const moduleLabels: Record<string, string> = {
   relations: 'Conexões ativas',
   decisions: 'ADRs indexadas',
   modules: 'Módulos operacionais',
-  health: 'Saúde do sistema',
-  version: 'Engine version',
+  health: 'Saúde do conteúdo',
+  version: 'Current version',
 };
 
 export function EngineBar() {

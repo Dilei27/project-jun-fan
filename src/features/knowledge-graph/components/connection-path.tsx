@@ -23,7 +23,7 @@ interface ConnectionPathProps {
 
 const INTENSITY_CONFIG = {
   dim: { strokeWidth: 0.5, opacity: 0.08, dash: undefined as string | undefined, duration: 800, glow: false },
-  normal: { strokeWidth: 0.75, opacity: 0.25, dash: undefined, duration: 800, glow: false },
+  normal: { strokeWidth: 0.9, opacity: 0.38, dash: undefined, duration: 800, glow: false },
   highlight: { strokeWidth: 1.5, opacity: 0.7, dash: undefined, duration: 400, glow: true },
   path: { strokeWidth: 2, opacity: 0.9, dash: '5 3', duration: 400, glow: true },
 } as const;

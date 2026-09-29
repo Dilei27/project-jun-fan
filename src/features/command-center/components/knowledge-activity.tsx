@@ -7,11 +7,11 @@ import Link from 'next/link';
 type ActivityType = 'node' | 'connection' | 'update';
 
 const activities: { type: ActivityType; label: string; time: string; color: string }[] = [
-  { type: 'node', label: 'Novo produto: Vigilante AI', time: '1h atrás', color: '#4F8CFF' },
-  { type: 'connection', label: 'Nova conexão: QA CC → WhatsApp AI', time: '3h atrás', color: '#22C55E' },
-  { type: 'update', label: 'Atualização: ADR-003 (Database)', time: '5h atrás', color: '#EAB308' },
-  { type: 'node', label: 'Novo nó: Skill — Playwright', time: '8h atrás', color: '#4F8CFF' },
-  { type: 'connection', label: 'Nova conexão: Docs → Architecture Flow', time: '12h atrás', color: '#22C55E' },
+  { type: 'node', label: 'Produto catalogado: Vigilante AI', time: 'static snapshot', color: '#4F8CFF' },
+  { type: 'connection', label: 'Relação catalogada: QA CC → WhatsApp AI', time: 'static snapshot', color: '#22C55E' },
+  { type: 'update', label: 'Decisão catalogada: ADR-003 (Database)', time: 'static snapshot', color: '#EAB308' },
+  { type: 'node', label: 'Skill catalogada: Playwright', time: 'static snapshot', color: '#4F8CFF' },
+  { type: 'connection', label: 'Relação catalogada: Docs → Architecture Flow', time: 'static snapshot', color: '#22C55E' },
 ];
 
 const activityIcons: Record<ActivityType, typeof Plus> = {
@@ -37,7 +37,7 @@ export function KnowledgeActivity() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <GitBranch size={14} className="text-text-muted" />
-            <h3 className="text-sm font-semibold text-text-primary">Knowledge Activity</h3>
+            <h3 className="text-sm font-semibold text-text-primary">Knowledge Activity <span className="text-[9px] font-normal text-text-muted/60">· Static snapshot</span></h3>
           </div>
           <Link
             href="/knowledge-graph/"

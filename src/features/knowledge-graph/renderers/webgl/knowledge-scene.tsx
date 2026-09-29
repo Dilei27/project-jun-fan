@@ -556,7 +556,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
   const { nodes, edges, positions, coreId } = useMemo(() => {
     const degree = new Map<string, number>();
     graph.edges.forEach(edge => { degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1); degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1); });
-    const coreId = variant === 'home' && graph.nodes.some(node => node.id === 'product-qa-command-center')
+    const coreId = graph.nodes.some(node => node.id === 'product-qa-command-center')
       ? 'product-qa-command-center'
       : [...graph.nodes].sort((a, b) => (degree.get(b.id) ?? 0) - (degree.get(a.id) ?? 0))[0]?.id;
     const positions = new Map<string, Position>();
@@ -607,7 +607,7 @@ function KnowledgeUniverse({ onSelect, mode, selectedIds, pathEdgeKeys, pathNode
   const focusedRelations = focusedNode
     ? edges.filter(edge => edge.source === focusedNode.id || edge.target === focusedNode.id)
     : [];
-  const focusedNodeIds = new Set(focusedRelations.map(e => e.source === focusedNode?.id ? e.target : e.source));
+
   const visibleNodes = variant === 'home' ? (revealThreshold >= 1 ? nodes : nodes.filter((node, index) => node.id === coreId || (mobile && index >= 5 ? false : revealThreshold > (mobile ? 0.1 : 0.02) + index * (mobile ? 0.14 : 0.11)))) : nodes;
   const visibleNodeIds = new Set(visibleNodes.map(node => node.id));
   // Connected to core map
@@ -695,18 +695,27 @@ export function KnowledgeScene({ className = '', onNodeSelect, onEmptySpace, onU
   const [mobile, setMobile] = useState(false);
   const [homeCoreHovered, setHomeCoreHovered] = useState(false);
   const graph = useMemo(() => graphData ?? getFullGraph(), [graphData]);
+  const graphCoreId = useMemo(() => {
+    const degree = new Map<string, number>();
+    graph.edges.forEach(edge => {
+      degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1);
+      degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1);
+    });
+    return [...graph.nodes].sort((a, b) => (degree.get(b.id) ?? 0) - (degree.get(a.id) ?? 0))[0]?.id ?? null;
+  }, [graph]);
   const focusPosition = useMemo(() => {
     if (!focusId) return null;
     const index = graph.nodes.findIndex(node => node.id === focusId);
     if (index < 0) return null;
-    const homeCoreIndex = graph.nodes.findIndex(node => node.id === 'product-qa-command-center');
-    if (variant === 'home' && index === homeCoreIndex) return [0, 0, 0] as Position;
-    const rank = variant === 'home' ? index - (index > homeCoreIndex ? 1 : 0) : index;
+    const coreId = variant === 'home' ? 'product-qa-command-center' : graphCoreId;
+    const coreIndex = graph.nodes.findIndex(node => node.id === coreId);
+    if (index === coreIndex) return [0, 0, 0] as Position;
+    const rank = index - (index > coreIndex ? 1 : 0);
     const angle = rank * 2.399963;
     const degree = graph.edges.filter(edge => edge.source === focusId || edge.target === focusId).length;
     const radius = variant === 'home' ? mobile ? 4.4 + Math.sqrt(Math.max(rank, 0)) * 0.35 : 15 + Math.sqrt(Math.max(rank, 0)) * 1.5 : 2.2 + Math.sqrt(index) * 0.58;
     return [Math.cos(angle) * radius, Math.sin(angle) * radius * 0.6, Math.min(2.8, Math.max(-2.8, (degree - 2) * -0.16 + Math.sin(index * 1.7)))] as Position;
-  }, [focusId, graph, mobile, variant]);
+  }, [focusId, graph, graphCoreId, mobile, variant]);
   const dpr: [number, number] = quality === 'low' ? [1, 1] : quality === 'ultra' ? [1, 2] : [1, 1.75];
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');

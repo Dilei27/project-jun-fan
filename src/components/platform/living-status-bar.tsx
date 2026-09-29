@@ -100,8 +100,8 @@ export function LivingStatusBar() {
           >
             <Wifi size={8} className={syncStatus === 'synced' ? 'text-success/60' : syncStatus === 'error' ? 'text-danger/60' : 'text-text-muted/40'} />
           </motion.div>
-          <span className="text-[8px] text-text-muted/40 font-medium">
-            {syncStatus === 'synced' ? 'Sincronizado' : syncStatus === 'syncing' ? 'Sincronizando' : 'Erro'}
+          <span className="text-[8px] text-text-muted/40 font-medium" title="Dados locais estáticos; sem fonte operacional live">
+            {syncStatus === 'synced' ? 'Dados locais' : syncStatus === 'syncing' ? 'Preparando dados' : 'Erro'}
           </span>
         </div>
 

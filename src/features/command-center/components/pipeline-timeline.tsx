@@ -12,16 +12,16 @@ const pipelineStatus = {
   success: 97,
   failed: 3,
   running: true,
-  lastRun: '2 min atrás',
+  lastRun: 'static snapshot',
   commits: 284,
 };
 
 const recentExecutions = [
-  { status: 'success', label: 'Deploy v2.4.1 — produção', time: '2h atrás', actor: 'CI/CD' },
-  { status: 'success', label: 'Execução #482 — suite regressão', time: '4h atrás', actor: 'QA Bot' },
-  { status: 'failed', label: 'Edge test — timeout em busca CNPJ', time: '6h atrás', actor: 'Vigilante AI' },
-  { status: 'success', label: 'Deploy v2.4.0 — staging', time: '8h atrás', actor: 'CI/CD' },
-  { status: 'success', label: 'Execução #481 — smoke tests', time: '10h atrás', actor: 'QA Bot' },
+  { status: 'success', label: 'Deploy example — produção', time: 'static snapshot', actor: 'CI/CD' },
+  { status: 'success', label: 'Execução example — suite regressão', time: 'static snapshot', actor: 'QA Bot' },
+  { status: 'failed', label: 'Edge test example — timeout em busca CNPJ', time: 'static snapshot', actor: 'Vigilante AI' },
+  { status: 'success', label: 'Deploy example — staging', time: 'static snapshot', actor: 'CI/CD' },
+  { status: 'success', label: 'Execução example — smoke tests', time: 'static snapshot', actor: 'QA Bot' },
 ] as const;
 
 export function PipelineTimeline({ limit = 4 }: PipelineTimelineProps) {
@@ -45,7 +45,7 @@ export function PipelineTimeline({ limit = 4 }: PipelineTimelineProps) {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <GitPullRequest size={14} className="text-text-muted" />
-              <h3 className="text-sm font-semibold text-text-primary">Pipeline Health</h3>
+              <h3 className="text-sm font-semibold text-text-primary">Pipeline Health <span className="text-[9px] font-normal text-text-muted/60">· Static snapshot</span></h3>
             </div>
             <span className="text-[10px] text-text-muted/60 font-mono">{pipelineStatus.lastRun}</span>
           </div>
@@ -85,7 +85,7 @@ export function PipelineTimeline({ limit = 4 }: PipelineTimelineProps) {
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                 className="w-1.5 h-1.5 rounded-full bg-accent-qa"
               />
-              <span className="text-[11px] text-accent-qa font-medium">Pipeline em execução — suite de regressão</span>
+              <span className="text-[11px] text-accent-qa font-medium">Estado de pipeline demonstrativo — suite de regressão</span>
             </div>
           )}
 

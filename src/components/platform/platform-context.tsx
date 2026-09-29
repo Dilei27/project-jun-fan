@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useCallback, useMemo, type ReactNo
 import { MockAdapter } from '@/core/knowledge/adapters/mock-adapter';
 import { KnowledgeRepository } from '@/core/knowledge/repositories/knowledge-repository';
 import { getNodeStatistics, getEdgeStatistics } from '@/core/knowledge/services/statistics-service';
+import { currentVersionLabel } from '@/config/version';
 
 export interface BreadcrumbItem {
   label: string
@@ -150,7 +151,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       navigationHistory,
       pushHistory,
       environment: 'production',
-      version: '0.1.0',
+      version: currentVersionLabel,
       syncStatus: 'synced',
     }),
     [
