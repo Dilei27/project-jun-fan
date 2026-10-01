@@ -16,7 +16,14 @@ export default function ProjectsPage() {
       </Link>
 
       <h1 className="text-3xl font-extrabold text-text-primary mb-2">Projetos</h1>
-      <p className="text-text-secondary mb-8 max-w-xl">Projetos de automação, QA e IA aplicada que construíram o ecossistema.</p>
+      <p className="text-text-secondary mb-4 max-w-xl">Projetos de automação, QA e IA aplicada que construíram o ecossistema.</p>
+      <Link
+        href="/projetos-qa/"
+        className="inline-flex items-center gap-2 mb-8 text-sm text-accent-qa hover:text-text-primary transition-colors"
+      >
+        <span>Explorar projetos históricos de QA</span>
+        <ArrowLeft size={14} className="rotate-180" />
+      </Link>
 
       <ProjectGrid />
     </PageEntry>

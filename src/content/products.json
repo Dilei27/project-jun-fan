@@ -67,7 +67,7 @@
     "architectureFlow": "Contexto -> Contratos -> Descoberta -> Validação -> Evidência -> Saúde",
     "metrics": {"private_repository": 1, "local_source": 1},
     "roadmap": ["Evoluir contratos", "Ampliar adapters", "Consolidar quality health"],
-    "links": {"repo": "https://github.com/Dilei27/quality-engine-v2"}
+    "links": {"docs": "/docs/quality-engine-v2-preview/"}
   },
   {
     "id": "qa-command-center-ia-v0",
@@ -123,7 +123,7 @@
     "architectureFlow": "Sistema existente -> Descoberta -> Evidência -> Validação -> Decisão",
     "metrics": {"private_repository": 1, "brownfield_validation": 1},
     "roadmap": ["Preservar evidências", "Reexecutar validações críticas"],
-    "links": {"repo": "https://github.com/Dilei27/freightflow-brownfield-validation"}
+    "links": {"docs": "/docs/freightflow-preview/"}
   },
   {
     "id": "forge-lab-v0",
@@ -137,7 +137,7 @@
     "architectureFlow": "Problema -> Candidatos -> Crítica -> Revisão -> Síntese -> Decisão",
     "metrics": {"private_repository": 1, "experiment_lab": 1},
     "roadmap": ["Fortalecer contratos", "Melhorar reprodutibilidade"],
-    "links": {"repo": "https://github.com/Dilei27/forge-lab-v0"}
+    "links": {"docs": "/docs/forge-lab-v0-preview/"}
   },
   {
     "id": "hermes-jarvis-bootstrap-v0",

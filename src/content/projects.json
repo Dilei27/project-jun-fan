@@ -34,5 +34,41 @@
     "status": "em_andamento",
     "decisions": ["classificacao-on-device", "retencao-evidencias"],
     "links": {"docs": "/docs/vigilante-ai-preview/"}
+  },
+  {
+    "id": "dde-mobile",
+    "title": "DDE Mobile",
+    "context": "Prévia segura do framework Android-first para automação mobile com evidências e execução multi-dispositivo.",
+    "problem": "Testes mobile perdem confiabilidade quando dispositivos, versões e artefatos não são governados por uma matriz reproduzível.",
+    "solution": "Framework com Robot Framework, Appium, perfis versionados, workers isolados, execução offline e contratos de CI.",
+    "stack": ["Python", "Robot Framework", "Appium", "Android", "Docker", "CI"],
+    "impact": "Base de release e certificação para execução mobile controlada, sem publicar serials, ambientes ou artefatos privados.",
+    "status": "concluido",
+    "decisions": [],
+    "links": {"docs": "/docs/dde-mobile-preview/"}
+  },
+  {
+    "id": "ia-builders-scsi",
+    "title": "IA Builders — SCSI",
+    "context": "Prévia segura de uma plataforma SaaS multi-tenant para corretoras de seguros com assistência de IA.",
+    "problem": "Corretoras precisam conectar clientes, apólices, sinistros, CRM e operações sem perder isolamento entre tenants.",
+    "solution": "Arquitetura modular com domínio de seguros, filas assíncronas, dashboard, anexos protegidos e IA contextual.",
+    "stack": ["Django", "PostgreSQL", "Celery", "Redis", "LangChain", "Docker"],
+    "impact": "Visão pública do produto sem expor código operacional, domínio, endpoints, credenciais ou dados de corretoras.",
+    "status": "em_andamento",
+    "decisions": [],
+    "links": {"docs": "/docs/ia-builders-scsI-preview/"}
+  },
+  {
+    "id": "suporte-assist-ia",
+    "title": "Suporte Assist IA",
+    "context": "Demo pública de atendimento guiado com IA simulada para triagem técnica.",
+    "problem": "Demonstrações de suporte precisam comunicar o fluxo de orientação sem depender de um backend real.",
+    "solution": "Experiência estática de triagem que apresenta entrada, assistência, orientação e próximo passo.",
+    "stack": ["HTML", "CSS", "IA aplicada", "GitHub Pages"],
+    "impact": "Demo pública disponível para apresentação, separada de integrações, credenciais e operação real.",
+    "status": "concluido",
+    "decisions": [],
+    "links": {"docs": "/docs/suporte-assist-ia-preview/"}
   }
 ]

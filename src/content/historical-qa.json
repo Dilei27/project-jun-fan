@@ -1,0 +1,40 @@
+[
+  {
+    "title": "Desafio QA — API com Cypress",
+    "category": "API",
+    "stack": ["Cypress", "Docker", "Mochawesome", "GitHub Actions"],
+    "summary": "Automação de testes da API Dog CEO com relatório e pipeline de CI.",
+    "repositoryUrl": "https://github.com/Dilei27/desafio-qa-api-cypress",
+    "documentationUrl": "https://dilei27.github.io/desafio-qa-api-cypress/"
+  },
+  {
+    "title": "Desafio QA — Performance com k6",
+    "category": "Performance",
+    "stack": ["k6", "Docker", "GitHub Actions", "k6-reporter"],
+    "summary": "Cenário BlazeDemo com carga controlada, métricas e meta de latência P90.",
+    "repositoryUrl": "https://github.com/Dilei27/desafio-qa-performance",
+    "documentationUrl": "https://dilei27.github.io/desafio-qa-performance/"
+  },
+  {
+    "title": "Desafio QA — Web com Playwright",
+    "category": "Web",
+    "stack": ["Playwright", "Docker", "GitHub Actions", "Page Object Model"],
+    "summary": "Automação web com cenários de navegação, busca e organização por Page Object Model.",
+    "repositoryUrl": "https://github.com/Dilei27/desafio-qa-web-playwright",
+    "documentationUrl": "https://dilei27.github.io/desafio-qa-web-playwright/"
+  },
+  {
+    "title": "Testes Pipeline Desktop",
+    "category": "Desktop",
+    "stack": ["Robot Framework", "SikuliLibrary", "FakerLibrary"],
+    "summary": "Regressão de fluxo CRUD desktop com geração de dados, interação visual e evidências de execução.",
+    "repositoryUrl": "https://github.com/Dilei27/Tests_Pipeline_Desktop"
+  },
+  {
+    "title": "Projeto Robot Framework Avançado",
+    "category": "Fundamentos",
+    "stack": ["Robot Framework", "Python", "WebDriver", "PostgreSQL"],
+    "summary": "Laboratório de bibliotecas, loops, teardown, esperas, argumentos e execução de testes.",
+    "repositoryUrl": "https://github.com/Dilei27/projeto-robot-avancado"
+  }
+]

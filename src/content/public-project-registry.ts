@@ -11,4 +11,7 @@ export const publicProjectIds = [
   'forge-lab-v0',
   'hermes-jarvis-bootstrap-v0',
   'uau-assist-ia-demo',
+  'dde-mobile',
+  'ia-builders-scsi',
+  'suporte-assist-ia',
 ] as const;

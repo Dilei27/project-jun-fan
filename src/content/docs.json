@@ -26,7 +26,7 @@
   {
     "id": "produtos",
     "title": "Projetos",
-    "description": "Visão geral dos quatro projetos públicos do ecossistema.",
+    "description": "Visão geral dos projetos públicos e suas prévias seguras.",
     "sections": [
       {"heading": "QA Command Center", "content": "Hub central que funciona como cockpit do ecossistema. Centraliza trajetória, projetos, decisões técnicas, demos, métricas e documentação com identidade visual própria. É o ponto de entrada para todos os produtos."},
       {"heading": "WhatsApp AI Assistant", "content": "Assistente comercial conectado ao WhatsApp para pequenos negócios automatizarem atendimento. Usa LangChain e GPT-5.5-mini para qualificar clientes, agendar horários e gerar resumos."},
@@ -55,6 +55,72 @@
       {"heading": "Stack Definitiva", "content": "Next.js + React + TypeScript + Tailwind CSS como base principal. Horizon Design System com tokens via @theme. Conteúdo gerenciado via JSON estruturado em src/content/. Zero backend, zero banco de dados."},
       {"heading": "Front-end First", "content": "O Project Jun Fan adota uma abordagem front-end first. Todo o conteúdo é estático e servido via Next.js App Router. Não há Django, banco de dados, autenticação ou APIs complexas no MVP."},
       {"heading": "Design System", "content": "Tokens CSS como fonte de verdade visual, integrados ao Tailwind via @theme. Nenhum valor solto em componentes finais. Se a identidade mudar, a plataforma inteira evolui por token."}
+    ]
+  },
+  {
+    "id": "dde-mobile-preview",
+    "title": "DDE Mobile: Prévia Pública",
+    "description": "Visão segura do framework mobile, sem expor ambientes ou artefatos operacionais.",
+    "relatedProject": "dde-mobile",
+    "sections": [
+      {"heading": "Escopo", "content": "Framework Android-first para automação mobile com Robot Framework, Appium, perfis de dispositivos e execução orientada por matriz."},
+      {"heading": "Capacidades", "content": "Workers isolados, relatórios offline, execução local ou Docker, contratos de CI e documentação de release."},
+      {"heading": "Confidencialidade", "content": "Esta prévia não publica serials, credenciais, endpoints, imagens, artefatos de execução, ambientes ou configurações privadas."}
+    ]
+  },
+  {
+    "id": "ia-builders-scsi-preview",
+    "title": "IA Builders / SCSI: Prévia Pública",
+    "description": "Visão de produto de uma plataforma de seguros com IA, sem detalhes operacionais sensíveis.",
+    "relatedProject": "ia-builders-scsi",
+    "sections": [
+      {"heading": "Produto", "content": "Plataforma SaaS multi-tenant para corretoras de seguros, com clientes, seguradoras, propostas, apólices, sinistros, CRM, comissões e dashboards."},
+      {"heading": "IA e arquitetura", "content": "A visão pública contempla assistência contextual, processamento assíncrono, isolamento por tenant e módulos de operação. Os detalhes são apresentados em alto nível."},
+      {"heading": "Confidencialidade", "content": "Não são publicados credenciais, endpoints, dados de corretoras, configurações de infraestrutura, segredos ou instruções de operação."}
+    ]
+  },
+  {
+    "id": "suporte-assist-ia-preview",
+    "title": "Suporte Assist IA: Prévia Pública",
+    "description": "Demo pública de atendimento guiado com IA simulada.",
+    "relatedProject": "suporte-assist-ia",
+    "sections": [
+      {"heading": "Experiência", "content": "O projeto apresenta uma jornada de triagem técnica com entrada, assistência, orientação e próximo passo."},
+      {"heading": "Status", "content": "A prévia é uma demo estática publicada no GitHub Pages. Ela comunica a experiência sem depender de um backend operacional."},
+      {"heading": "Limite público", "content": "A demo não representa credenciais, integrações, dados de clientes ou comportamento de produção."}
+    ]
+  },
+  {
+    "id": "quality-engine-v2-preview",
+    "title": "Quality Engine v2: Prévia Segura",
+    "description": "Visão de alto nível do motor privado de qualidade e governança.",
+    "relatedProject": "quality-engine-v2",
+    "sections": [
+      {"heading": "Propósito", "content": "Motor modular para descoberta, contratos, políticas, validação, evidência e observabilidade de QA."},
+      {"heading": "Fluxo", "content": "Contexto -> Contratos -> Descoberta -> Validação -> Evidência -> Saúde."},
+      {"heading": "Confidencialidade", "content": "O repositório é privado. Esta página não expõe código, regras internas, adapters, credenciais ou artefatos de execução."}
+    ]
+  },
+  {
+    "id": "forge-lab-v0-preview",
+    "title": "Forge Lab V0: Prévia Segura",
+    "description": "Visão pública controlada do laboratório de decisão e experimentação.",
+    "relatedProject": "forge-lab-v0",
+    "sections": [
+      {"heading": "Propósito", "content": "Laboratório para comparar alternativas técnicas com baseline, crítica, revisão, síntese e decisão rastreável."},
+      {"heading": "Fluxo", "content": "Problema -> Candidatos -> Crítica -> Revisão -> Síntese -> Decisão."},
+      {"heading": "Confidencialidade", "content": "A prévia omite prompts privados, dados de experimentos, credenciais, configurações e resultados internos."}
+    ]
+  },
+  {
+    "id": "freightflow-preview",
+    "title": "FreightFlow: Prévia Segura",
+    "description": "Visão pública controlada da validação brownfield e seus artefatos de qualidade.",
+    "relatedProject": "freightflow-brownfield-validation",
+    "sections": [
+      {"heading": "Propósito", "content": "Pacote de descoberta e validação para sistemas existentes, preservando evidências antes de automação ou mudança."},
+      {"heading": "Fluxo", "content": "Sistema existente -> Descoberta -> Evidência -> Validação -> Decisão."},
+      {"heading": "Confidencialidade", "content": "Não são publicados contratos internos, dados do sistema, endpoints, evidências privadas ou artefatos de cliente."}
     ]
   }
 ]

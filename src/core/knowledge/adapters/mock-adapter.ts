@@ -14,6 +14,7 @@ import docsData from '@/content/docs.json'
 import timelineData from '@/content/timeline.json'
 import skillsData from '@/content/skills.json'
 import metricsData from '@/content/metrics.json'
+import historicalQaData from '@/content/historical-qa.json'
 
 type JsonRecord = Record<string, unknown>
 
@@ -27,8 +28,9 @@ export class MockAdapter implements IKnowledgeAdapter {
 
     this.loadProducts(nodes, edges)
     this.loadProjects(nodes, edges)
+    this.loadHistoricalQaProjects(nodes, edges)
     const decisionNodes = this.loadDecisions(nodes, decisions)
-    this.loadDocuments(docsData as JsonRecord[], nodes, documents, decisionNodes)
+    this.loadDocuments(docsData as JsonRecord[], nodes, documents, decisionNodes, edges)
     this.loadTimeline(nodes)
     this.loadSkills(nodes)
     this.loadMetricNodes(nodes, metrics)
@@ -140,6 +142,47 @@ export class MockAdapter implements IKnowledgeAdapter {
     }
   }
 
+  private loadHistoricalQaProjects(nodes: KnowledgeNode[], edges: KnowledgeEdge[]): void {
+    for (const item of historicalQaData as Array<JsonRecord>) {
+      const id = `historical-${String(item.title).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+      const nodeId = createNodeId('project', id)
+      const stack = (item.stack as string[]) || []
+      nodes.push({
+        id: nodeId,
+        title: item.title as string,
+        description: item.summary as string,
+        type: 'project',
+        category: 'historical-qa',
+        owner: 'Project Jun Fan',
+        status: 'concluido',
+        priority: 'medium',
+        risk: 'low',
+        health: 'healthy',
+        maturity: 'mature',
+        createdAt: '2025-01-01T00:00:00.000Z',
+        updatedAt: '2026-10-01T00:00:00.000Z',
+        tags: ['project', 'historical-qa', String(item.category), ...stack],
+        relatedNodes: [],
+        relatedComponents: [],
+        relatedDocs: [],
+        relatedDecisions: [],
+        relatedTests: [],
+        metadata: {
+          stack,
+          impact: item.summary as string,
+          links: {
+            repo: item.repositoryUrl as string,
+            docs: item.documentationUrl as string | undefined,
+          },
+          historical: true,
+        },
+      })
+      for (const skill of stack) {
+        edges.push({ source: nodeId, target: createNodeId('skill', skill), type: 'uses', label: 'usa', weight: 1 })
+      }
+    }
+  }
+
   private loadDecisions(
     nodes: KnowledgeNode[],
     decisions: KnowledgeDecision[],
@@ -195,6 +238,7 @@ export class MockAdapter implements IKnowledgeAdapter {
     nodes: KnowledgeNode[],
     documents: KnowledgeDocument[],
     decisionNodes: string[],
+    edges: KnowledgeEdge[],
   ): void {
     for (const doc of docsArray) {
       const id = doc.id as string
@@ -227,6 +271,17 @@ export class MockAdapter implements IKnowledgeAdapter {
         nodeId,
         sections: (doc.sections as Array<{ heading: string; content: string }>) || [],
       })
+
+      const relatedProject = doc.relatedProject as string | undefined
+      if (relatedProject) {
+        edges.push({
+          source: nodeId,
+          target: createNodeId('project', relatedProject),
+          type: 'references',
+          label: 'prévia de',
+          weight: 1,
+        })
+      }
     }
   }
 
